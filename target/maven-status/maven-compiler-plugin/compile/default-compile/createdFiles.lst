@@ -18,6 +18,7 @@ payloads/LoginRequest.class
 com/dev/gbk/model/RoleName.class
 payloads/JwtAuthenticationResponse.class
 com/dev/gbk/exception/ResourceNotFoundException.class
+com/dev/gbk/controller/DashboardController.class
 com/dev/gbk/exception/AppException.class
 com/dev/gbk/model/Role.class
 com/dev/gbk/security/JwtAuthenticationFilter.class
