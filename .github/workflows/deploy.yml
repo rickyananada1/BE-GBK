@@ -28,7 +28,7 @@ jobs:
         with:
           host: 213.210.37.2
           username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SERVER_PASSWORD }}
           port: 22
           script: |
             cd /opt
