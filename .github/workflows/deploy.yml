@@ -35,12 +35,12 @@ jobs:
           expect << EOF
           spawn scp target/SSec-0.0.1-SNAPSHOT.jar ${SERVER_USERNAME}@213.210.37.2:/opt/SSec-0.0.1-SNAPSHOT.jar
           expect {
-            "(yes/no)?" {
+            "(yes/no/*)? " {
               send "yes\r"
               exp_continue
             }
-            "password:" {
-              send "${SERVER_PASSWORD}\r"
+            "password: " {
+              send "$env(SERVER_PASSWORD)\r"
             }
           }
           expect eof
@@ -50,12 +50,12 @@ jobs:
           expect << EOF
           spawn ssh ${SERVER_USERNAME}@213.210.37.2
           expect {
-            "(yes/no)?" {
+            "(yes/no/*)? " {
               send "yes\r"
               exp_continue
             }
-            "password:" {
-              send "${SERVER_PASSWORD}\r"
+            "password: " {
+              send "$env(SERVER_PASSWORD)\r"
             }
           }
           expect "\$ "
