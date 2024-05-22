@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.dev.gbk.GbkApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.741 s - in com.dev.gbk.GbkApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.75 s - in com.dev.gbk.GbkApplicationTests

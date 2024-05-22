@@ -7,6 +7,7 @@
 /Users/rickysitorus/Downloads/project/GBK/BE/src/main/java/com/dev/gbk/security/CurrentUser.java
 /Users/rickysitorus/Downloads/project/GBK/BE/src/main/java/com/dev/gbk/model/Booking.java
 /Users/rickysitorus/Downloads/project/GBK/BE/src/main/java/com/dev/gbk/controller/GenController.java
+/Users/rickysitorus/Downloads/project/GBK/BE/src/main/java/com/dev/gbk/controller/DashboardController.java
 /Users/rickysitorus/Downloads/project/GBK/BE/src/main/java/com/dev/gbk/repo/RoleRepo.java
 /Users/rickysitorus/Downloads/project/GBK/BE/src/main/java/com/dev/gbk/security/JwtAuthenticationFilter.java
 /Users/rickysitorus/Downloads/project/GBK/BE/src/main/java/com/dev/gbk/model/User.java
