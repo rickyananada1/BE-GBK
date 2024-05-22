@@ -46,7 +46,7 @@ jobs:
           expect eof
           EOF
           
-          $env:SERVER_PASSWORD 
+          $env{SERVER_PASSWORD} 
           echo "Using SSH to run start_app.sh on server"
           expect << EOF
           spawn ssh ${SERVER_USERNAME}@213.210.37.2
