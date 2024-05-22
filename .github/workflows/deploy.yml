@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Ganti dengan branch deployment Anda
+      - main  # Change this to your deployment branch
 
 jobs:
   build:
@@ -46,7 +46,6 @@ jobs:
           expect eof
           EOF
           
-          $env{SERVER_PASSWORD} 
           echo "Using SSH to run start_app.sh on server"
           expect << EOF
           spawn ssh ${SERVER_USERNAME}@213.210.37.2
