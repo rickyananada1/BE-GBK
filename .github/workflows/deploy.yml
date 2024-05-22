@@ -28,22 +28,38 @@ jobs:
 
       - name: Deploy to Server
         env:
-          SERVER_USERNAME: root
-          SERVER_PASSWORD: Gbk5781!
+          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
           echo "Using SCP to copy JAR file to server"
           expect << EOF
           spawn scp target/SSec-0.0.1-SNAPSHOT.jar ${SERVER_USERNAME}@213.210.37.2:/opt/SSec-0.0.1-SNAPSHOT.jar
-          expect "password:"
-          send "${SERVER_PASSWORD}\r"
+          expect {
+            "(yes/no/[fingerprint])?" {
+              send "yes\r"
+              expect "password:"
+              send "${SERVER_PASSWORD}\r"
+            }
+            "password:" {
+              send "${SERVER_PASSWORD}\r"
+            }
+          }
           expect eof
           EOF
 
           echo "Using SSH to run start_app.sh on server"
           expect << EOF
           spawn ssh ${SERVER_USERNAME}@213.210.37.2
-          expect "password:"
-          send "${SERVER_PASSWORD}\r"
+          expect {
+            "(yes/no/[fingerprint])?" {
+              send "yes\r"
+              expect "password:"
+              send "${SERVER_PASSWORD}\r"
+            }
+            "password:" {
+              send "${SERVER_PASSWORD}\r"
+            }
+          }
           expect "\$ "
           send "chmod +x /opt/start_app.sh\r"
           expect "\$ "
