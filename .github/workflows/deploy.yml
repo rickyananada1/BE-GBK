@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Change this to your deployment branch
+      - main  # Ganti dengan branch deployment Anda
 
 jobs:
   build:
