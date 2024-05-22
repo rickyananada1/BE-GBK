@@ -20,8 +20,8 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
-      - name: Build with Maven
-        run: mvn clean package -DskipTests
+      - name: Install SSH client
+        run: sudo apt-get install -y openssh-client
 
       - name: Install Expect
         run: sudo apt-get install -y expect
@@ -29,18 +29,15 @@ jobs:
       - name: Deploy to Server
         env:
           SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
-          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           echo "Using SCP to copy JAR file to server"
           expect << EOF
-          spawn scp target/SSec-0.0.1-SNAPSHOT.jar ${SERVER_USERNAME}@213.210.37.2:/opt/SSec-0.0.1-SNAPSHOT.jar
+          spawn scp -i $env(SSH_PRIVATE_KEY) -o StrictHostKeyChecking=no target/SSec-0.0.1-SNAPSHOT.jar ${SERVER_USERNAME}@213.210.37.2:/opt/SSec-0.0.1-SNAPSHOT.jar
           expect {
-            "(yes/no/*)? " {
-              send "yes\r"
-              exp_continue
-            }
-            "password: " {
+            "assword: " {
               send "$env(SERVER_PASSWORD)\r"
+              exp_continue
             }
           }
           expect eof
@@ -48,14 +45,14 @@ jobs:
           
           echo "Using SSH to run start_app.sh on server"
           expect << EOF
-          spawn ssh ${SERVER_USERNAME}@213.210.37.2
+          spawn ssh -i $env(SSH_PRIVATE_KEY) -o StrictHostKeyChecking=no ${SERVER_USERNAME}@213.210.37.2
           expect {
-            "(yes/no/*)? " {
-              send "yes\r"
+            "assword: " {
+              send "$env(SERVER_PASSWORD)\r"
               exp_continue
             }
-            "password: " {
-              send "$env(SERVER_PASSWORD)\r"
+            "Permission denied" {
+              exit 1
             }
           }
           expect "\$ "
