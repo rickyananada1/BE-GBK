@@ -10,7 +10,12 @@ import com.dev.gbk.model.RoleName;
 import com.dev.gbk.repo.RoleRepo;
 import com.dev.gbk.repo.UserRepo;
 import com.dev.gbk.security.JwtTokenProvider;
+import com.dev.gbk.service.GbkFeignClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,14 +32,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.dev.gbk.exception.AppException;
 import com.dev.gbk.model.User;
 
-import payloads.ApiResponse;
-import payloads.JwtAuthenticationResponse;
-import payloads.LoginRequest;
-import payloads.SignUpRequest;
+import payloads.*;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
 	@Autowired
 	AuthenticationManager authenticationManager;
@@ -51,16 +54,31 @@ public class AuthController {
 	@Autowired
     JwtTokenProvider tokenProvider;
 
+	@Autowired
+	GbkFeignClient gbkFeignClient;
+
+	@Autowired
+	Environment env;
+
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsernameOrEmail(), loginRequest.getPassword()));
 
+		ObjectMapper objectMapper = new ObjectMapper();
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-
-		String jwt = tokenProvider.generateToken(authentication);
+		ReqGbkToken reqGbkToken = new ReqGbkToken(Integer.parseInt(env.getProperty("gbk.partner.id")), env.getProperty("gbk.partner.key"));
+		ResponseEntity<RespGbkToken> responseEntity = gbkFeignClient.getTokenGbk(reqGbkToken);
+		RespGbkToken respGbkToken = responseEntity.getBody();
+		try{
+			logger.info("Request to GBK [{}]", objectMapper.writeValueAsString(reqGbkToken));
+			logger.info("Response from GBK [{}]", objectMapper.writeValueAsString(respGbkToken));
+		}catch (Exception e){
+			logger.info("Exception object mapper [{}]", e.getMessage());
+		}
+		String jwt = tokenProvider.generateToken(authentication, respGbkToken.getToken());
 		return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+
 	}
 
 	@PostMapping("/signup")

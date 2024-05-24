@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,10 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import payloads.ReqGbkToken;
+import payloads.RespGbkToken;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Component
 public class JwtTokenProvider {
@@ -27,14 +32,19 @@ public class JwtTokenProvider {
     @Value("${app.jwtExpirationInMs}")
     private int jwtExpirationInMs;
 
-    public String generateToken(Authentication authentication) {
+
+
+    public String generateToken(Authentication authentication, String gbkToken) {
+        Claims claims = Jwts.claims();
 
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+        claims.put("gbkToken", gbkToken);
 
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(Long.toString(userPrincipal.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
@@ -42,11 +52,14 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public Long getUserIdFromJWT(String token) {
+    public Long getUserIdFromJWT(String token, HttpServletRequest request) {
         Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody();
+
+        String gbkToken = claims.get("gbkToken", String.class);
+        request.setAttribute("gbkToken", gbkToken);
 
         return Long.parseLong(claims.getSubject());
     }
