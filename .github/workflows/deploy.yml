@@ -24,8 +24,9 @@ jobs:
         run: mvn clean package -DskipTests
 
       - name: Verify build output
+        run: pwd
         run: ls -la target/
-        
+
       - name: Deploy to Server
         uses: appleboy/ssh-action@master
         with:
@@ -40,7 +41,7 @@ jobs:
             echo "Listing files in the current directory on server:"
             ls -la
             echo "Copying JAR file from GitHub Actions runner to /opt directory on server:"
-            scp -o StrictHostKeyChecking=no -P 22 target/SSec-0.0.1-SNAPSHOT.jar ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/opt/
+            scp -o StrictHostKeyChecking=no -P 22 target/SSec-0.0.1-SNAPSHOT.jar ${{ secrets.SERVER_USERNAME }}@213.210.37.2:/opt/
             echo "Listing files in /opt directory on server:"
             ls -la /opt
             echo "Setting execute permission and running the start script:"
