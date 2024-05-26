@@ -24,8 +24,9 @@ jobs:
         run: mvn clean package -DskipTests
 
       - name: Verify build output
-        run: pwd
-        run: ls -la target/
+        run: |
+        pwd
+        ls -la target/
 
       - name: Deploy to Server
         uses: appleboy/ssh-action@master
