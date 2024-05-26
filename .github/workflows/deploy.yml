@@ -34,5 +34,14 @@ jobs:
           source: "target/SSec-0.0.1-SNAPSHOT.jar"
           target: "/opt"
           script: |
-            cd /opt
-            chmod +x /opt/start_app.sh&& /opt/start_app.sh
+            echo "Current working directory:"
+            pwd
+            echo "Listing files in the current directory:"
+            ls -la
+            echo "Copying JAR file to /opt directory:"
+            cp target/SSec-0.0.1-SNAPSHOT.jar /opt/
+            echo "Listing files in /opt directory:"
+            ls -la /opt
+            echo "Setting execute permission and running the start script:"
+            chmod +x /opt/start_app.sh
+            /opt/start_app.sh
