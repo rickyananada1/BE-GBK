@@ -35,4 +35,4 @@ jobs:
           target: "/opt"
           script: |
             cd /opt
-            pkill -f SSec-0.0.1-SNAPSHOT.jar && /opt/start_app.sh
+            chmod +x /opt/start_app.sh&& /opt/start_app.sh
