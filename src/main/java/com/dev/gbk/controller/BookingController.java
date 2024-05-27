@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import payloads.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController
@@ -58,7 +60,7 @@ public class BookingController {
 
     @PostMapping("/info/venue")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getVenueInfo(@RequestAttribute String gbkToken ,@Valid @RequestBody ReqVenueInfoUi reqVenueInfoUi){
+    public ResponseEntity<List<ListDataVenueInfoGbk>> getVenueInfo(@RequestAttribute String gbkToken ,@Valid @RequestBody ReqVenueInfoUi reqVenueInfoUi){
         ObjectMapper objectMapper = new ObjectMapper();
         String tokenGbk = "Bearer " + gbkToken;
         ReqVenueInfoGbk reqVenueInfoGbk = new ReqVenueInfoGbk(Integer.parseInt(env.getProperty("gbk.partner.id")), reqVenueInfoUi);
@@ -70,12 +72,12 @@ public class BookingController {
         }catch (Exception e){
             logger.info("Exception object mapper [{}]", e.getMessage());
         }
-        return ResponseEntity.ok(respVenueInfoGbk != null ? respVenueInfoGbk.getData() : new ListDataVenueInfoGbk());
+        return ResponseEntity.ok(respVenueInfoGbk != null ? respVenueInfoGbk.getData() : new ArrayList<ListDataVenueInfoGbk>());
     }
 
     @PostMapping("/info/schedule")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getSchedule(@RequestAttribute String gbkToken, @Valid @RequestBody ReqScheduleUi reqScheduleUi){
+    public ResponseEntity<List<ListScheduleGbk>> getSchedule(@RequestAttribute String gbkToken, @Valid @RequestBody ReqScheduleUi reqScheduleUi){
         ObjectMapper objectMapper = new ObjectMapper();
         String tokenGbk = "Bearer " + gbkToken;
         ReqScheduleGbk reqScheduleGbk = new ReqScheduleGbk(Integer.parseInt(env.getProperty("gbk.partner.id")), reqScheduleUi);
@@ -87,6 +89,6 @@ public class BookingController {
         }catch (Exception e){
             logger.info("Exception object mapper [{}]", e.getMessage());
         }
-        return ResponseEntity.ok(respScheduleGbk != null ? respScheduleGbk.getData() : new ListScheduleGbk());
+        return ResponseEntity.ok(respScheduleGbk != null ? respScheduleGbk.getData() : new ArrayList<ListScheduleGbk>());
     }
 }
