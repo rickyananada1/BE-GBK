@@ -20,6 +20,20 @@ public class RequestResponseLoggingFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestResponseLoggingFilter.class);
 
+    private static final String[] SWAGGER_WHITELIST = {
+            "/v2/api-docs",
+            "/v3/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui/**",
+            "/webjars/**",
+//            "/swagger-ui/swagger-ui.css",
+//            "/swagger-ui/index.html",
+            "/swagger-ui/"
+    };
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         Filter.super.init(filterConfig);
@@ -29,6 +43,14 @@ public class RequestResponseLoggingFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
+
+        String requestURI = httpRequest.getRequestURI();
+
+        // Check if the request is for Swagger documentation
+        if (isSwaggerPath(requestURI)) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
 
         // Wrap the request and response to enable repeated reading
         ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(httpRequest);
@@ -73,5 +95,14 @@ public class RequestResponseLoggingFilter implements Filter {
     @Override
     public void destroy() {
         Filter.super.destroy();
+    }
+
+    private boolean isSwaggerPath(String requestURI) {
+        for (String swaggerPath : SWAGGER_WHITELIST) {
+            if (requestURI.startsWith(swaggerPath)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
