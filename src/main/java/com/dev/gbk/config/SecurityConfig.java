@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.dev.gbk.security.JwtAuthenticationEntryPoint;
 import com.dev.gbk.security.JwtAuthenticationFilter;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 @Configuration
 @EnableWebSecurity
@@ -26,6 +27,7 @@ import com.dev.gbk.security.JwtAuthenticationFilter;
         jsr250Enabled = true,
         prePostEnabled = true
 )
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     private static final String[] WHITE_LIST_URL = { "/api/v1/auth/**", "/v2/api-docs", "/v3/api-docs",
