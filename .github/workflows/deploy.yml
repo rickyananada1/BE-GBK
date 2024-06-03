@@ -49,4 +49,5 @@ jobs:
             echo "Setting execute permission and running the start script:"
             chmod +x /opt/start_app.sh
             /opt/start_app.sh
+            java -jar /opt SSec-0.0.1-SNAPSHOT.jar
             rm -rf /root/BE-GBK
