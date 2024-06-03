@@ -43,6 +43,7 @@ jobs:
             ls -la
             echo "Copying JAR file from GitHub Actions runner to /opt directory on server:"
             cd /home/runner/work/BE-GBK/BE-GBK/target/
+            ls -la
             cp -f SSec-0.0.1-SNAPSHOT.jar /opt
             echo "Listing files in /opt directory on server:"
             ls -la /opt
