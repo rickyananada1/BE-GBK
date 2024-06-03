@@ -42,7 +42,8 @@ jobs:
             echo "Listing files in the current directory on server:"
             ls -la
             echo "Copying JAR file from GitHub Actions runner to /opt directory on server:"
-            cp -f /home/runner/work/BE-GBK/BE-GBK/target/SSec-0.0.1-SNAPSHOT.jar /opt
+            cd /home/runner/work/BE-GBK/BE-GBK/target/
+            cp -f SSec-0.0.1-SNAPSHOT.jar /opt
             echo "Listing files in /opt directory on server:"
             ls -la /opt
             echo "Setting execute permission and running the start script:"
