@@ -23,7 +23,7 @@ jobs:
       - name: Build with Maven
         run: |
           mvn clean compile
-          mvn clean install
+          sudo mvn clean install
 
       - name: Verify build output
         run: |
