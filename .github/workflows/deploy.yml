@@ -22,8 +22,7 @@ jobs:
 
       - name: Build with Maven
         run: |
-          mvn clean compile
-          sudo mvn clean install
+          mvn clean install -DskipTests
 
       - name: Verify build output
         run: |
@@ -41,12 +40,13 @@ jobs:
           script: |     #cd /home/runner/work/BE-GBK/BE-GBK/target/ | ls -la | cp -f SSec-0.0.1-SNAPSHOT.jar /opt
             echo "Current working directory on server:"
             pwd
-            echo "Listing files in the current directory on server:"
-            ls -la
-            echo "Copying JAR file from GitHub Actions runner to /opt directory on server:"
-            scp -o StrictHostKeyChecking=no -P 22 target/SSec-0.0.1-SNAPSHOT.jar ${{ secrets.SERVER_USERNAME }}@213.210.37.2:/opt/
+            git clone git@github.com:rickyananada1/BE-GBK.git
+            cd BE-GBK
+            mvn clean install
+            cp -f target/SSec-0.0.1-SNAPSHOT.jar /opt
             echo "Listing files in /opt directory on server:"
             ls -la /opt
             echo "Setting execute permission and running the start script:"
             chmod +x /opt/start_app.sh
             /opt/start_app.sh
+            rm -rf /root/BE-GBK
