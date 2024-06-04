@@ -1,13 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.dev.gbk.GbkApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.61 s <<< FAILURE! - in com.dev.gbk.GbkApplicationTests
-contextLoads  Time elapsed: 0.001 s  <<< ERROR!
-java.lang.IllegalStateException: Failed to load ApplicationContext
-Caused by: java.lang.IllegalStateException: 
-java.lang.IllegalStateException: Logback configuration error detected: 
-ERROR in ch.qos.logback.core.rolling.RollingFileAppender[File] - openFile(/var/logs/log.log,true) call failed. java.io.FileNotFoundException: /var/logs/log.log (Permission denied)
-Caused by: java.lang.IllegalStateException: 
-Logback configuration error detected: 
-ERROR in ch.qos.logback.core.rolling.RollingFileAppender[File] - openFile(/var/logs/log.log,true) call failed. java.io.FileNotFoundException: /var/logs/log.log (Permission denied)
-
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.021 s - in com.dev.gbk.GbkApplicationTests
