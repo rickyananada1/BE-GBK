@@ -1,15 +1,11 @@
 package com.dev.gbk.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.NaturalId;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "roles")
@@ -22,9 +18,25 @@ public class Role {
     @Enumerated(EnumType.STRING)
     @NaturalId
     @Column(length = 60)
-    private RoleName name;	
-    
-    public Role() {
+    private RoleName name;
+
+	@JoinTable(
+			name = "roles_permissions",
+			joinColumns = {@JoinColumn(name = "roles_id", referencedColumnName = "id")},
+			inverseJoinColumns = {@JoinColumn(name = "permissions_id", referencedColumnName = "id")}
+	)
+	@ManyToMany
+	private Set<Permission> permissions = new HashSet<>();
+
+	public Set<Permission> getPermissions() {
+		return permissions;
+	}
+
+	void setPermissions(Set<Permission> permissions) {
+		this.permissions = permissions;
+	}
+
+	public Role() {
 
     }
 

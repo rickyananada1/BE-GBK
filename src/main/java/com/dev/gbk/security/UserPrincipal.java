@@ -1,18 +1,16 @@
 package com.dev.gbk.security;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.dev.gbk.model.Permission;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.dev.gbk.model.User;
 
-public class UserPrincipal implements UserDetails {
+public class UserPrincipal implements UserPrincipalDetails {
 
 	private Long id;
 
@@ -28,8 +26,10 @@ public class UserPrincipal implements UserDetails {
 
 	private Collection<? extends GrantedAuthority> authorities;
 
+	private Set<String> permissions = new HashSet<>();
+
 	public UserPrincipal(Long id, String name, String username, String email, String password,
-			Collection<? extends GrantedAuthority> authorities) {
+			Collection<? extends GrantedAuthority> authorities, Set<String> permissions) {
 		this.id = id;
 		this.name = name;
 		this.username = username;
@@ -41,9 +41,27 @@ public class UserPrincipal implements UserDetails {
 	public static UserPrincipal create(User user) {
 		List<GrantedAuthority> authorities = user.getRoles().stream()
 				.map(role -> new SimpleGrantedAuthority(role.getName().name())).collect(Collectors.toList());
+		Set<String> permissionSet = new HashSet<>();
+		user.getRoles().forEach(
+				role -> role.getPermissions().forEach(permission -> permissionSet.add(permission.getId())));
 
 		return new UserPrincipal(user.getId(), user.getName(), user.getUsername(), user.getEmail(), user.getPassword(),
-				authorities);
+				authorities, permissionSet);
+	}
+
+	@Override
+	public Set<String> getPermissions() {
+		return permissions;
+	}
+
+	@Override
+	public Long asUser() {
+		return getId();
+	}
+
+	@Override
+	public boolean can(String permission){
+		return permissions.contains(permission);
 	}
 
 	public Long getId() {

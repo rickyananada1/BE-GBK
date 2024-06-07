@@ -1,17 +1,18 @@
 package com.dev.gbk.controller;
 
-import com.dev.gbk.model.Booking;
-import com.dev.gbk.repo.BookRepo;
+import com.dev.gbk.repo.BookRepository;
+import com.dev.gbk.security.UserPrincipalDetails;
+import com.dev.gbk.service.BookingService;
 import com.dev.gbk.service.GbkFeignClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import payloads.*;
 
@@ -26,7 +27,9 @@ public class BookingController {
     private static final Logger logger = LoggerFactory.getLogger(BookingController.class);
 
     @Autowired
-    private BookRepo bookRepo;
+    private BookRepository bookRepository;
+    @Autowired
+    private BookingService bookingService;
 
     @Autowired
     GbkFeignClient gbkFeignClient;
@@ -37,26 +40,32 @@ public class BookingController {
     @GetMapping("/bookings")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getAllBookings() {
-        return ResponseEntity.ok(bookRepo.findAll());
+        return ResponseEntity.ok(bookRepository.findAll());
     }
 
-    @PostMapping("/bookings")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> createBooking(@Valid @RequestBody BookingRequest bookingRequest) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        Long userId = ((Booking) authentication.getPrincipal()).getId();
-        System.out.println("userId: " + userId);
-        Booking booking = new Booking(bookingRequest.getVenue(),
-                bookingRequest.getRangeDate(),
-                bookingRequest.getWaktuMulai(),
-                bookingRequest.getWaktuSelesai(),
-                userId);
-
-        Booking result = bookRepo.save(booking);
-        System.out.println(result);
-        return ResponseEntity.ok(new ApiResponse(true, "Booking created successfully"));
+    @PostMapping("/booking")
+    public ResponseEntity<?> createBooking(@Parameter(hidden = true)@AuthenticationPrincipal UserPrincipalDetails userPrincipal,
+                                           @Valid @RequestBody ReqVenueBookDto reqVenueBookDto){
+        return ResponseEntity.ok(bookingService.addNewBooking(userPrincipal, reqVenueBookDto));
     }
+
+//    @PostMapping("/bookings")
+//    @PreAuthorize("hasRole('USER')")
+//    public ResponseEntity<?> createBooking(@Valid @RequestBody BookingRequest bookingRequest) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//        Long userId = ((Booking) authentication.getPrincipal()).getId();
+//        System.out.println("userId: " + userId);
+//        Booking booking = new Booking(bookingRequest.getVenue(),
+//                bookingRequest.getRangeDate(),
+//                bookingRequest.getWaktuMulai(),
+//                bookingRequest.getWaktuSelesai(),
+//                userId);
+//
+//        Booking result = bookRepo.save(booking);
+//        System.out.println(result);
+//        return ResponseEntity.ok(new ApiResponse(true, "Booking created successfully"));
+//    }
 
     @PostMapping("/info/venue")
     @PreAuthorize("hasRole('USER')")

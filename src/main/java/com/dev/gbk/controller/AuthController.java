@@ -7,8 +7,8 @@ import javax.validation.Valid;
 
 import com.dev.gbk.model.Role;
 import com.dev.gbk.model.RoleName;
-import com.dev.gbk.repo.RoleRepo;
-import com.dev.gbk.repo.UserRepo;
+import com.dev.gbk.repo.RoleRepository;
+import com.dev.gbk.repo.UserRepository;
 import com.dev.gbk.security.JwtTokenProvider;
 import com.dev.gbk.service.GbkFeignClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,10 +43,10 @@ public class AuthController {
 	AuthenticationManager authenticationManager;
 
 	@Autowired
-    UserRepo userRepository;
+	UserRepository userRepository;
 
 	@Autowired
-    RoleRepo roleRepository;
+    RoleRepository roleRepository;
 
 	@Autowired
 	PasswordEncoder passwordEncoder;
