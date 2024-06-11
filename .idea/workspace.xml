@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a35b04f0-81d2-463e-afed-5cc832453716" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/dev/gbk/config/GlobalCorsConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/dev/gbk/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/dev/gbk/config/SecurityConfig.java" afterDir="false" />
     </list>
@@ -59,7 +60,7 @@
       <workItem from="1717514792975" duration="4799000" />
       <workItem from="1717519600740" duration="3000" />
       <workItem from="1717834546137" duration="730000" />
-      <workItem from="1718111758565" duration="837000" />
+      <workItem from="1718111758565" duration="1511000" />
     </task>
     <servers />
   </component>
