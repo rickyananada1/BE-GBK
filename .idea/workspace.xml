@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a35b04f0-81d2-463e-afed-5cc832453716" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/copilot/chatSessions/00000000000.xd" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copilot/chatSessions/00000000000.xd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/copilot/chatSessions/xd.lck" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copilot/chatSessions/xd.lck" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/dev/gbk/GbkApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/dev/gbk/GbkApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/dev/gbk/config/WebMvcConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/dev/gbk/config/WebMvcConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +61,7 @@
       <workItem from="1717519600740" duration="3000" />
       <workItem from="1717834546137" duration="730000" />
       <workItem from="1718111758565" duration="2587000" />
-      <workItem from="1718118341662" duration="26000" />
+      <workItem from="1718118341662" duration="337000" />
     </task>
     <servers />
   </component>
