@@ -1,7 +1,6 @@
 /Users/rickysitorus/Downloads/project/GBK/BE-GBK/src/main/java/com/dev/gbk/repo/BookRepo.java
 /Users/rickysitorus/Downloads/project/GBK/BE-GBK/src/main/java/com/dev/gbk/model/Role.java
 /Users/rickysitorus/Downloads/project/GBK/BE-GBK/src/main/java/payloads/ReqScheduleGbk.java
-/Users/rickysitorus/Downloads/project/GBK/BE-GBK/src/main/java/com/dev/gbk/model/Menu.java
 /Users/rickysitorus/Downloads/project/GBK/BE-GBK/src/main/java/com/dev/gbk/controller/AuthController.java
 /Users/rickysitorus/Downloads/project/GBK/BE-GBK/src/main/java/payloads/ListDataVenueInfoGbk.java
 /Users/rickysitorus/Downloads/project/GBK/BE-GBK/src/main/java/payloads/SignUpRequest.java
@@ -16,7 +15,6 @@
 /Users/rickysitorus/Downloads/project/GBK/BE-GBK/src/main/java/com/dev/gbk/security/JwtAuthenticationEntryPoint.java
 /Users/rickysitorus/Downloads/project/GBK/BE-GBK/src/main/java/payloads/BookingRequest.java
 /Users/rickysitorus/Downloads/project/GBK/BE-GBK/src/main/java/com/dev/gbk/config/SwaggerConfig.java
-/Users/rickysitorus/Downloads/project/GBK/BE-GBK/src/main/java/com/dev/gbk/model/Permission.java
 /Users/rickysitorus/Downloads/project/GBK/BE-GBK/src/main/java/payloads/ReqVenueInfoUi.java
 /Users/rickysitorus/Downloads/project/GBK/BE-GBK/src/main/java/com/dev/gbk/model/RoleName.java
 /Users/rickysitorus/Downloads/project/GBK/BE-GBK/src/main/java/payloads/ReqScheduleUi.java
