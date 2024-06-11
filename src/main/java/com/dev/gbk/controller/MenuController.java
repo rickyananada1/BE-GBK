@@ -24,7 +24,8 @@ public class MenuController {
     Environment env;
 
     @GetMapping("/menus")
-    public ResponseEntity<?> getAllMenus() {
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> getAllBookings() {
         return ResponseEntity.ok(menuRepo.findAll());
     }
 }
