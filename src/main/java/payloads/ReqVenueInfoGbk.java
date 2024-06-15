@@ -2,8 +2,6 @@ package payloads;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.validation.constraints.NotBlank;
-
 public class ReqVenueInfoGbk {
     @JsonProperty("PartnerID")
     private int partnerId;
@@ -52,6 +50,5 @@ public class ReqVenueInfoGbk {
     public void setStatus(int status) {
         this.status = status;
     }
-
 
 }

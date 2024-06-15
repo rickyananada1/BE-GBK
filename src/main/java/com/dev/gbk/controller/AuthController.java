@@ -43,16 +43,16 @@ public class AuthController {
 	AuthenticationManager authenticationManager;
 
 	@Autowired
-    UserRepo userRepository;
+	UserRepo userRepository;
 
 	@Autowired
-    RoleRepo roleRepository;
+	RoleRepo roleRepository;
 
 	@Autowired
 	PasswordEncoder passwordEncoder;
 
 	@Autowired
-    JwtTokenProvider tokenProvider;
+	JwtTokenProvider tokenProvider;
 
 	@Autowired
 	GbkFeignClient gbkFeignClient;
@@ -67,13 +67,14 @@ public class AuthController {
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		ReqGbkToken reqGbkToken = new ReqGbkToken(Integer.parseInt(env.getProperty("gbk.partner.id")), env.getProperty("gbk.partner.key"));
+		ReqGbkToken reqGbkToken = new ReqGbkToken(Integer.parseInt(env.getProperty("gbk.partner.id")),
+				env.getProperty("gbk.partner.key"));
 		ResponseEntity<RespGbkToken> responseEntity = gbkFeignClient.getTokenGbk(reqGbkToken);
 		RespGbkToken respGbkToken = responseEntity.getBody();
-		try{
+		try {
 			logger.info("Request to GBK [{}]", objectMapper.writeValueAsString(reqGbkToken));
 			logger.info("Response from GBK [{}]", objectMapper.writeValueAsString(respGbkToken));
-		}catch (Exception e){
+		} catch (Exception e) {
 			logger.info("Exception object mapper [{}]", e.getMessage());
 		}
 		String jwt = tokenProvider.generateToken(authentication, respGbkToken.getToken());
@@ -85,11 +86,12 @@ public class AuthController {
 	public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
 		System.out.println("signup masuk");
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-			return new ResponseEntity(new ApiResponse(false, "Username is already taken!"), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(new ApiResponse(false, "Username is already taken!"), HttpStatus.BAD_REQUEST);
 		}
 
 		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-			return new ResponseEntity(new ApiResponse(false, "Email Address already in use!"), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(new ApiResponse(false, "Email Address already in use!"),
+					HttpStatus.BAD_REQUEST);
 		}
 
 		User user = new User(signUpRequest.getName(), signUpRequest.getUsername(), signUpRequest.getEmail(),

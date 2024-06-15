@@ -29,8 +29,8 @@ public class RequestResponseLoggingFilter implements Filter {
             "/configuration/security",
             "/swagger-ui/**",
             "/webjars/**",
-//            "/swagger-ui/swagger-ui.css",
-//            "/swagger-ui/index.html",
+            // "/swagger-ui/swagger-ui.css",
+            // "/swagger-ui/index.html",
             "/swagger-ui/"
     };
 
@@ -40,7 +40,8 @@ public class RequestResponseLoggingFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 

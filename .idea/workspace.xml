@@ -5,24 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a35b04f0-81d2-463e-afed-5cc832453716" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/copilot/chatSessions/00000000000.xd" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copilot/chatSessions/00000000000.xd" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/copilot/chatSessions/xd.lck" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copilot/chatSessions/xd.lck" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SSec.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/dev/gbk/controller/MenuController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/dev/gbk/controller/PermissionController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/dev/gbk/controller/UserController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/dev/gbk/model/Menu.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/dev/gbk/model/Permission.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/dev/gbk/repo/MenuRepo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/dev/gbk/repo/PermissionRepo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/payloads/PermissionRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/payloads/UserRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/dev/gbk/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/dev/gbk/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/GbkApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/GbkApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/config/SecurityConfig.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/config/WebMvcConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/config/WebMvcConfig.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/AuthController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/BookingController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/BookingController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/DashboardController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/DashboardController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/GenController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/GenController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/exception/AppException.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/exception/AppException.class" afterDir="false" />
@@ -40,16 +31,11 @@
       <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtAuthenticationEntryPoint.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtAuthenticationEntryPoint.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtAuthenticationFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtAuthenticationFilter.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtTokenProvider.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtTokenProvider.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/UserPrincipal.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/UserPrincipal.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/payloads/ApiResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/payloads/ApiResponse.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/payloads/BookingRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/payloads/BookingRequest.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/payloads/JwtAuthenticationResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/payloads/JwtAuthenticationResponse.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/payloads/LoginRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/payloads/LoginRequest.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/payloads/SignUpRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/payloads/SignUpRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/surefire-reports/TEST-com.dev.gbk.GbkApplicationTests.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/surefire-reports/TEST-com.dev.gbk.GbkApplicationTests.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/surefire-reports/com.dev.gbk.GbkApplicationTests.txt" beforeDir="false" afterPath="$PROJECT_DIR$/target/surefire-reports/com.dev.gbk.GbkApplicationTests.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/test-classes/com/dev/gbk/GbkApplicationTests.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/com/dev/gbk/GbkApplicationTests.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -75,10 +61,12 @@
     <option name="generalSettings">
       <MavenGeneralSettings>
         <option name="mavenHome" value="Use Maven wrapper" />
-        <option name="useMavenConfig" value="true" />
       </MavenGeneralSettings>
     </option>
   </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 0
+}]]></component>
   <component name="ProjectId" id="2ea10F3xhRvxvxoVmWMG12f82WY" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -94,19 +82,42 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
     "spring.configuration.checksum": "55ec366db20552e9637407fb8e32595c",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration name="GbkApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="SSec" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.dev.gbk.GbkApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.dev.gbk.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.GbkApplication" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="493e3202-29c2-4c60-8936-ada8811a6f6e" name="Changes" comment="" />
+      <changelist id="a35b04f0-81d2-463e-afed-5cc832453716" name="Changes" comment="" />
       <created>1712127649590</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -125,6 +136,7 @@
       <workItem from="1715768241610" duration="204000" />
       <workItem from="1715781926832" duration="5698000" />
       <workItem from="1715914708362" duration="4286000" />
+      <workItem from="1718250656917" duration="6292000" />
     </task>
     <servers />
   </component>

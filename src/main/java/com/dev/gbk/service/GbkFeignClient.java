@@ -9,19 +9,17 @@ import payloads.*;
 
 @FeignClient(value = "gbkFeignClient", url = "${gbk.client.url}")
 public interface GbkFeignClient {
-    @PostMapping("/api/info/token")
-    ResponseEntity<RespGbkToken> getTokenGbk (@RequestBody ReqGbkToken reqGbkToken);
+        @PostMapping("/api/info/token")
+        ResponseEntity<RespGbkToken> getTokenGbk(@RequestBody ReqGbkToken reqGbkToken);
 
-    @PostMapping("/api/info/venue")
-    ResponseEntity<RespVenueInfoGbk> getVenueInfoGbk(@RequestHeader(
-            value = "Authorization", required = true) String authorizationHeader
-            ,@RequestBody ReqVenueInfoGbk reqVenueInfoGbk
-    );
+        @PostMapping("/api/info/venue")
+        ResponseEntity<RespVenueInfoGbk> getVenueInfoGbk(
+                        @RequestHeader(value = "Authorization", required = true) String authorizationHeader,
+                        @RequestBody ReqVenueInfoGbk reqVenueInfoGbk);
 
-    @PostMapping("/api/info/schedule")
-    ResponseEntity<RespScheduleGbk> getScheduleGbk(@RequestHeader(
-            value = "Authorization", required = true) String authorizationHeader
-            , @RequestBody ReqScheduleGbk reqScheduleGbk
-                                                    );
+        @PostMapping("/api/info/schedule")
+        ResponseEntity<RespScheduleGbk> getScheduleGbk(
+                        @RequestHeader(value = "Authorization", required = true) String authorizationHeader,
+                        @RequestBody ReqScheduleGbk reqScheduleGbk);
 
 }

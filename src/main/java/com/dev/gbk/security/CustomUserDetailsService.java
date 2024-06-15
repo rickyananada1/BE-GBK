@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dev.gbk.model.User;
 import com.dev.gbk.repo.UserRepo;
 
-
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 

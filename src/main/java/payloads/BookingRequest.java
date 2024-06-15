@@ -1,6 +1,5 @@
 package payloads;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -8,25 +7,24 @@ import java.util.Date;
 public class BookingRequest {
 
     @NotBlank
-    @Size(min=3,max = 40)
+    @Size(min = 3, max = 40)
     private String venue;
 
     @NotBlank
-    @Size(min=5,max = 15)
+    @Size(min = 5, max = 15)
     private Integer rangeDate;
 
     @NotBlank
-    @Size(min=10,max = 40)
+    @Size(min = 10, max = 40)
     private Date waktuMulai;
 
     @NotBlank
-    @Size(min=10,max = 100)
+    @Size(min = 10, max = 100)
     private Date waktuSelesai;
 
     @NotBlank
     @Size(max = 40)
     private Long user_id;
-
 
     public String getVenue() {
         return venue;

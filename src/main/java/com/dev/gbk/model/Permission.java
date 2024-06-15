@@ -1,7 +1,5 @@
 package com.dev.gbk.model;
 
-import org.hibernate.annotations.NaturalId;
-
 import javax.persistence.*;
 
 @Entity
@@ -32,7 +30,8 @@ public class Permission {
     public Permission() {
     }
 
-    public Permission(Integer role_id, Integer permission_id, Boolean create, Boolean read, Boolean update, Boolean delete) {
+    public Permission(Integer role_id, Integer permission_id, Boolean create, Boolean read, Boolean update,
+            Boolean delete) {
         this.role_id = role_id;
         this.permission_id = permission_id;
         this.create = create;

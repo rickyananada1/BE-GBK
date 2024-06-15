@@ -1,4 +1,5 @@
 package com.dev.gbk.config;
+
 import com.dev.gbk.security.CustomUserDetailsService;
 import com.dev.gbk.security.JwtAuthenticationEntryPoint;
 import com.dev.gbk.security.JwtAuthenticationFilter;
@@ -22,12 +23,8 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
-        securedEnabled = true,
-        jsr250Enabled = true,
-        prePostEnabled = true
-)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
+public class SecurityConfig {
 
     private static final String[] WHITE_LIST_URL = { "/api/v1/auth/**", "/v2/api-docs", "/v3/api-docs",
             "/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui",

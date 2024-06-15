@@ -8,7 +8,6 @@ public class ReqGbkToken {
     @JsonProperty("PartnerKey")
     private String PartnerKey;
 
-
     public ReqGbkToken(int partnerID, String partnerKey) {
         this.PartnerID = partnerID;
         this.PartnerKey = partnerKey;
