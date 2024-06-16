@@ -42,7 +42,7 @@ public class UserSeeder implements ApplicationRunner {
 
     private void seedUser() {
         List<Role> roleAdminList = new ArrayList<>();
-        roleAdminList.add(roleService.findByName("Admin").get());
+        roleAdminList.add(roleService.findByName("ROLE_ADMIN").get());
         User admin = User.builder()
                 .name("Admin")
                 .username("admin")
@@ -53,7 +53,7 @@ public class UserSeeder implements ApplicationRunner {
         this.userService.save(admin);
 
         List<Role> roleUserList = new ArrayList<>();
-        roleUserList.add(roleService.findByName("User").get());
+        roleUserList.add(roleService.findByName("ROLE_USER").get());
 
         User user = User.builder()
                 .name("User")
