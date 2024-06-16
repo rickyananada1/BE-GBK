@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  app:
+    image: gbk-app
+    container_name: gbk-app
+    ports:
+      - "8000:8000" # Pemetaan port
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/gbk_db?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  db:
+    image: mysql:latest
+    container_name: mysql-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gbk_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge

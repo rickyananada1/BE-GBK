@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - dev  # Change this to your deployment branch
+      - main  # Change this to your deployment branch
 
 jobs:
   build:
