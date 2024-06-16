@@ -1,78 +1,82 @@
 package com.dev.gbk.security;
 
-import java.util.Date;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
-
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import javax.servlet.http.HttpServletRequest;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
+
+import com.dev.gbk.exception.GBKAPIException;
+
+import javax.crypto.SecretKey;
+import java.security.Key;
+import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
-
-    @Value("${app.jwtSecret}")
+    @Value("${app.jwt-secret}")
     private String jwtSecret;
 
-    @Value("${app.jwtExpirationInMs}")
-    private int jwtExpirationInMs;
+    @Value("${app-jwt-expiration-milliseconds}")
+    private long jwtExpirationDate;
 
-    public String generateToken(Authentication authentication, String gbkToken) {
-        Claims claims = Jwts.claims();
+    // generate JWT token
+    public String generateToken(Authentication authentication) {
 
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        String username = authentication.getName();
 
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
-        claims.put("gbkToken", gbkToken);
+        Date currentDate = new Date();
 
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(Long.toString(userPrincipal.getId()))
+        Date expireDate = new Date(currentDate.getTime() + jwtExpirationDate);
+
+        String token = Jwts.builder()
+                .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .setIssuedAt(expireDate)
+                .signWith(key())
                 .compact();
+
+        return token;
     }
 
-    public Long getUserIdFromJWT(String token, HttpServletRequest request) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(jwtSecret)
+    private Key key() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+    }
+
+    // get username from JWT token
+    public String getUsername(String token) {
+
+        return Jwts.parserBuilder()
+                .setSigningKey((SecretKey) key())
+                .build()
                 .parseClaimsJws(token)
-                .getBody();
-
-        String gbkToken = claims.get("gbkToken", String.class);
-        request.setAttribute("gbkToken", gbkToken);
-
-        return Long.parseLong(claims.getSubject());
+                .getBody()
+                .getSubject();
     }
 
-    public boolean validateToken(String authToken) {
+    // validate JWT token
+    public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+            // check if token is valid
+            Jwts.parserBuilder()
+                    .setSigningKey((SecretKey) key())
+                    .build()
+                    .parse(token);
             return true;
-        } catch (SignatureException ex) {
-            logger.error("Invalid JWT signature");
-        } catch (MalformedJwtException ex) {
-            logger.error("Invalid JWT token");
-        } catch (ExpiredJwtException ex) {
-            logger.error("Expired JWT token");
-        } catch (UnsupportedJwtException ex) {
-            logger.error("Unsupported JWT token");
-        } catch (IllegalArgumentException ex) {
-            logger.error("JWT claims string is empty.");
+        } catch (MalformedJwtException malformedJwtException) {
+            throw new GBKAPIException(HttpStatus.BAD_REQUEST, "Invalid JWT Token");
+        } catch (ExpiredJwtException expiredJwtException) {
+            throw new GBKAPIException(HttpStatus.BAD_REQUEST, "Expired JWT token");
+        } catch (UnsupportedJwtException unsupportedJwtException) {
+            throw new GBKAPIException(HttpStatus.BAD_REQUEST, "Unsupported JWT token");
+        } catch (IllegalArgumentException illegalArgumentException) {
+            throw new GBKAPIException(HttpStatus.BAD_REQUEST, "Jwt claims string is null or empty");
         }
-        return false;
     }
 }

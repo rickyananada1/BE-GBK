@@ -1,45 +1,30 @@
 package com.dev.gbk.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.io.Serializable;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "menus")
-public class Menu {
+public class Menu implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(length = 60)
-    private String menu;
-
-    public Menu() {
-
-    }
-
-    public Menu(String menu) {
-        this.menu = menu;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getMenu() {
-        return menu;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setMenu(String menu) {
-        this.menu = menu;
-    }
-
+    private String name;
 }

@@ -4,22 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a35b04f0-81d2-463e-afed-5cc832453716" name="Changes" comment="" />
+    <list default="true" id="d400b17e-e8d4-4b3c-940d-a005c8725913" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Interface" />
-        <option value="Class" />
-      </list>
-    </option>
-  </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -27,14 +16,15 @@
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
-        <option name="mavenHome" value="Use Maven wrapper" />
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
       </MavenGeneralSettings>
     </option>
   </component>
   <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 0
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 1
 }</component>
-  <component name="ProjectId" id="2ea10F3xhRvxvxoVmWMG12f82WY" />
+  <component name="ProjectId" id="2hwZuU8OwJ1Cb8qbb5vCdGyzgUC" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -47,64 +37,50 @@
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.GbkApplication.executor": "Run",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "dev",
     "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "spring.configuration.checksum": "55ec366db20552e9637407fb8e32595c",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RunManager">
-    <configuration name="GbkApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
-      <module name="SSec" />
+    <configuration name="GbkApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="gbk" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.dev.gbk.GbkApplication" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.dev.gbk.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Spring Boot.GbkApplication" />
-      </list>
-    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.17890.1" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.17890.1" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="a35b04f0-81d2-463e-afed-5cc832453716" name="Changes" comment="" />
-      <created>1712127649590</created>
+      <changelist id="d400b17e-e8d4-4b3c-940d-a005c8725913" name="Changes" comment="" />
+      <created>1718507327420</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1712127649590</updated>
-      <workItem from="1712127652919" duration="1134000" />
-      <workItem from="1712128792079" duration="1203000" />
-      <workItem from="1712157532918" duration="2154000" />
-      <workItem from="1712159876798" duration="6094000" />
-      <workItem from="1712668988229" duration="251000" />
-      <workItem from="1713641057771" duration="9000" />
-      <workItem from="1713641335899" duration="138000" />
-      <workItem from="1715344429166" duration="897000" />
-      <workItem from="1715659415759" duration="656000" />
-      <workItem from="1715750500211" duration="92000" />
-      <workItem from="1715750595020" duration="906000" />
-      <workItem from="1715768241610" duration="204000" />
-      <workItem from="1715781926832" duration="5698000" />
-      <workItem from="1715914708362" duration="4286000" />
-      <workItem from="1718250656917" duration="6292000" />
-      <workItem from="1718478261051" duration="24000" />
+      <updated>1718507327420</updated>
+      <workItem from="1718507330342" duration="2955000" />
+      <workItem from="1718512984353" duration="2580000" />
     </task>
     <servers />
   </component>
