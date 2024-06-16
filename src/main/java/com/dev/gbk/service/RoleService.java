@@ -8,7 +8,10 @@ import org.springframework.stereotype.Service;
 import com.dev.gbk.model.Role;
 import com.dev.gbk.repository.RoleRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
+@Transactional
 public class RoleService {
     private final RoleRepository roleRepository;
 

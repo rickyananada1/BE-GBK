@@ -3,6 +3,7 @@ package com.dev.gbk.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.dev.gbk.model.Role;
@@ -10,12 +11,16 @@ import com.dev.gbk.model.User;
 import com.dev.gbk.service.RoleService;
 import com.dev.gbk.service.UserService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
+@SecurityRequirement(name = "bearerAuth")
+@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
     @Autowired
@@ -26,12 +31,14 @@ public class UserController {
 
     // GET all users
     @GetMapping
+    @PreAuthorize("hasAuthority('VIEW_USER')")
     public ResponseEntity<Collection<User>> getAllUsers() {
         return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
     }
 
     // GET user by username
     @GetMapping("/{username}")
+    @PreAuthorize("hasAuthority('VIEW_USER')")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
         Optional<User> user = userService.findByUsername(username);
         if (user.isPresent()) {
@@ -43,6 +50,7 @@ public class UserController {
 
     // CREATE new user
     @PostMapping
+    @PreAuthorize("hasAuthority('CREATE_USER')")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User savedUser = userService.save(user);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
@@ -50,6 +58,7 @@ public class UserController {
 
     // UPDATE user
     @PutMapping("/{username}")
+    @PreAuthorize("hasAuthority('UPDATE_USER')")
     public ResponseEntity<User> updateUser(@PathVariable String username, @RequestBody User userDetails) {
         Optional<User> user = userService.findByUsername(username);
         if (user.isPresent()) {
@@ -67,6 +76,7 @@ public class UserController {
 
     // DELETE user
     @DeleteMapping("/{username}")
+    @PreAuthorize("hasAuthority('DELETE_USER')")
     public ResponseEntity<HttpStatus> deleteUser(@PathVariable String username) {
         Optional<User> user = userService.findByUsername(username);
         if (user.isPresent()) {
@@ -79,6 +89,7 @@ public class UserController {
 
     // UPDATE roles for a user
     @PutMapping("/{username}/roles")
+    @PreAuthorize("hasAuthority('UPDATE_USER')")
     public ResponseEntity<User> updateUserRoles(@PathVariable String username,
             @RequestBody Collection<String> roleNames) {
         Optional<User> user = userService.findByUsername(username);

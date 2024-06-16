@@ -4,11 +4,30 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d400b17e-e8d4-4b3c-940d-a005c8725913" name="Changes" comment="" />
+    <list default="true" id="d400b17e-e8d4-4b3c-940d-a005c8725913" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/GbkApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/GbkApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/config/SecurityConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/AuthController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/DashboardController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/DashboardController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/exception/ResourceNotFoundException.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/exception/ResourceNotFoundException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/model/Booking.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/model/Booking.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/model/Role.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/model/Role.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/model/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/model/User.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtAuthenticationEntryPoint.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtAuthenticationEntryPoint.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtAuthenticationFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtAuthenticationFilter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtTokenProvider.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtTokenProvider.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/com/dev/gbk/GbkApplicationTests.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/com/dev/gbk/GbkApplicationTests.class" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -39,6 +58,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.GbkApplication.executor": "Run",
     "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "dev",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
@@ -80,7 +100,7 @@
       <option name="presentableId" value="Default" />
       <updated>1718507327420</updated>
       <workItem from="1718507330342" duration="2955000" />
-      <workItem from="1718512984353" duration="2580000" />
+      <workItem from="1718512984353" duration="3487000" />
     </task>
     <servers />
   </component>

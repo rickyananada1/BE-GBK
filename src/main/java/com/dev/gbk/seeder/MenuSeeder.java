@@ -32,7 +32,7 @@ public class MenuSeeder implements ApplicationRunner {
 
             log.info("Success run MenuSeeder");
         } else {
-            log.info("Role seeder skipped");
+            log.info("Menu seeder skipped");
         }
     }
 

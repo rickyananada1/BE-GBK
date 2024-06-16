@@ -45,7 +45,7 @@ public class RoleSeeder implements ApplicationRunner {
         permissionService.findAll().forEach(permissions::add);
 
         Role admin = Role.builder()
-                .name("Admin")
+                .name("ROLE_ADMIN")
                 .build();
 
         admin.setPermissions(permissions);
@@ -53,7 +53,7 @@ public class RoleSeeder implements ApplicationRunner {
         this.roleService.save(admin);
 
         Role user = Role.builder()
-                .name("User")
+                .name("ROLE_USER")
                 .build();
 
         this.roleService.save(user);

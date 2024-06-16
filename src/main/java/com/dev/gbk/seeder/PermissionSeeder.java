@@ -36,7 +36,7 @@ public class PermissionSeeder implements ApplicationRunner {
             log.info("Success run role seeder");
 
         } else {
-            log.info("Role seeder skipped");
+            log.info("Permission seeder skipped");
         }
     }
 

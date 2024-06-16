@@ -32,7 +32,7 @@ public class Role implements Serializable {
 	@Column(length = 60, unique = true)
 	private String name;
 
-	@ManyToMany
+	@ManyToMany()
 	@JoinTable(name = "role_permissions", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "permission_id", referencedColumnName = "id"))
 	private Collection<Permission> permissions;
 }

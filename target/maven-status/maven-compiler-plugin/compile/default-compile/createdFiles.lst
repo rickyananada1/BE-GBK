@@ -6,6 +6,7 @@ com\dev\gbk\repository\RoleRepository.class
 com\dev\gbk\dto\LoginRequest.class
 com\dev\gbk\GbkApplication.class
 com\dev\gbk\security\JwtAuthenticationFilter.class
+com\dev\gbk\config\OpenAPI30Configuration.class
 com\dev\gbk\controller\DashboardController.class
 com\dev\gbk\utils\AppConstants.class
 com\dev\gbk\security\JwtTokenProvider.class
@@ -34,7 +35,6 @@ com\dev\gbk\service\AuthService.class
 com\dev\gbk\dto\UserRequest.class
 com\dev\gbk\service\CustomUserDetailsService.class
 com\dev\gbk\seeder\MenuSeeder.class
-com\dev\gbk\config\OpenAPISecurityConfiguration.class
 com\dev\gbk\seeder\UserSeeder.class
 com\dev\gbk\repository\PermissionRepository.class
 com\dev\gbk\config\SecurityConfig.class

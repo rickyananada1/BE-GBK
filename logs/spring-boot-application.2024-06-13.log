@@ -1,0 +1,476 @@
+2024-06-13 11:12:28 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 6.2.5.Final
+2024-06-13 11:12:28 [main] INFO  com.dev.gbk.GbkApplication - Starting GbkApplication using Java 18.0.2 on Horas with PID 15260 (C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK\target\classes started by amsal in C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK)
+2024-06-13 11:12:28 [main] INFO  com.dev.gbk.GbkApplication - No active profile set, falling back to 1 default profile: "default"
+2024-06-13 11:12:29 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8000"]
+2024-06-13 11:12:29 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-06-13 11:12:29 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.68]
+2024-06-13 11:12:29 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-06-13 11:12:29 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-06-13 11:12:29 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.12.Final
+2024-06-13 11:12:29 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2024-06-13 11:12:29 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-06-13 11:12:37 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-06-13 11:12:37 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+2024-06-13 11:12:38 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2024-06-13 11:12:40 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8000"]
+2024-06-13 11:12:40 [main] INFO  com.dev.gbk.GbkApplication - Started GbkApplication in 12.156 seconds (JVM running for 12.714)
+2024-06-13 11:14:12 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2024-06-13 11:14:13 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2024-06-13 11:14:15 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 6.2.5.Final
+2024-06-13 11:14:15 [main] INFO  com.dev.gbk.GbkApplication - Starting GbkApplication using Java 18.0.2 on Horas with PID 29600 (C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK\target\classes started by amsal in C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK)
+2024-06-13 11:14:15 [main] INFO  com.dev.gbk.GbkApplication - No active profile set, falling back to 1 default profile: "default"
+2024-06-13 11:14:16 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8000"]
+2024-06-13 11:14:16 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-06-13 11:14:16 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.68]
+2024-06-13 11:14:16 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-06-13 11:14:17 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-06-13 11:14:17 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.12.Final
+2024-06-13 11:14:17 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2024-06-13 11:14:17 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-06-13 11:14:21 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-06-13 11:14:21 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+2024-06-13 11:14:22 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2024-06-13 11:14:24 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8000"]
+2024-06-13 11:14:24 [main] INFO  com.dev.gbk.GbkApplication - Started GbkApplication in 8.785 seconds (JVM running for 9.477)
+2024-06-13 11:15:00 [http-nio-8000-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-06-13 11:15:00 [http-nio-8000-exec-1] INFO  c.d.g.c.RequestResponseLoggingFilter - Request: method=GET | path=/ |
+2024-06-13 11:15:00 [http-nio-8000-exec-1] INFO  c.d.g.c.RequestResponseLoggingFilter - Response: path=/ | status=404 | body= |
+2024-06-13 11:15:00 [http-nio-8000-exec-2] INFO  c.d.g.c.RequestResponseLoggingFilter - Request: method=GET | path=/favicon.ico |
+2024-06-13 11:15:00 [http-nio-8000-exec-2] INFO  c.d.g.c.RequestResponseLoggingFilter - Response: path=/favicon.ico | status=404 | body= |
+2024-06-13 11:15:08 [http-nio-8000-exec-3] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception
+org.springframework.security.web.firewall.RequestRejectedException: The request was rejected because the URL contained a potentially malicious String "//"
+	at org.springframework.security.web.firewall.StrictHttpFirewall.rejectedBlocklistedUrls(StrictHttpFirewall.java:535)
+	at org.springframework.security.web.firewall.StrictHttpFirewall.getFirewalledRequest(StrictHttpFirewall.java:505)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:206)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:186)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:354)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:267)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:197)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:541)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:135)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:360)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:399)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:893)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1789)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+2024-06-13 11:15:08 [http-nio-8000-exec-3] ERROR c.d.g.s.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Full authentication is required to access this resource
+2024-06-13 11:15:12 [http-nio-8000-exec-4] ERROR c.d.g.s.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Full authentication is required to access this resource
+2024-06-13 11:15:22 [http-nio-8000-exec-6] ERROR c.d.g.s.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Full authentication is required to access this resource
+2024-06-13 11:17:43 [http-nio-8000-exec-8] INFO  c.d.g.c.RequestResponseLoggingFilter - Request: method=GET | path=/context-path/swagger-ui.html |
+2024-06-13 11:17:43 [http-nio-8000-exec-8] INFO  c.d.g.c.RequestResponseLoggingFilter - Response: path=/context-path/swagger-ui.html | status=404 | body= |
+2024-06-13 11:18:01 [http-nio-8000-exec-9] INFO  c.d.g.c.RequestResponseLoggingFilter - Request: method=GET | path=/v3/swagger-ui.html |
+2024-06-13 11:18:01 [http-nio-8000-exec-9] INFO  c.d.g.c.RequestResponseLoggingFilter - Response: path=/v3/swagger-ui.html | status=404 | body= |
+2024-06-13 11:19:17 [http-nio-8000-exec-2] INFO  o.a.coyote.http11.Http11Processor - Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+java.lang.IllegalArgumentException: Invalid character found in method name [0x160x030x010x060xf20x010x000x060xee0x030x030xeeOel0x0b0x830x82h0xb1#0xe3W0xa10x100xb20xfa0x150xb60x0a0x1570x19]w0xed0x84t0xf3/0x030xca0x96 ]. HTTP method names must be tokens
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:419)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:271)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:893)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1789)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+2024-06-13 11:19:17 [http-nio-8000-exec-3] INFO  o.a.coyote.http11.Http11Processor - Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+java.lang.IllegalArgumentException: Invalid character found in method name [0x160x030x010x060xf20x010x000x060xee0x030x030xd60x0as0x1flQ0xd1j0x810x0f0x18nV0xca0xd30xed0xa00xa6Z0x10hM0x100xde0xd70xf1G0x060x1fw0x840xbd ]. HTTP method names must be tokens
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:419)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:271)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:893)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1789)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+2024-06-13 11:19:32 [http-nio-8000-exec-9] INFO  c.d.g.c.RequestResponseLoggingFilter - Request: method=GET | path=/favicon.ico |
+2024-06-13 11:19:32 [http-nio-8000-exec-9] INFO  c.d.g.c.RequestResponseLoggingFilter - Response: path=/favicon.ico | status=404 | body= |
+2024-06-13 11:19:37 [http-nio-8000-exec-4] INFO  o.a.coyote.http11.Http11Processor - Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+java.lang.IllegalArgumentException: Invalid character found in method name [0x160x030x010x060xf20x010x000x060xee0x030x0350xd8N0xb3}0xc7s0xee0x070xc50x8c0xb80x0d@0x960xe5{0xf30xb50x890xcf0xe10x070xb8W=0xa20x960xce0xe50xd5C ]. HTTP method names must be tokens
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:419)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:271)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:893)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1789)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+2024-06-13 11:19:50 [http-nio-8000-exec-3] ERROR c.d.g.s.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Full authentication is required to access this resource
+2024-06-13 11:19:59 [http-nio-8000-exec-4] ERROR c.d.g.s.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Full authentication is required to access this resource
+2024-06-13 11:20:17 [http-nio-8000-exec-6] ERROR c.d.g.s.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Full authentication is required to access this resource
+2024-06-13 11:20:27 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2024-06-13 11:20:36 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 6.2.5.Final
+2024-06-13 11:20:36 [main] INFO  com.dev.gbk.GbkApplication - Starting GbkApplication using Java 18.0.2 on Horas with PID 13120 (C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK\target\classes started by amsal in C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK)
+2024-06-13 11:20:36 [main] INFO  com.dev.gbk.GbkApplication - No active profile set, falling back to 1 default profile: "default"
+2024-06-13 11:20:37 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8000"]
+2024-06-13 11:20:37 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-06-13 11:20:37 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.68]
+2024-06-13 11:20:37 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-06-13 11:20:37 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-06-13 11:20:37 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.12.Final
+2024-06-13 11:20:38 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2024-06-13 11:20:38 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-06-13 11:20:43 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-06-13 11:20:43 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+2024-06-13 11:20:45 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2024-06-13 11:20:46 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8000"]
+2024-06-13 11:20:46 [main] INFO  com.dev.gbk.GbkApplication - Started GbkApplication in 10.139 seconds (JVM running for 10.72)
+2024-06-13 11:20:46 [http-nio-8000-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-06-13 11:20:46 [http-nio-8000-exec-1] ERROR c.d.g.s.JwtAuthenticationEntryPoint - Responding with unauthorized error. Message - Full authentication is required to access this resource
+2024-06-13 11:21:31 [http-nio-8000-exec-2] INFO  c.d.g.c.RequestResponseLoggingFilter - Request: method=GET | path=/swagger-ui-custom.html |
+2024-06-13 11:21:31 [http-nio-8000-exec-2] INFO  c.d.g.c.RequestResponseLoggingFilter - Response: path=/swagger-ui-custom.html | status=404 | body= |
+2024-06-13 11:23:54 [http-nio-8000-exec-6] INFO  c.d.g.c.RequestResponseLoggingFilter - Request: method=GET | path=/swagger-ui-custom.html |
+2024-06-13 11:23:54 [http-nio-8000-exec-6] INFO  c.d.g.c.RequestResponseLoggingFilter - Response: path=/swagger-ui-custom.html | status=404 | body= |
+2024-06-13 11:23:54 [http-nio-8000-exec-8] INFO  c.d.g.c.RequestResponseLoggingFilter - Request: method=GET | path=/swagger-ui-custom.html |
+2024-06-13 11:23:54 [http-nio-8000-exec-8] INFO  c.d.g.c.RequestResponseLoggingFilter - Response: path=/swagger-ui-custom.html | status=404 | body= |
+2024-06-13 11:23:59 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2024-06-13 11:24:00 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2024-06-13 11:24:07 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 6.2.5.Final
+2024-06-13 11:24:07 [main] INFO  com.dev.gbk.GbkApplication - Starting GbkApplication using Java 18.0.2 on Horas with PID 15808 (C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK\target\classes started by amsal in C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK)
+2024-06-13 11:24:07 [main] INFO  com.dev.gbk.GbkApplication - No active profile set, falling back to 1 default profile: "default"
+2024-06-13 11:24:08 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'webConversionServiceProvider', defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2024-06-13 11:24:41 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 6.2.5.Final
+2024-06-13 11:24:41 [main] INFO  com.dev.gbk.GbkApplication - Starting GbkApplication using Java 18.0.2 on Horas with PID 17564 (C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK\target\classes started by amsal in C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK)
+2024-06-13 11:24:41 [main] INFO  com.dev.gbk.GbkApplication - No active profile set, falling back to 1 default profile: "default"
+2024-06-13 11:24:41 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'webConversionServiceProvider', defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2024-06-13 11:24:58 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 6.2.5.Final
+2024-06-13 11:24:58 [main] INFO  com.dev.gbk.GbkApplication - Starting GbkApplication using Java 18.0.2 on Horas with PID 32288 (C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK\target\classes started by amsal in C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK)
+2024-06-13 11:24:58 [main] INFO  com.dev.gbk.GbkApplication - No active profile set, falling back to 1 default profile: "default"
+2024-06-13 11:24:59 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'webConversionServiceProvider', defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2024-06-13 11:26:05 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 6.2.5.Final
+2024-06-13 11:26:05 [main] INFO  com.dev.gbk.GbkApplication - Starting GbkApplication using Java 18.0.2 on Horas with PID 25204 (C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK\target\classes started by amsal in C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK)
+2024-06-13 11:26:05 [main] INFO  com.dev.gbk.GbkApplication - No active profile set, falling back to 1 default profile: "default"
+2024-06-13 11:26:05 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'webConversionServiceProvider', defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2024-06-13 11:28:02 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 6.2.5.Final
+2024-06-13 11:28:02 [main] INFO  com.dev.gbk.GbkApplication - Starting GbkApplication using Java 18.0.2 on Horas with PID 31468 (C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK\target\classes started by amsal in C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK)
+2024-06-13 11:28:02 [main] INFO  com.dev.gbk.GbkApplication - No active profile set, falling back to 1 default profile: "default"
+2024-06-13 11:28:02 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'webConversionServiceProvider', defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2024-06-13 11:28:05 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 6.2.5.Final
+2024-06-13 11:28:05 [main] INFO  com.dev.gbk.GbkApplication - Starting GbkApplication using Java 18.0.2 on Horas with PID 2368 (C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK\target\classes started by amsal in C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK)
+2024-06-13 11:28:05 [main] INFO  com.dev.gbk.GbkApplication - No active profile set, falling back to 1 default profile: "default"
+2024-06-13 11:28:05 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'webConversionServiceProvider', defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2024-06-13 11:28:17 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 6.2.5.Final
+2024-06-13 11:28:17 [main] INFO  com.dev.gbk.GbkApplication - Starting GbkApplication using Java 18.0.2 on Horas with PID 23272 (C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK\target\classes started by amsal in C:\Users\amsal\OneDrive\Dokumen\Programming\Java Spring\BE-GBK)
+2024-06-13 11:28:17 [main] INFO  com.dev.gbk.GbkApplication - No active profile set, falling back to 1 default profile: "default"
+2024-06-13 11:28:18 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'webConversionServiceProvider' defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]: Cannot register bean definition [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.configuration.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]] for bean 'webConversionServiceProvider': There is already [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class]] bound.
+2024-06-13 11:28:18 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2024-06-13 11:28:18 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'webConversionServiceProvider', defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2024-06-13 11:29:12 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'webConversionServiceProvider' defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]: Cannot register bean definition [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.configuration.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]] for bean 'webConversionServiceProvider': There is already [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class]] bound.
+2024-06-13 11:29:12 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'webConversionServiceProvider', defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2024-06-13 11:29:17 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'webConversionServiceProvider' defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]: Cannot register bean definition [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.configuration.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]] for bean 'webConversionServiceProvider': There is already [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class]] bound.
+2024-06-13 11:29:17 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'webConversionServiceProvider', defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2024-06-13 11:31:27 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'webConversionServiceProvider' defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]: Cannot register bean definition [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.configuration.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]] for bean 'webConversionServiceProvider': There is already [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class]] bound.
+2024-06-13 11:31:27 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'webConversionServiceProvider', defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2024-06-13 11:31:35 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'webConversionServiceProvider' defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]: Cannot register bean definition [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.configuration.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]] for bean 'webConversionServiceProvider': There is already [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class]] bound.
+2024-06-13 11:31:35 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'webConversionServiceProvider', defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2024-06-13 11:40:07 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'webConversionServiceProvider' defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]: Cannot register bean definition [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.configuration.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]] for bean 'webConversionServiceProvider': There is already [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class]] bound.
+2024-06-13 11:40:07 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'webConversionServiceProvider', defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2024-06-13 11:40:15 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'webConversionServiceProvider' defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]: Cannot register bean definition [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.configuration.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]] for bean 'webConversionServiceProvider': There is already [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class]] bound.
+2024-06-13 11:40:15 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'webConversionServiceProvider', defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2024-06-13 11:43:41 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'webConversionServiceProvider' defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]: Cannot register bean definition [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.configuration.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]] for bean 'webConversionServiceProvider': There is already [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class]] bound.
+2024-06-13 11:43:41 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'webConversionServiceProvider', defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2024-06-13 11:46:03 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'webConversionServiceProvider' defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]: Cannot register bean definition [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.configuration.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class]] for bean 'webConversionServiceProvider': There is already [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springdoc.core.SpringDocConfiguration$WebConversionServiceConfiguration; factoryMethodName=webConversionServiceProvider; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class]] bound.
+2024-06-13 11:46:03 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'webConversionServiceProvider', defined in class path resource [org/springdoc/core/configuration/SpringDocConfiguration$WebConversionServiceConfiguration.class], could not be registered. A bean with that name has already been defined in class path resource [org/springdoc/core/SpringDocConfiguration$WebConversionServiceConfiguration.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2024-06-13 11:47:20 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-06-13 11:47:28 [main] DEBUG o.s.web.filter.CorsFilter - Filter 'corsFilter' configured for use
+2024-06-13 11:47:29 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.d.g.c.AuthController:
+	{POST [/api/auth/signin]}: authenticateUser(LoginRequest)
+	{POST [/api/auth/signup]}: registerUser(SignUpRequest)
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.d.g.c.BookingController:
+	{GET [/api/bookings]}: getAllBookings()
+	{POST [/api/bookings]}: createBooking(BookingRequest)
+	{POST [/api/info/venue]}: getVenueInfo(String,ReqVenueInfoUi)
+	{POST [/api/info/schedule]}: getSchedule(String,ReqScheduleUi)
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.d.g.c.DashboardController:
+	{GET [/api/dashboard]}: dashboard()
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.d.g.c.GenController:
+	{GET [/api/user]}: forUser()
+	{GET [/api/admin]}: forAdmin()
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.d.g.c.MenuController:
+	{GET [/api/menus]}: getAllMenus()
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.d.g.c.PermissionController:
+	{GET [/api/permissions]}: getAllPermissions()
+	{POST [/api/permissions]}: createPermissions(PermissionRequest)
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.d.g.c.UserController:
+	{GET [/api/users]}: getAllBookings()
+	{POST [/api/users]}: createUser(UserRequest)
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	o.s.b.a.w.s.e.BasicErrorController:
+	{ [/error]}: error(HttpServletRequest)
+	{ [/error], produces [text/html]}: errorHtml(HttpServletRequest,HttpServletResponse)
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	o.s.w.a.OpenApiWebMvcResource:
+	{GET [/api-docs], produces [application/json]}: openapiJson(HttpServletRequest,String,Locale)
+	{GET [/api-docs.yaml], produces [application/vnd.oai.openapi]}: openapiYaml(HttpServletRequest,String,Locale)
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	o.s.w.u.SwaggerWelcomeWebMvc:
+	{GET [/swagger-ui.html]}: redirectToUi(HttpServletRequest)
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	o.s.w.u.SwaggerConfigResource:
+	{GET [/api-docs/swagger-config], produces [application/json]}: openapiJson(HttpServletRequest)
+2024-06-13 11:47:29 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 20 mappings in 'requestMappingHandlerMapping'
+2024-06-13 11:47:29 [main] DEBUG o.s.w.s.h.BeanNameUrlHandlerMapping - Detected 0 mappings in 'beanNameHandlerMapping'
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.f.s.RouterFunctionMapping - 0 RouterFunction(s) in 'routerFunctionMapping'
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.h.SimpleUrlHandlerMapping - Mapped [/webjars/**] onto ResourceHttpRequestHandler [classpath [resources/webjars/]]
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.h.SimpleUrlHandlerMapping - Mapped [/**] onto ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.h.SimpleUrlHandlerMapping - Mapped [/swagger-ui.html**] onto ResourceHttpRequestHandler [classpath [resources/swagger-ui.html]]
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.h.SimpleUrlHandlerMapping - Mapped [/swagger-ui*/*swagger-initializer.js] onto ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2024-06-13 11:47:29 [main] TRACE o.s.w.s.h.SimpleUrlHandlerMapping - Mapped [/swagger-ui*/**] onto ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]
+2024-06-13 11:47:29 [main] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui.html**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+2024-06-13 11:47:29 [main] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2024-06-13 11:47:31 [http-nio-8000-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-06-13 11:47:31 [http-nio-8000-exec-1] TRACE o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.multipart.support.StandardServletMultipartResolver@28be7db5
+2024-06-13 11:47:31 [http-nio-8000-exec-1] TRACE o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver@427128a6
+2024-06-13 11:47:31 [http-nio-8000-exec-1] TRACE o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.theme.FixedThemeResolver@1fd4850b
+2024-06-13 11:47:31 [http-nio-8000-exec-1] TRACE o.s.web.servlet.DispatcherServlet - Detected DefaultRequestToViewNameTranslator
+2024-06-13 11:47:31 [http-nio-8000-exec-1] TRACE o.s.web.servlet.DispatcherServlet - Detected SessionFlashMapManager
+2024-06-13 11:47:31 [http-nio-8000-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2024-06-13 11:47:31 [http-nio-8000-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 8 ms
+2024-06-13 11:47:31 [http-nio-8000-exec-1] INFO  c.d.g.c.RequestResponseLoggingFilter - Request: method=GET | path=/swagger-ui-custom.html |
+2024-06-13 11:47:31 [http-nio-8000-exec-1] TRACE o.s.web.servlet.DispatcherServlet - GET "/swagger-ui-custom.html", parameters={}, headers={masked} in DispatcherServlet 'dispatcherServlet'
+2024-06-13 11:47:31 [http-nio-8000-exec-1] TRACE o.s.w.s.h.SimpleUrlHandlerMapping - Matching patterns [/swagger-ui*/**, /**]
+2024-06-13 11:47:31 [http-nio-8000-exec-1] TRACE o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to HandlerExecutionChain with [ResourceHttpRequestHandler [classpath [META-INF/resources/webjars/]]] and 4 interceptors
+2024-06-13 11:47:31 [http-nio-8000-exec-1] DEBUG o.s.w.s.r.ResourceHttpRequestHandler - Resource not found
+2024-06-13 11:47:31 [http-nio-8000-exec-1] TRACE o.s.web.servlet.DispatcherServlet - No view rendering, null ModelAndView returned.
+2024-06-13 11:47:31 [http-nio-8000-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND, headers={masked}
+2024-06-13 11:47:31 [http-nio-8000-exec-1] INFO  c.d.g.c.RequestResponseLoggingFilter - Response: path=/swagger-ui-custom.html | status=404 | body= |
+2024-06-13 11:47:31 [http-nio-8000-exec-1] TRACE o.s.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/error", parameters={}, headers={masked} in DispatcherServlet 'dispatcherServlet'
+2024-06-13 11:47:31 [http-nio-8000-exec-1] TRACE o.s.w.s.m.m.a.RequestMappingHandlerMapping - 2 matching mappings: [{ [/error], produces [text/html]}, { [/error]}]
+2024-06-13 11:47:31 [http-nio-8000-exec-1] TRACE o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController#errorHtml(HttpServletRequest, HttpServletResponse)
+2024-06-13 11:47:31 [http-nio-8000-exec-1] TRACE o.s.web.method.HandlerMethod - Arguments: [SecurityContextHolderAwareRequestWrapper[ FirewalledRequest[ org.apache.catalina.core.ApplicationHttpRequest@73a7d243]], org.springframework.security.web.firewall.FirewalledResponse@49836ed9]
+2024-06-13 11:47:31 [http-nio-8000-exec-1] DEBUG o.s.w.s.v.ContentNegotiatingViewResolver - Selected 'text/html' given [text/html, text/html;q=0.8]
+2024-06-13 11:47:31 [http-nio-8000-exec-1] TRACE o.s.web.servlet.DispatcherServlet - Rendering view [org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration$StaticView@3203a4ae] 
+2024-06-13 11:47:31 [http-nio-8000-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404, headers={masked}

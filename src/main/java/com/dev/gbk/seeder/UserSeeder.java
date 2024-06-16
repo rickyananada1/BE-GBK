@@ -31,12 +31,12 @@ public class UserSeeder implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         if (args.getOptionValues("seeder") != null) {
             List<String> seeder = Arrays.asList(args.getOptionValues("seeder").get(0).split(","));
-            if (seeder.contains("role")) {
+            if (seeder.contains("user")) {
                 seedUser();
                 log.info("Success run role seeder");
             }
         } else {
-            log.info("Role seeder skipped");
+            log.info("User seeder skipped");
         }
     }
 
