@@ -1,20 +1,26 @@
 # Menggunakan image resmi openjdk sebagai base image
-FROM openjdk:17-jdk-slim
+FROM openjdk:17-jdk-slim AS build
 
-# Menetapkan variabel lingkungan untuk aplikasi Spring Boot
-ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
-    JAR_FILE=app.jar
-
-# Direktori kerja di dalam container
+# Menetapkan direktori kerja
 WORKDIR /app
 
-# Menyalin file JAR yang telah dibangun dari host ke dalam container
-COPY target/*.jar $JAR_FILE
+# Menyalin file Maven wrapper dan pom.xml ke direktori kerja
+COPY .mvn/ .mvn
+COPY pom.xml .
 
-# Menambahkan metadata untuk versi Docker dan image
-LABEL maintainer="amsalsiregar12@gmail.com" \
-    version="1.0" \
-    description="Docker image for Spring Boot 3 application with Java JDK 17"
+# Menjalankan perintah Maven untuk mengunduh dependensi
+RUN ./mvnw dependency:go-offline
+
+# Menyalin seluruh isi proyek ke direktori kerja
+COPY src ./src
+
+# Menjalankan perintah Maven untuk build dan menjalankan seeder
+RUN ./mvnw clean spring-boot:run -Dspring-boot.run.arguments=--seeder=menu,permission,role,user
+
+# Tahap runtime untuk menjalankan aplikasi
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 
 # Menjalankan aplikasi Spring Boot
 ENTRYPOINT ["java","-jar","/app/app.jar"]
