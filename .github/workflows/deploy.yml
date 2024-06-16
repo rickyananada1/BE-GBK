@@ -40,7 +40,7 @@ jobs:
           script: |
             echo "Current working directory on server:"
             pwd
-              
+            git clone -b dev git@github.com:rickyananada1/BE-GBK.git
             cd BE-GBK
             mvn clean install
             cp -f target/SSec-0.0.1-SNAPSHOT.jar /opt
