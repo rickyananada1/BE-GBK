@@ -4,40 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a35b04f0-81d2-463e-afed-5cc832453716" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/dev/gbk/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/dev/gbk/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/GbkApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/GbkApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/config/WebMvcConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/config/WebMvcConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/AuthController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/DashboardController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/DashboardController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/GenController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/controller/GenController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/exception/AppException.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/exception/AppException.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/exception/BadRequestException.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/exception/BadRequestException.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/exception/ResourceNotFoundException.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/exception/ResourceNotFoundException.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/model/Booking.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/model/Booking.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/model/Role.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/model/Role.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/model/RoleName.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/model/RoleName.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/model/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/model/User.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/repo/BookRepo.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/repo/BookRepo.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/repo/RoleRepo.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/repo/RoleRepo.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/repo/UserRepo.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/repo/UserRepo.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/CurrentUser.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/CurrentUser.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/CustomUserDetailsService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/CustomUserDetailsService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtAuthenticationEntryPoint.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtAuthenticationEntryPoint.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtAuthenticationFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtAuthenticationFilter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtTokenProvider.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dev/gbk/security/JwtTokenProvider.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/payloads/ApiResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/payloads/ApiResponse.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/payloads/BookingRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/payloads/BookingRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/payloads/JwtAuthenticationResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/payloads/JwtAuthenticationResponse.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/payloads/LoginRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/payloads/LoginRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/payloads/SignUpRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/payloads/SignUpRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/dev/gbk/GbkApplicationTests.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/com/dev/gbk/GbkApplicationTests.class" afterDir="false" />
-    </list>
+    <list default="true" id="a35b04f0-81d2-463e-afed-5cc832453716" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -64,9 +31,9 @@
       </MavenGeneralSettings>
     </option>
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="2ea10F3xhRvxvxoVmWMG12f82WY" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -82,7 +49,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "dev",
     "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -137,6 +104,7 @@
       <workItem from="1715781926832" duration="5698000" />
       <workItem from="1715914708362" duration="4286000" />
       <workItem from="1718250656917" duration="6292000" />
+      <workItem from="1718478261051" duration="24000" />
     </task>
     <servers />
   </component>
