@@ -2,10 +2,9 @@ package com.dev.gbk.service;
 
 import org.springframework.stereotype.Service;
 
+import com.dev.gbk.exception.ResourceNotFoundException;
 import com.dev.gbk.model.Permission;
 import com.dev.gbk.repository.PermissionRepository;
-
-import java.util.Optional;
 
 @Service
 public class PermissionService {
@@ -20,13 +19,14 @@ public class PermissionService {
     }
 
     public void save(Permission permission) {
-        if (this.findByName(permission.getName()).isPresent()) {
+        if (permissionRepository.findByName(permission.getName()).isPresent()) {
             throw new RuntimeException("Permission already exists");
         }
         permissionRepository.save(permission);
     }
 
-    public Optional<Permission> findByName(String name) {
-        return permissionRepository.findByName(name);
+    public Permission findByName(String name) {
+        return permissionRepository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Permission not found"));
     }
 }

@@ -1,6 +1,5 @@
 package com.dev.gbk.service;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.dev.gbk.dto.LoginRequest;
 import com.dev.gbk.dto.UserRequest;
 import com.dev.gbk.exception.GBKAPIException;
+import com.dev.gbk.exception.ResourceNotFoundException;
 import com.dev.gbk.model.Role;
 import com.dev.gbk.model.User;
 import com.dev.gbk.repository.RoleRepository;
@@ -23,11 +23,11 @@ import java.util.Set;
 @Service
 public class AuthService {
 
-    private AuthenticationManager authenticationManager;
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
-    private JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public AuthService(AuthenticationManager authenticationManager,
             UserRepository userRepository,
@@ -48,21 +48,19 @@ public class AuthService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String token = jwtTokenProvider.generateToken(authentication);
-
-        return token;
+        return jwtTokenProvider.generateToken(authentication);
     }
 
     public String register(UserRequest userRequest) {
 
         // add check for username exists in database
         if (userRepository.existsByUsername(userRequest.getUsername())) {
-            throw new GBKAPIException(HttpStatus.BAD_REQUEST, "Username is already exists!.");
+            throw new GBKAPIException("Username is already exists!.");
         }
 
         // add check for email exists in database
         if (userRepository.existsByEmail(userRequest.getEmail())) {
-            throw new GBKAPIException(HttpStatus.BAD_REQUEST, "Email is already exists!.");
+            throw new GBKAPIException("Email is already exists!.");
         }
 
         User user = new User();
@@ -72,6 +70,9 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         Set<Role> roles = new HashSet<>();
         for (String role : userRequest.getRoles()) {
+            if (!roleRepository.existsByName(role)) {
+                throw new ResourceNotFoundException("Role not found");
+            }
             roles.add(roleRepository.findByName(role).get());
         }
         user.setRoles(roles);

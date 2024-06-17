@@ -9,7 +9,7 @@ import com.dev.gbk.repository.MenuRepository;
 
 @Service
 public class MenuService {
-    private MenuRepository menuRepository;
+    private final MenuRepository menuRepository;
 
     public MenuService(MenuRepository menuRepository) {
         this.menuRepository = menuRepository;

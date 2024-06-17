@@ -27,10 +27,8 @@ public class VenueService {
     }
 
     public Venue findById(Long id) {
-        Venue venue = venueRepository.findById(id)
+        return venueRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Venue not found"));
-
-        return venue;
     }
 
     public Venue save(VenueRequest venueRequest) {

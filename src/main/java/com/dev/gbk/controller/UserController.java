@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.dev.gbk.dto.UserRequest;
 import com.dev.gbk.model.User;
-import com.dev.gbk.service.RoleService;
 import com.dev.gbk.service.UserService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -23,7 +22,7 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserService userService, RoleService roleService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 

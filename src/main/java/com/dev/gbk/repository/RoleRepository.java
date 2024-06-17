@@ -1,6 +1,5 @@
 package com.dev.gbk.repository;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.dev.gbk.model.Role;
@@ -12,5 +11,4 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
 	Optional<Role> findByName(String name);
 
 	Boolean existsByName(String name);
-	List<Role> findAll();
 }

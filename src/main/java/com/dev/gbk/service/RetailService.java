@@ -26,22 +26,9 @@ public class RetailService {
         return retailRepository.findAll();
     }
 
-    public Retail findByTenantName(String name) {
-        Retail retail = retailRepository.findByTenantName(name)
-                .orElseThrow(() -> new ResourceNotFoundException("Retail not found"));
-        return retail;
-    }
-
-    public Retail findByTenantNumber(String number) {
-        Retail retail = retailRepository.findByTenantNumber(number)
-                .orElseThrow(() -> new ResourceNotFoundException("Retail not found"));
-        return retail;
-    }
-
     public Retail findById(Long id) {
-        Retail retail = retailRepository.findById(id)
+        return retailRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Retail not found"));
-        return retail;
     }
 
     public void save(RetailRequest retailRequest) {

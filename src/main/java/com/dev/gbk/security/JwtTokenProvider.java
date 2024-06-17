@@ -7,7 +7,6 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -70,13 +69,13 @@ public class JwtTokenProvider {
                     .parse(token);
             return true;
         } catch (MalformedJwtException malformedJwtException) {
-            throw new GBKAPIException(HttpStatus.BAD_REQUEST, "Invalid JWT Token");
+            throw new GBKAPIException("Invalid JWT Token");
         } catch (ExpiredJwtException expiredJwtException) {
-            throw new GBKAPIException(HttpStatus.BAD_REQUEST, "Expired JWT token");
+            throw new GBKAPIException("Expired JWT token");
         } catch (UnsupportedJwtException unsupportedJwtException) {
-            throw new GBKAPIException(HttpStatus.BAD_REQUEST, "Unsupported JWT token");
+            throw new GBKAPIException("Unsupported JWT token");
         } catch (IllegalArgumentException illegalArgumentException) {
-            throw new GBKAPIException(HttpStatus.BAD_REQUEST, "Jwt claims string is null or empty");
+            throw new GBKAPIException("Jwt claims string is null or empty");
         }
     }
 }

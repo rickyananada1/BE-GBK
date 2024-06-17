@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.dev.gbk.dto.RoleRequest;
 import com.dev.gbk.model.Role;
-import com.dev.gbk.service.PermissionService;
 import com.dev.gbk.service.RoleService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -22,7 +21,7 @@ public class RoleController {
 
     private final RoleService roleService;
 
-    public RoleController(RoleService roleService, PermissionService permissionService) {
+    public RoleController(RoleService roleService) {
         this.roleService = roleService;
     }
 

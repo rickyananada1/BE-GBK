@@ -31,8 +31,7 @@ public class RoleService {
     }
 
     public Role findByName(String name) {
-        Role role = roleRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Role not found"));
-        return role;
+        return roleRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Role not found"));
     }
 
     public void save(RoleRequest roleRequest) {
@@ -44,7 +43,7 @@ public class RoleService {
     }
 
     public void update(String name, RoleRequest roleRequest) {
-        Role role = roleRepository.findByName(roleRequest.getName())
+        Role role = roleRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
         role.setName(roleRequest.getName());
         roleRepository.save(role);

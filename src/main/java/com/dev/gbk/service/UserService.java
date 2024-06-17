@@ -4,6 +4,7 @@ import com.dev.gbk.repository.RoleRepository;
 import org.springframework.stereotype.Service;
 
 import com.dev.gbk.dto.UserRequest;
+import com.dev.gbk.exception.ResourceNotFoundException;
 import com.dev.gbk.model.Role;
 import com.dev.gbk.model.User;
 import com.dev.gbk.repository.UserRepository;
@@ -39,12 +40,12 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    public User findById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
     public void update(Long id, UserRequest userRequest) {
-        User user = this.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = this.findById(id);
         user.setName(userRequest.getName());
         user.setUsername(userRequest.getUsername());
         user.setEmail(userRequest.getEmail());
@@ -53,10 +54,7 @@ public class UserService {
     }
 
     public void delete(Long id) {
-        // check if user exists
-        if (this.findById(id).isEmpty()) {
-            throw new IllegalArgumentException("User not found");
-        }
+        userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
         userRepository.deleteById(id);
     }
 
@@ -65,7 +63,7 @@ public class UserService {
     }
 
     public void updateUserRoles(Long id, Collection<String> roleNames) {
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = this.findById(id);
         Collection<Role> roles = roleNames.stream()
                 .map(name -> roleRepository.findByName(name).orElse(null))
                 .filter(Objects::nonNull)
