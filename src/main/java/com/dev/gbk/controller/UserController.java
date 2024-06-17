@@ -1,6 +1,5 @@
 package com.dev.gbk.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +13,7 @@ import com.dev.gbk.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,11 +23,14 @@ import java.util.stream.Collectors;
 @PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private RoleService roleService;
+    private final RoleService roleService;
+
+    public UserController(UserService userService, RoleService roleService) {
+        this.userService = userService;
+        this.roleService = roleService;
+    }
 
     // GET all users
     @GetMapping
@@ -41,11 +44,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('VIEW_USER')")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
         Optional<User> user = userService.findByUsername(username);
-        if (user.isPresent()) {
-            return new ResponseEntity<>(user.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return user.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     // CREATE new user
@@ -97,7 +96,7 @@ public class UserController {
             User existingUser = user.get();
             Collection<Role> roles = roleNames.stream()
                     .map(name -> roleService.findByName(name).orElse(null))
-                    .filter(role -> role != null)
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
             existingUser.setRoles(roles);
             userService.save(existingUser);

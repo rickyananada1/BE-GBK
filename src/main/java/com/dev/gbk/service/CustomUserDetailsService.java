@@ -7,7 +7,6 @@ import jakarta.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,10 +21,13 @@ import java.util.stream.Collectors;
 @Transactional
 public class CustomUserDetailsService implements UserDetailsService {
 
-        @Autowired
-        private UserRepository userRepository;
+        private final UserRepository userRepository;
 
         private static final Logger log = LoggerFactory.getLogger(CustomUserDetailsService.class);
+
+        public CustomUserDetailsService(UserRepository userRepository) {
+                this.userRepository = userRepository;
+        }
 
         @Override
         public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -46,7 +48,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
                 authorities.addAll(permissions);
 
-                log.info("User found with username: " + user.getUsername() + ", Authorities: " + authorities);
+            log.info("User found with username: {}, Authorities: {}", user.getUsername(), authorities);
 
                 return new org.springframework.security.core.userdetails.User(
                                 user.getUsername(),
