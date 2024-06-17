@@ -10,8 +10,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Configuration;
 
-import com.dev.gbk.model.Permission;
-import com.dev.gbk.model.Role;
+import com.dev.gbk.dto.RoleRequest;
 import com.dev.gbk.service.PermissionService;
 import com.dev.gbk.service.RoleService;
 
@@ -31,7 +30,7 @@ public class RoleSeeder implements ApplicationRunner {
             List<String> seeder = Arrays.asList(args.getOptionValues("seeder").get(0).split(","));
             if (seeder.contains("role")) {
                 seedRoles();
-                log.info("Success run role seeder");
+                log.info("Success run Role seeder");
             }
         } else
 
@@ -41,10 +40,10 @@ public class RoleSeeder implements ApplicationRunner {
     }
 
     private void seedRoles() {
-        List<Permission> permissions = new ArrayList<>();
-        permissionService.findAll().forEach(permissions::add);
+        List<String> permissions = new ArrayList<>();
+        permissionService.findAll().forEach(permission -> permissions.add(permission.getName()));
 
-        Role admin = Role.builder()
+        RoleRequest admin = RoleRequest.builder()
                 .name("ROLE_ADMIN")
                 .build();
 
@@ -52,7 +51,7 @@ public class RoleSeeder implements ApplicationRunner {
 
         this.roleService.save(admin);
 
-        Role user = Role.builder()
+        RoleRequest user = RoleRequest.builder()
                 .name("ROLE_USER")
                 .build();
 

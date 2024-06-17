@@ -14,19 +14,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserRequest {
+public class RoleRequest {
     @NotEmpty
     private String name;
 
-    @NotEmpty
-    private String username;
-
-    @NotEmpty
-    private String email;
-
-    @NotEmpty
-    private String password;
-
-    @NotEmpty
-    private List<String> roles;
+    private List<String> permissions;
 }

@@ -11,8 +11,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.dev.gbk.model.Role;
-import com.dev.gbk.model.User;
+import com.dev.gbk.dto.UserRequest;
 import com.dev.gbk.service.RoleService;
 import com.dev.gbk.service.UserService;
 
@@ -41,24 +40,26 @@ public class UserSeeder implements ApplicationRunner {
     }
 
     private void seedUser() {
-        List<Role> roleAdminList = new ArrayList<>();
-        roleAdminList.add(roleService.findByName("ROLE_ADMIN").get());
-        User admin = User.builder()
+        List<String> roleAdminList = new ArrayList<>();
+        roleAdminList.add(roleService.findByName("ROLE_ADMIN").getName());
+        // map to string
+
+        UserRequest admin = UserRequest.builder()
                 .name("Admin")
                 .username("admin")
-                .email("admin@gmail.com")
+                .email("admin@gmail")
                 .password(passwordEncoder.encode("password"))
                 .roles(roleAdminList)
                 .build();
         this.userService.save(admin);
 
-        List<Role> roleUserList = new ArrayList<>();
-        roleUserList.add(roleService.findByName("ROLE_USER").get());
+        List<String> roleUserList = new ArrayList<>();
+        roleUserList.add(roleService.findByName("ROLE_USER").getName());
 
-        User user = User.builder()
+        UserRequest user = UserRequest.builder()
                 .name("User")
                 .username("user")
-                .email("user@gmail.com")
+                .email("user@gmail")
                 .password(passwordEncoder.encode("password"))
                 .roles(roleUserList)
                 .build();

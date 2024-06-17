@@ -1,7 +1,5 @@
 package com.dev.gbk.dto;
 
-import java.util.List;
-
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,19 +12,26 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserRequest {
-    @NotEmpty
-    private String name;
+public class RetailRequest {
 
     @NotEmpty
-    private String username;
+    private String tenant_number;
 
     @NotEmpty
-    private String email;
+    private String tenant_name;
 
     @NotEmpty
-    private String password;
+    private String area;
 
     @NotEmpty
-    private List<String> roles;
+    private String size;
+
+    @NotEmpty
+    private Double price;
+
+    @NotEmpty
+    private Integer year;
+
+    @NotEmpty
+    private String status;
 }

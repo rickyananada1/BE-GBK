@@ -70,12 +70,11 @@ public class AuthService {
         user.setUsername(userRequest.getUsername());
         user.setEmail(userRequest.getEmail());
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-
         Set<Role> roles = new HashSet<>();
-        Role userRole = roleRepository.findByName(userRequest.getRoles()).get();
-        roles.add(userRole);
+        for (String role : userRequest.getRoles()) {
+            roles.add(roleRepository.findByName(role).get());
+        }
         user.setRoles(roles);
-
         userRepository.save(user);
 
         return "User registered successfully!.";

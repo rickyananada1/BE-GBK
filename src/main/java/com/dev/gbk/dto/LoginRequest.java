@@ -1,15 +1,15 @@
 package com.dev.gbk.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.Builder;
+import lombok.Data;
 
-@Setter
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
+@Builder
 public class LoginRequest {
+    @NotEmpty
     private String usernameOrEmail;
+
+    @NotEmpty
     private String password;
 }
