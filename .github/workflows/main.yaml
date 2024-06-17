@@ -3,15 +3,12 @@ name: Docker Compose CI/CD
 on:
   push:
     branches: [ "dev" ]
-    # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "dev" ]
 
 env:
-  # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
-  # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
@@ -21,16 +18,13 @@ jobs:
     permissions:
       contents: read
       packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
       id-token: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Set up Docker Compose
-      - name: Set up Docker Compose
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Log into registry ${{ env.REGISTRY }}
@@ -47,31 +41,26 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      # Build and push Docker image with Buildx (don't push on PR)
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: ${{ github.event_name != 'pull_request' }} # Don't push on PR
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # Run Docker Compose to test the application
       - name: Run Docker Compose for testing
-        run: docker-compose -f docker-compose.yml up --build -d
+        run: docker-compose -f compose.yml up --build -d
 
-      # Wait for services to be ready
       - name: Wait for MySQL to be ready
         run: |
-          docker-compose exec db sh -c "while ! mysqladmin ping -hlocalhost -uroot -prootpassword --silent; do sleep 1; done"
-      
-      # Run your tests (this step assumes you have some kind of tests)
-      - name: Run tests
-        run: docker-compose exec app sh -c "chmod +x ./mvnw && ./mvnw test"
+          docker-compose exec mysql sh -c "while ! mysqladmin ping -hlocalhost -u${MYSQL_USER} -p${MYSQL_PASSWORD} --silent; do sleep 1; done"
 
-      # Tear down Docker Compose services
+      - name: Run tests
+        run: docker-compose exec spring-boot-app sh -c "chmod +x ./mvnw && ./mvnw test"
+
       - name: Tear down services
         run: docker-compose down
