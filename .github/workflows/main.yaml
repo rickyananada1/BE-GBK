@@ -57,10 +57,6 @@ jobs:
       - name: Run Docker Compose for testing
         run: docker-compose -f compose.yaml up --build -d
 
-      - name: Wait for MySQL to be ready
-        run: |
-          docker-compose exec mysql sh -c "while ! mysqladmin ping -hlocalhost -u${MYSQL_USER} -p${MYSQL_PASSWORD} --silent; do sleep 1; done"
-
       - name: Run tests
         run: docker-compose exec spring-boot-app sh -c "chmod +x ./mvnw && ./mvnw test"
 
