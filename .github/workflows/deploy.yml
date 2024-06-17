@@ -52,6 +52,10 @@ jobs:
           #   ./start.sh
           #   rm -rf /root/BE-GBK
           script: |
-              git clone -b dev git@github.com:rickyananada1/BE-GBK.git
-              cd BE-GBK
+              if [ -d "BE-GBK" ]; then
+                cd BE-GBK
+                git pull
+              else
+                git clone -b dev git@github.com:rickyananada1/BE-GBK.git
+                cd BE-GBK
               docker-compose -f compose.yml up -d --build
