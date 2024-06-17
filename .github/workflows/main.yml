@@ -93,4 +93,4 @@ jobs:
           script: |
               git clone -b dev git@github.com:rickyananada1/BE-GBK.git
               cd BE-GBK
-              docker-compose -f compose.yml up -d --build
+              docker-compose -f compose.yaml up -d --build
