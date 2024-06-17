@@ -61,6 +61,9 @@ jobs:
       #   run: |
       #     docker-compose run --rm mysql sh -c "while ! mysqladmin ping -hlocalhost -u${MYSQL_USER} -p${MYSQL_PASSWORD} --silent; do sleep 1; done"
 
+      - name: List directory contents for debugging
+        run: docker-compose exec -T spring-boot-app sh -c "ls -al /app"
+
       - name: Run tests
         run: docker-compose exec -T spring-boot-app sh -c "chmod +x ./mvnw && ./mvnw test"
 
