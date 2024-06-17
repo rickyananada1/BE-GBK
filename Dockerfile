@@ -29,4 +29,4 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 # Menjalankan aplikasi Spring Boot
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar", "-Dspring-boot.run.arguments=--seeder=menu,permission,role,user"]

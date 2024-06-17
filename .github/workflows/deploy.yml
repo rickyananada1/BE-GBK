@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Change this to your deployment branch
+      - dev  # Change this to your deployment branch
 
 jobs:
   build:
@@ -13,16 +13,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '17'
-          cache: 'maven'
+      # - name: Set up JDK 17
+      #   uses: actions/setup-java@v2
+      #   with:
+      #     distribution: 'adopt'
+      #     java-version: '17'
+      #     cache: 'maven'
 
-      - name: Build with Maven
-        run: |
-          mvn clean install -DskipTests
+      # - name: Build with Maven
+      #   run: |
+      #     mvn clean install -DskipTests
 
       - name: Verify build output
         run: |
@@ -37,17 +37,22 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: 22
           command_timeout: 500s
+          # script: |
+          #   echo "Current working directory on server:"
+          #   pwd
+          #   git clone -b dev git@github.com:rickyananada1/BE-GBK.git
+          #   cd BE-GBK
+          #   mvn clean install
+          #   cp -f target/SSec-0.0.1-SNAPSHOT.jar /opt
+          #   echo "Listing files in /opt directory on server:"
+          #   ls -la /opt
+          #   echo "Setting execute permission and running the start script:"
+          #   chmod +x /opt/start.sh
+          #   cd /opt
+          #   ./start.sh
+          #   rm -rf /root/BE-GBK
           script: |
-            echo "Current working directory on server:"
-            pwd
-            git clone -b dev git@github.com:rickyananada1/BE-GBK.git
-            cd BE-GBK
-            mvn clean install
-            cp -f target/SSec-0.0.1-SNAPSHOT.jar /opt
-            echo "Listing files in /opt directory on server:"
-            ls -la /opt
-            echo "Setting execute permission and running the start script:"
-            chmod +x /opt/start.sh
-            cd /opt
-            ./start.sh
-            rm -rf /root/BE-GBK
+              git clone -b dev git@github.com:rickyananada1/BE-GBK.git
+              cd BE-GBK
+              docker-compose -f compose.yml up -d --build
+              
