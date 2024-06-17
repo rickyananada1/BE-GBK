@@ -10,8 +10,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  MYSQL_USER: 'myuser'  # Tambahkan environment variable
-  MYSQL_PASSWORD: 'secret'  # Tambahkan environment variable
+  MYSQL_USER: 'myuser'
+  MYSQL_PASSWORD: 'secret'
 
 jobs:
   build:
@@ -55,10 +55,14 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Run Docker Compose for testing
-        run: docker-compose -f compose.yaml up --build -d
+        run: docker-compose -f docker-compose.yml up --build -d
+
+      - name: Wait for MySQL to be ready
+        run: |
+          docker-compose run --rm mysql sh -c "while ! mysqladmin ping -hlocalhost -u${MYSQL_USER} -p${MYSQL_PASSWORD} --silent; do sleep 1; done"
 
       - name: Run tests
-        run: docker-compose exec spring-boot-app sh -c "chmod +x ./mvnw && ./mvnw test"
+        run: docker-compose exec -T spring-boot-app sh -c "chmod +x ./mvnw && ./mvnw test"
 
       - name: Tear down services
         run: docker-compose down
