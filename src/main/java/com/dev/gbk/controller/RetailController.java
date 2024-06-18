@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,33 +32,39 @@ public class RetailController {
         this.retailService = retailService;
     }
 
+    @PreAuthorize("hasAuthority('VIEW_DATA_RETAIL')")
     @GetMapping
     public List<Retail> findAll() {
         return retailService.findAll();
     }
 
-    @PostMapping("/post")
+    @PreAuthorize("hasAuthority('CREATE_DATA_RETAIL')")
+    @PostMapping
     public String store(@RequestBody RetailRequest retailRequest) {
         retailService.save(retailRequest);
         return new ResponseEntity<>(HttpStatus.CREATED).toString();
     }
 
+    @PreAuthorize("hasAuthority('VIEW_DATA_RETAIL')")
     @GetMapping("/{id}")
     public ResponseEntity<Retail> findById(@PathVariable Long id) {
         return new ResponseEntity<>(retailService.findById(id), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('VIEW_DATA_RETAIL')")
     @GetMapping("/area/{area}")
     public ResponseEntity<List<Retail>> findAllByArea(@PathVariable String area) {
         return new ResponseEntity<>(retailService.findAllByArea(area), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_DATA_RETAIL')")
     @PutMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable Long id, @RequestBody RetailRequest retailRequest) {
         retailService.update(id, retailRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('DELETE_DATA_RETAIL')")
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
         retailService.deleteById(id);
