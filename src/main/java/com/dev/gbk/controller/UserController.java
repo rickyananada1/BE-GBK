@@ -12,7 +12,6 @@ import com.dev.gbk.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -34,12 +33,10 @@ public class UserController {
     }
 
     // GET user by username
-    @GetMapping("/{username}")
+    @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('VIEW_USER')")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        Optional<User> user = userService.findByUsername(username);
-        return user.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<User> getUserByUsername(@PathVariable Long id) {
+        return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
     }
 
     // CREATE new user
