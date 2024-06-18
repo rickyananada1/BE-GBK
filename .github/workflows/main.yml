@@ -97,4 +97,6 @@ jobs:
               else
                 git clone -b dev git@github.com:rickyananada1/BE-GBK.git
                 cd BE-GBK
+              fi
               docker compose -f compose.yaml up -d --build
+              
