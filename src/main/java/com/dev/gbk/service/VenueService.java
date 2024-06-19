@@ -53,7 +53,7 @@ public class VenueService {
             throw new ResourceNotFoundException("Venue already exists");
         }
         venue.setUnit(venueRequest.getUnit());
-        venue.setVenue(venueRequest.getVenue();
+        venue.setVenue(venueRequest.getVenue());
         venue.setCapacity(venueRequest.getCapacity());
         venue.setSize(venueRequest.getSize());
         venue.setContact(venueRequest.getContact());
