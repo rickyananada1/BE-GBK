@@ -37,7 +37,7 @@ public class UserService {
         User user = User.builder().name(userRequest.getName()).username(userRequest.getUsername())
                 .email(userRequest.getEmail()).password(userRequest.getPassword()).contact_person(userRequest.getContact_person()).division(userRequest.getDivision()).unit(userRequest.getUnit()).status(userRequest.getStatus())
                         .roles(userRequest.getRoles().stream().map(roleName -> roleRepository.findByName(roleName).orElse(null))
-                                .filter(Objects::nonNull).collect(Collectors.toList())).build();
+                                .filter(Objects::nonNull).collect(Collectors.toList())).unit(userRequest.getUnit()).build();
 
         userRepository.save(user);
     }
@@ -57,6 +57,7 @@ public class UserService {
         user.setStatus(userRequest.getStatus());
         user.setRoles(userRequest.getRoles().stream().map(roleName -> roleRepository.findByName(roleName).orElse(null))
                 .filter(Objects::nonNull).collect(Collectors.toList()));
+        user.setUnit(userRequest.getUnit());
         userRepository.save(user);
     }
 
