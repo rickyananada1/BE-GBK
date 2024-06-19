@@ -45,4 +45,19 @@ public class Venue implements Serializable {
 
     @Column(length = 60)
     private String status;
+
+    @Column(length = 60)
+    private String total_orders;
+
+    @Column(length = 60)
+    private String weekend;
+
+    @Column(length = 60)
+    private String morning_weekdays;
+
+    @Column(length = 60)
+    private String afternoof_weekdays;
+
+    @Column(length = 60)
+    private String evening_weekdays;
 }

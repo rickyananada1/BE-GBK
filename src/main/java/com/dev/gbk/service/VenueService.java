@@ -38,7 +38,11 @@ public class VenueService {
         Venue v = Venue.builder().unit(venueRequest.getUnit())
                 .unit(venueRequest.getUnit()).capacity(venueRequest.getCapacity())
                 .size(venueRequest.getSize()).contact(venueRequest.getContact()).type(venueRequest.getType())
-                .status(venueRequest.getStatus()).build();
+                .status(venueRequest.getStatus()).weekend(venueRequest.getWeekend())
+                .total_orders(venueRequest.getTotal_orders())
+                .morning_weekdays(venueRequest.getAfternoof_weekdays())
+                .evening_weekdays(venueRequest.getEvening_weekdays())
+                .build();
         return venueRepository.save(v);
     }
 
@@ -53,6 +57,11 @@ public class VenueService {
         venue.setContact(venueRequest.getContact());
         venue.setType(venueRequest.getType());
         venue.setStatus(venueRequest.getStatus());
+        venue.setTotal_orders(venueRequest.getTotal_orders());
+        venue.setWeekend(venueRequest.getWeekend());
+        venue.setMorning_weekdays(venue.getMorning_weekdays());
+        venue.setAfternoof_weekdays(venue.getAfternoof_weekdays());
+        venue.setEvening_weekdays(venue.getEvening_weekdays());
         venueRepository.save(venue);
     }
 

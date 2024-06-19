@@ -34,5 +34,19 @@ public class VenueRequest {
 
     @NotEmpty
     private String status;
-    
+
+    @NotEmpty
+    private String total_orders;
+
+    @NotEmpty
+    private String weekend;
+
+    @NotEmpty
+    private String morning_weekdays;
+
+    @NotEmpty
+    private String afternoof_weekdays;
+
+    @NotEmpty
+    private String evening_weekdays;
 }
