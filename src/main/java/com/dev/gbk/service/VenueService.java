@@ -42,6 +42,7 @@ public class VenueService {
                 .total_orders(venueRequest.getTotal_orders())
                 .morning_weekdays(venueRequest.getAfternoof_weekdays())
                 .evening_weekdays(venueRequest.getEvening_weekdays())
+                .venue(venueRequest.getVenue())
                 .build();
         return venueRepository.save(v);
     }
@@ -52,6 +53,7 @@ public class VenueService {
             throw new ResourceNotFoundException("Venue already exists");
         }
         venue.setUnit(venueRequest.getUnit());
+        venue.setVenue(venueRequest.getVenue();
         venue.setCapacity(venueRequest.getCapacity());
         venue.setSize(venueRequest.getSize());
         venue.setContact(venueRequest.getContact());
