@@ -34,6 +34,10 @@ public class RoleService {
         return roleRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Role not found"));
     }
 
+    public Role findById(Long id) {
+        return roleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+    }
+
     public void save(RoleRequest roleRequest) {
         if (roleRepository.existsByName(roleRequest.getName())) {
             throw new ResourceNotFoundException("Role already exists");
@@ -42,15 +46,15 @@ public class RoleService {
         roleRepository.save(role);
     }
 
-    public void update(String name, RoleRequest roleRequest) {
-        Role role = roleRepository.findByName(name)
+    public void update(Long id, RoleRequest roleRequest) {
+        Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
         role.setName(roleRequest.getName());
         roleRepository.save(role);
     }
 
-    public void delete(String name) {
-        Role role = roleRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+    public void delete(Long id) {
+        Role role = roleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Role not found"));
         if (role == null) {
             throw new ResourceNotFoundException("Role not found");
         }

@@ -33,10 +33,10 @@ public class RoleController {
     }
 
     // GET role by name
-    @GetMapping("/{name}")
+    @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('CREATE_ROLE')")
-    public ResponseEntity<Role> getRoleByName(@PathVariable String name) {
-        return new ResponseEntity<>(roleService.findByName(name), HttpStatus.OK);
+    public ResponseEntity<Role> getRoleByName(@PathVariable Long id) {
+        return new ResponseEntity<>(roleService.findById(id), HttpStatus.OK);
     }
 
     // CREATE new role
@@ -48,18 +48,18 @@ public class RoleController {
     }
 
     // UPDATE role
-    @PutMapping("/{name}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('UPDATE_ROLE')")
-    public ResponseEntity<HttpStatus> updateRole(@PathVariable String name, @RequestBody RoleRequest roleRequest) {
-        roleService.update(name, roleRequest);
+    public ResponseEntity<HttpStatus> updateRole(@PathVariable Long id, @RequestBody RoleRequest roleRequest) {
+        roleService.update(id, roleRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     // DELETE role
-    @DeleteMapping("/{name}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('DELETE_ROLE')")
-    public ResponseEntity<HttpStatus> deleteRole(@PathVariable String name) {
-        roleService.delete(name);
+    public ResponseEntity<HttpStatus> deleteRole(@PathVariable Long id) {
+        roleService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
