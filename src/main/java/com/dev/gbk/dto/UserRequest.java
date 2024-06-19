@@ -31,7 +31,10 @@ public class UserRequest {
     private String contact_person;
 
     @NotEmpty
-    private String divisi;
+    private String division;
+
+    @NotEmpty
+    private String unit;
 
     @NotEmpty
     private String status;
