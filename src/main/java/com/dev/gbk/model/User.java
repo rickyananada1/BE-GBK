@@ -46,7 +46,10 @@ public class User implements Serializable {
 	private String contact_person;
 
 	@Column(length = 100)
-	private String divisi;
+	private String division;
+
+	@Column(length = 100)
+	private String unit;
 
 	@Column(length = 100)
 	private String status;
