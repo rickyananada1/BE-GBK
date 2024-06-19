@@ -1,6 +1,8 @@
 package com.dev.gbk.service;
 
 import com.dev.gbk.repository.RoleRepository;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.dev.gbk.dto.UserRequest;
@@ -19,10 +21,12 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<User> findAll() {
@@ -35,9 +39,12 @@ public class UserService {
             throw new IllegalArgumentException("User already exists");
         }
         User user = User.builder().name(userRequest.getName()).username(userRequest.getUsername())
-                .email(userRequest.getEmail()).password(userRequest.getPassword()).contact_person(userRequest.getContact_person()).division(userRequest.getDivision()).unit(userRequest.getUnit()).status(userRequest.getStatus())
-                        .roles(userRequest.getRoles().stream().map(roleName -> roleRepository.findByName(roleName).orElse(null))
-                                .filter(Objects::nonNull).collect(Collectors.toList())).unit(userRequest.getUnit()).build();
+                .email(userRequest.getEmail()).password(passwordEncoder.encode(userRequest.getPassword()))
+                .contact_person(userRequest.getContact_person()).division(userRequest.getDivision())
+                .unit(userRequest.getUnit()).status(userRequest.getStatus())
+                .roles(userRequest.getRoles().stream().map(roleName -> roleRepository.findByName(roleName).orElse(null))
+                        .filter(Objects::nonNull).collect(Collectors.toList()))
+                .unit(userRequest.getUnit()).build();
 
         userRepository.save(user);
     }
@@ -51,7 +58,7 @@ public class UserService {
         user.setName(userRequest.getName());
         user.setUsername(userRequest.getUsername());
         user.setEmail(userRequest.getEmail());
-        user.setPassword(userRequest.getPassword());
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         user.setContact_person(userRequest.getContact_person());
         user.setDivision(userRequest.getDivision());
         user.setStatus(userRequest.getStatus());

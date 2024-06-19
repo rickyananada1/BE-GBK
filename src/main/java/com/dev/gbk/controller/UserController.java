@@ -42,7 +42,7 @@ public class UserController {
     // CREATE new user
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_USER')")
-    public ResponseEntity<User> store(@RequestBody UserRequest userRequest) {
+    public ResponseEntity<HttpStatus> store(@RequestBody UserRequest userRequest) {
         userService.save(userRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -66,7 +66,7 @@ public class UserController {
     // UPDATE roles for a user
     @PutMapping("/{id}/roles")
     @PreAuthorize("hasAuthority('UPDATE_USER')")
-    public ResponseEntity<User> updateUserRoles(@PathVariable Long id,
+    public ResponseEntity<HttpStatus> updateUserRoles(@PathVariable Long id,
             @RequestBody Collection<String> roleNames) {
         userService.updateUserRoles(id, roleNames);
         return new ResponseEntity<>(HttpStatus.OK);
