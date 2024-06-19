@@ -35,7 +35,9 @@ public class UserService {
             throw new IllegalArgumentException("User already exists");
         }
         User user = User.builder().name(userRequest.getName()).username(userRequest.getUsername())
-                .email(userRequest.getEmail()).password(userRequest.getPassword()).build();
+                .email(userRequest.getEmail()).password(userRequest.getPassword()).contact_person(userRequest.getContact_person()).divisi(userRequest.getDivisi()).status(userRequest.getStatus())
+                        .roles(userRequest.getRoles().stream().map(roleName -> roleRepository.findByName(roleName).orElse(null))
+                                .filter(Objects::nonNull).collect(Collectors.toList())).build();
 
         userRepository.save(user);
     }
@@ -50,6 +52,11 @@ public class UserService {
         user.setUsername(userRequest.getUsername());
         user.setEmail(userRequest.getEmail());
         user.setPassword(userRequest.getPassword());
+        user.setContact_person(userRequest.getContact_person());
+        user.setDivisi(userRequest.getDivisi());
+        user.setStatus(userRequest.getStatus());
+        user.setRoles(userRequest.getRoles().stream().map(roleName -> roleRepository.findByName(roleName).orElse(null))
+                .filter(Objects::nonNull).collect(Collectors.toList()));
         userRepository.save(user);
     }
 
