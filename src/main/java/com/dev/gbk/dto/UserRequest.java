@@ -28,5 +28,14 @@ public class UserRequest {
     private String password;
 
     @NotEmpty
+    private String contact_person;
+
+    @NotEmpty
+    private String divisi;
+
+    @NotEmpty
+    private String status;
+
+    @NotEmpty
     private List<String> roles;
 }
