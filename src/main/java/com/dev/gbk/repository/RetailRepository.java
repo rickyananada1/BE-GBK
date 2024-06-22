@@ -4,11 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import com.dev.gbk.model.Retail;
 
-public interface RetailRepository extends JpaRepository<Retail, Long> {
+public interface RetailRepository extends JpaRepository<Retail, Long>, JpaSpecificationExecutor<Retail> {
     // find all by area
     List<Retail> findAllByArea(String area);
 

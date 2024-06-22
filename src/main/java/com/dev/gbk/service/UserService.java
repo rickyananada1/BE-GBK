@@ -2,6 +2,10 @@ package com.dev.gbk.service;
 
 import com.dev.gbk.repository.RoleRepository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +14,10 @@ import com.dev.gbk.exception.ResourceNotFoundException;
 import com.dev.gbk.model.Role;
 import com.dev.gbk.model.User;
 import com.dev.gbk.repository.UserRepository;
+import com.dev.gbk.spesification.SpecificationBuilderImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,6 +27,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final SpecificationBuilderImpl<User> specificationBuilder = new SpecificationBuilderImpl<>(
+            new ObjectMapper(), User.class);
 
     public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -29,8 +36,11 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public Page<User> findAll(String search, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Optional<Specification<User>> specification = specificationBuilder.parseAndBuild(search);
+        return specification.isPresent() ? userRepository.findAll(specification.get(), pageable)
+                : userRepository.findAll(pageable);
     }
 
     public void save(UserRequest userRequest) {
@@ -54,7 +64,7 @@ public class UserService {
     }
 
     public void update(Long id, UserRequest userRequest) {
-        User user = this.findById(id);
+        User user = findById(id);
         user.setName(userRequest.getName());
         user.setUsername(userRequest.getUsername());
         user.setEmail(userRequest.getEmail());
@@ -78,7 +88,7 @@ public class UserService {
     }
 
     public void updateUserRoles(Long id, Collection<String> roleNames) {
-        User user = this.findById(id);
+        User user = findById(id);
         Collection<Role> roles = roleNames.stream()
                 .map(name -> roleRepository.findByName(name).orElse(null))
                 .filter(Objects::nonNull)

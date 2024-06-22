@@ -1,25 +1,38 @@
 package com.dev.gbk.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.dev.gbk.exception.ResourceNotFoundException;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.dev.gbk.dto.RetailRequest;
 import com.dev.gbk.model.Retail;
 import com.dev.gbk.repository.RetailRepository;
+import com.dev.gbk.spesification.SpecificationBuilderImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class RetailService {
     private final RetailRepository retailRepository;
 
+    private final SpecificationBuilderImpl<Retail> specificationBuilder = new SpecificationBuilderImpl<>(
+            new ObjectMapper(), Retail.class);
+
     public RetailService(RetailRepository retailRepository) {
         this.retailRepository = retailRepository;
     }
 
-    // crud operation
-    public List<Retail> findAllByArea(String area) {
-        return retailRepository.findAllByArea(area);
+    public Page<Retail> findAll(String search, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Optional<Specification<Retail>> specification = specificationBuilder.parseAndBuild(search);
+        return specification.isPresent() ? retailRepository.findAll(specification.get(), pageable)
+                : retailRepository.findAll(pageable);
     }
 
     public List<Retail> findAll() {

@@ -6,16 +6,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dev.gbk.model.Retail;
 import com.dev.gbk.service.RetailService;
-
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -34,8 +34,10 @@ public class RetailController {
 
     @PreAuthorize("hasAuthority('VIEW_DATA_RETAIL')")
     @GetMapping
-    public List<Retail> findAll() {
-        return retailService.findAll();
+    public Page<Retail> findAll(@RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+        return ResponseEntity.ok(retailService.findAll(search, page, size)).getBody();
     }
 
     @PreAuthorize("hasAuthority('CREATE_DATA_RETAIL')")
@@ -49,12 +51,6 @@ public class RetailController {
     @GetMapping("/{id}")
     public ResponseEntity<Retail> findById(@PathVariable Long id) {
         return new ResponseEntity<>(retailService.findById(id), HttpStatus.OK);
-    }
-
-    @PreAuthorize("hasAuthority('VIEW_DATA_RETAIL')")
-    @GetMapping("/area/{area}")
-    public ResponseEntity<List<Retail>> findAllByArea(@PathVariable String area) {
-        return new ResponseEntity<>(retailService.findAllByArea(area), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('UPDATE_DATA_RETAIL')")

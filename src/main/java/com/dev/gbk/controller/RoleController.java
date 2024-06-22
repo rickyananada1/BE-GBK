@@ -1,5 +1,6 @@
 package com.dev.gbk.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,15 +29,17 @@ public class RoleController {
     // GET all roles
     @GetMapping
     @PreAuthorize("hasAuthority('VIEW_ROLE')")
-    public ResponseEntity<List<Role>> getAllRoles() {
-        return new ResponseEntity<>(roleService.findAll(), HttpStatus.OK);
+    public ResponseEntity<Page<Role>> getAllRoles(@RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+        return ResponseEntity.ok(roleService.findAll(search, page, size));
     }
 
     // GET role by name
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('CREATE_ROLE')")
     public ResponseEntity<Role> getRoleByName(@PathVariable Long id) {
-        return new ResponseEntity<>(roleService.findById(id), HttpStatus.OK);
+        return ResponseEntity.ok(roleService.findById(id));
     }
 
     // CREATE new role
@@ -44,7 +47,7 @@ public class RoleController {
     @PreAuthorize("hasAuthority('CREATE_ROLE')")
     public ResponseEntity<HttpStatus> store(@RequestBody RoleRequest roleRequest) {
         roleService.save(roleRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // UPDATE role
@@ -52,7 +55,7 @@ public class RoleController {
     @PreAuthorize("hasAuthority('UPDATE_ROLE')")
     public ResponseEntity<HttpStatus> updateRole(@PathVariable Long id, @RequestBody RoleRequest roleRequest) {
         roleService.update(id, roleRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     // DELETE role
@@ -60,15 +63,15 @@ public class RoleController {
     @PreAuthorize("hasAuthority('DELETE_ROLE')")
     public ResponseEntity<HttpStatus> deleteRole(@PathVariable Long id) {
         roleService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
     // UPDATE permissions for a role
-    @PutMapping("/{roleName}/permissions")
+    @PutMapping("/{id}/permissions")
     @PreAuthorize("hasAuthority('UPDATE_ROLE')")
-    public ResponseEntity<HttpStatus> updateRolePermissions(@PathVariable String roleName,
+    public ResponseEntity<HttpStatus> updateRolePermissions(@PathVariable Long id,
             @RequestBody List<String> permissionNames) {
-        roleService.updateRolePermissions(roleName, permissionNames);
-        return new ResponseEntity<>(HttpStatus.OK);
+        roleService.updateRolePermissions(id, permissionNames);
+        return ResponseEntity.ok().build();
     }
 }

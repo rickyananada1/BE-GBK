@@ -2,16 +2,24 @@ package com.dev.gbk.service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.dev.gbk.model.Permission;
 import com.dev.gbk.repository.PermissionRepository;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.dev.gbk.dto.RoleRequest;
 import com.dev.gbk.exception.ResourceNotFoundException;
 import com.dev.gbk.model.Role;
 import com.dev.gbk.repository.RoleRepository;
+import com.dev.gbk.spesification.SpecificationBuilderImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.transaction.Transactional;
 
@@ -20,14 +28,19 @@ import jakarta.transaction.Transactional;
 public class RoleService {
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
+    private final SpecificationBuilderImpl<Role> specificationBuilder = new SpecificationBuilderImpl<>(
+            new ObjectMapper(), Role.class);
 
     public RoleService(RoleRepository roleRepository, PermissionRepository permissionRepository) {
         this.roleRepository = roleRepository;
         this.permissionRepository = permissionRepository;
     }
 
-    public List<Role> findAll() {
-        return roleRepository.findAll();
+    public Page<Role> findAll(String search, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Optional<Specification<Role>> specification = specificationBuilder.parseAndBuild(search);
+        return specification.isPresent() ? roleRepository.findAll(specification.get(), pageable)
+                : roleRepository.findAll(pageable);
     }
 
     public Role findByName(String name) {
@@ -47,23 +60,18 @@ public class RoleService {
     }
 
     public void update(Long id, RoleRequest roleRequest) {
-        Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+        Role role = findById(id);
         role.setName(roleRequest.getName());
         roleRepository.save(role);
     }
 
     public void delete(Long id) {
-        Role role = roleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Role not found"));
-        if (role == null) {
-            throw new ResourceNotFoundException("Role not found");
-        }
-        roleRepository.delete(role);
+        findById(id);
+        roleRepository.deleteById(id);
     }
 
-    public void updateRolePermissions(String roleName, List<String> permissionNames) {
-        Role role = roleRepository.findByName(roleName)
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+    public void updateRolePermissions(Long id, List<String> permissionNames) {
+        Role role = findById(id);
         List<Permission> permissions = permissionNames.stream()
                 .map(name -> permissionRepository.findByName(name).orElse(null))
                 .filter(Objects::nonNull)

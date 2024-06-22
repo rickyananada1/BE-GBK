@@ -1,29 +1,38 @@
 package com.dev.gbk.service;
 
-import java.util.List;
-
 import com.dev.gbk.model.Venue;
+
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.dev.gbk.dto.VenueRequest;
 import com.dev.gbk.exception.ResourceNotFoundException;
 import com.dev.gbk.repository.VenueRepository;
+import com.dev.gbk.spesification.SpecificationBuilderImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class VenueService {
+
     private final VenueRepository venueRepository;
+    private final SpecificationBuilderImpl<Venue> specificationBuilder = new SpecificationBuilderImpl<>(
+            new ObjectMapper(), Venue.class);
 
     public VenueService(VenueRepository venueRepository) {
         this.venueRepository = venueRepository;
+
     }
 
-    // crud operation
-    public List<Venue> findAllByUnit(String area) {
-        return venueRepository.findAllByUnit(area);
-    }
-
-    public List<Venue> findAll() {
-        return venueRepository.findAll();
+    public Page<Venue> findAll(String search, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Optional<Specification<Venue>> specification = specificationBuilder.parseAndBuild(search);
+        return specification.isPresent() ? venueRepository.findAll(specification.get(), pageable)
+                : venueRepository.findAll(pageable);
     }
 
     public Venue findById(Long id) {
@@ -48,7 +57,7 @@ public class VenueService {
     }
 
     public void update(Long id, VenueRequest venueRequest) {
-        Venue venue = this.findById(id);
+        Venue venue = findById(id);
         if (venueRepository.findByVenue(venueRequest.getVenue()).isPresent()) {
             throw new ResourceNotFoundException("Venue already exists");
         }
@@ -68,7 +77,7 @@ public class VenueService {
     }
 
     public void deleteById(Long id) {
-        this.findById(id);
+        findById(id);
         venueRepository.deleteById(id);
     }
 }

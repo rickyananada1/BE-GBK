@@ -1,5 +1,6 @@
 package com.dev.gbk.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,15 +29,17 @@ public class UserController {
     // GET all users
     @GetMapping
     @PreAuthorize("hasAuthority('VIEW_USER')")
-    public ResponseEntity<Collection<User>> getAllUsers() {
-        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+    public ResponseEntity<Page<User>> getUsers(@RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+        return ResponseEntity.ok(userService.findAll(search, page, size));
     }
 
     // GET user by username
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('VIEW_USER')")
     public ResponseEntity<User> getUserByUsername(@PathVariable Long id) {
-        return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
+        return ResponseEntity.ok(userService.findById(id));
     }
 
     // CREATE new user
@@ -44,7 +47,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('CREATE_USER')")
     public ResponseEntity<HttpStatus> store(@RequestBody UserRequest userRequest) {
         userService.save(userRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // UPDATE user
@@ -52,7 +55,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('UPDATE_USER')")
     public ResponseEntity<User> update(@PathVariable Long id, @RequestBody UserRequest userRequest) {
         userService.update(id, userRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     // DELETE user
@@ -60,7 +63,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('DELETE_USER')")
     public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
         userService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
     // UPDATE roles for a user
@@ -69,6 +72,6 @@ public class UserController {
     public ResponseEntity<HttpStatus> updateUserRoles(@PathVariable Long id,
             @RequestBody Collection<String> roleNames) {
         userService.updateUserRoles(id, roleNames);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 }
