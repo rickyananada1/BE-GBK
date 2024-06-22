@@ -44,26 +44,26 @@ public class RetailController {
     @PostMapping
     public String store(@RequestBody RetailRequest retailRequest) {
         retailService.save(retailRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED).toString();
+        return ResponseEntity.status(HttpStatus.CREATED).toString();
     }
 
     @PreAuthorize("hasAuthority('VIEW_DATA_RETAIL')")
     @GetMapping("/{id}")
     public ResponseEntity<Retail> findById(@PathVariable Long id) {
-        return new ResponseEntity<>(retailService.findById(id), HttpStatus.OK);
+        return ResponseEntity.ok(retailService.findById(id));
     }
 
     @PreAuthorize("hasAuthority('UPDATE_DATA_RETAIL')")
     @PutMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable Long id, @RequestBody RetailRequest retailRequest) {
         retailService.update(id, retailRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAuthority('DELETE_DATA_RETAIL')")
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
         retailService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }

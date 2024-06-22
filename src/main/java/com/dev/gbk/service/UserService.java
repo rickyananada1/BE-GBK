@@ -65,9 +65,15 @@ public class UserService {
     }
 
     public void update(Long id, UserRequest userRequest) {
-        if (userRepository.existsByUsernameOrEmailAndIdNot(userRequest.getUsername(), userRequest.getEmail(), id)) {
-            throw new GBKAPIException("User already exists");
+        if (userRepository.existsByUsernameAndIdNot(userRequest.getUsername(), id)) {
+            throw new GBKAPIException("Username is already exists!.");
         }
+
+        // add check for email exists in database
+        if (userRepository.existsByEmailAndIdNot(userRequest.getEmail(), id)) {
+            throw new GBKAPIException("Email is already exists!.");
+        }
+
         User user = findById(id);
         user.setName(userRequest.getName());
         user.setUsername(userRequest.getUsername());

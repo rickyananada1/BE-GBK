@@ -35,7 +35,7 @@ public class AuthController {
 	// Build Register REST API
 	@PostMapping(value = { "/register", "/signup" })
 	public ResponseEntity<String> register(@RequestBody UserRequest userRequest) {
-		String response = authService.register(userRequest);
-		return new ResponseEntity<>(response, HttpStatus.CREATED);
+		authService.register(userRequest);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }

@@ -43,28 +43,28 @@ public class VenueController {
 
     @PreAuthorize("hasAuthority('CREATE_DATA_VENUE')")
     @PostMapping
-    public String store(@RequestBody VenueRequest venueRequest) {
+    public ResponseEntity<HttpStatus> store(@RequestBody VenueRequest venueRequest) {
         venueService.save(venueRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED).toString();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PreAuthorize("hasAuthority('VIEW_DATA_VENUE')")
     @GetMapping("/{id}")
     public ResponseEntity<Venue> findById(@PathVariable Long id) {
-        return new ResponseEntity<>(venueService.findById(id), HttpStatus.OK);
+        return ResponseEntity.ok(venueService.findById(id));
     }
 
     @PreAuthorize("hasAuthority('UPDATE_DATA_VENUE')")
     @PutMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable Long id, @RequestBody VenueRequest venueRequest) {
         venueService.update(id, venueRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAuthority('DELETE_DATA_VENUE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
         venueService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }

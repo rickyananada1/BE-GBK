@@ -51,7 +51,7 @@ public class AuthService {
         return jwtTokenProvider.generateToken(authentication);
     }
 
-    public String register(UserRequest userRequest) {
+    public void register(UserRequest userRequest) {
 
         // add check for username exists in database
         if (userRepository.existsByUsername(userRequest.getUsername())) {
@@ -78,6 +78,5 @@ public class AuthService {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return "User registered successfully!.";
     }
 }
