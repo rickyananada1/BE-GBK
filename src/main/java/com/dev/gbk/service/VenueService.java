@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.dev.gbk.dto.VenueRequest;
+import com.dev.gbk.exception.GBKAPIException;
 import com.dev.gbk.exception.ResourceNotFoundException;
 import com.dev.gbk.repository.VenueRepository;
 import com.dev.gbk.spesification.SpecificationBuilderImpl;
@@ -41,8 +42,8 @@ public class VenueService {
     }
 
     public Venue save(VenueRequest venueRequest) {
-        if (venueRepository.findByVenue(venueRequest.getVenue()).isPresent()) {
-            throw new ResourceNotFoundException("Venue already exists");
+        if (venueRepository.existsByVenue(venueRequest.getVenue())) {
+            throw new GBKAPIException("Venue already exists");
         }
         Venue v = Venue.builder().unit(venueRequest.getUnit())
                 .unit(venueRequest.getUnit()).capacity(venueRequest.getCapacity())
@@ -57,10 +58,11 @@ public class VenueService {
     }
 
     public void update(Long id, VenueRequest venueRequest) {
-        Venue venue = findById(id);
-        if (venueRepository.findByVenue(venueRequest.getVenue()).isPresent()) {
-            throw new ResourceNotFoundException("Venue already exists");
+        // check if venue exists with different id
+        if (venueRepository.existsByVenueAndIdNot(venueRequest.getVenue(), id)) {
+            throw new GBKAPIException("Venue already exists");
         }
+        Venue venue = findById(id);
         venue.setUnit(venueRequest.getUnit());
         venue.setVenue(venueRequest.getVenue());
         venue.setCapacity(venueRequest.getCapacity());

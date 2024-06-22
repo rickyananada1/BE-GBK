@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.dev.gbk.dto.UserRequest;
+import com.dev.gbk.exception.GBKAPIException;
 import com.dev.gbk.exception.ResourceNotFoundException;
 import com.dev.gbk.model.Role;
 import com.dev.gbk.model.User;
@@ -45,8 +46,8 @@ public class UserService {
 
     public void save(UserRequest userRequest) {
         // check if user exists
-        if (userRepository.findByUsernameOrEmail(userRequest.getUsername(), userRequest.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("User already exists");
+        if (userRepository.existsByUsernameOrEmail(userRequest.getUsername(), userRequest.getEmail())) {
+            throw new GBKAPIException("User already exists");
         }
         User user = User.builder().name(userRequest.getName()).username(userRequest.getUsername())
                 .email(userRequest.getEmail()).password(passwordEncoder.encode(userRequest.getPassword()))
@@ -64,6 +65,9 @@ public class UserService {
     }
 
     public void update(Long id, UserRequest userRequest) {
+        if (userRepository.existsByUsernameOrEmailAndIdNot(userRequest.getUsername(), userRequest.getEmail(), id)) {
+            throw new GBKAPIException("User already exists");
+        }
         User user = findById(id);
         user.setName(userRequest.getName());
         user.setUsername(userRequest.getUsername());

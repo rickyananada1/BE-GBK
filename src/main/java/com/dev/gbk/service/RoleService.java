@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.dev.gbk.dto.RoleRequest;
+import com.dev.gbk.exception.GBKAPIException;
 import com.dev.gbk.exception.ResourceNotFoundException;
 import com.dev.gbk.model.Role;
 import com.dev.gbk.repository.RoleRepository;
@@ -53,13 +54,16 @@ public class RoleService {
 
     public void save(RoleRequest roleRequest) {
         if (roleRepository.existsByName(roleRequest.getName())) {
-            throw new ResourceNotFoundException("Role already exists");
+            throw new GBKAPIException("Role already exists");
         }
         Role role = Role.builder().name(roleRequest.getName()).build();
         roleRepository.save(role);
     }
 
     public void update(Long id, RoleRequest roleRequest) {
+        if (roleRepository.existsByNameAndIdNot(roleRequest.getName(), id)) {
+            throw new GBKAPIException("Role already exists");
+        }
         Role role = findById(id);
         role.setName(roleRequest.getName());
         roleRepository.save(role);

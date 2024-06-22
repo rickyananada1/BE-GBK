@@ -2,14 +2,19 @@ package com.dev.gbk.exception;
 
 public class GBKAPIException extends RuntimeException {
 
-    private final String message;
-
-    public GBKAPIException(String message) {
-        this.message = message;
+    public GBKAPIException() {
+        super();
     }
 
-    @Override
-    public String getMessage() {
-        return message;
+    public GBKAPIException(String message) {
+        super(message);
+    }
+
+    public GBKAPIException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public GBKAPIException(Throwable cause) {
+        super(cause);
     }
 }

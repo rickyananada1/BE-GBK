@@ -9,4 +9,8 @@ import com.dev.gbk.model.Venue;
 
 public interface VenueRepository extends JpaRepository<Venue, Long>, JpaSpecificationExecutor<Venue> {
     Optional<Venue> findByVenue(String name);
+
+    boolean existsByVenue(String name);
+
+    boolean existsByVenueAndIdNot(String name, Long id);
 }

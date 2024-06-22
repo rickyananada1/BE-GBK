@@ -3,6 +3,7 @@ package com.dev.gbk.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.dev.gbk.exception.GBKAPIException;
 import com.dev.gbk.exception.ResourceNotFoundException;
 
 import org.springframework.data.domain.Page;
@@ -45,12 +46,12 @@ public class RetailService {
     }
 
     public void save(RetailRequest retailRequest) {
-        // check if venue exists
-        if (retailRepository.findByTenantName(retailRequest.getTenant_name()).isPresent()) {
-            throw new RuntimeException("Venue already exists");
+        if (retailRepository.existsByTenantName(retailRequest.getTenant_name())) {
+            throw new GBKAPIException("Retail already exists");
         }
-        if (retailRepository.findByTenantNumber(retailRequest.getTenant_number()).isPresent()) {
-            throw new RuntimeException("Venue already exists");
+
+        if (retailRepository.existsByTenantNumber(retailRequest.getTenant_number())) {
+            throw new GBKAPIException("Tenant number already exists");
         }
         Retail retail = Retail.builder().tenant_name(retailRequest.getTenant_name())
                 .tenant_number(retailRequest.getTenant_number()).area(retailRequest.getArea())
@@ -60,13 +61,14 @@ public class RetailService {
     }
 
     public void update(Long id, RetailRequest retailRequest) {
+        // check if retail exists
+        if (retailRepository.existsByTenantNameAndIdNot(retailRequest.getTenant_name(), id)) {
+            throw new GBKAPIException("Retail already exists");
+        }
+        if (retailRepository.existsByTenantNumberAndIdNot(retailRequest.getTenant_number(), id)) {
+            throw new GBKAPIException("Tenant number already exists");
+        }
         Retail retail = this.findById(id);
-        if (retailRepository.findByTenantName(retailRequest.getTenant_name()).isPresent()) {
-            throw new RuntimeException("Venue already exists");
-        }
-        if (retailRepository.findByTenantNumber(retailRequest.getTenant_number()).isPresent()) {
-            throw new RuntimeException("Venue already exists");
-        }
         retail.setTenant_name(retailRequest.getTenant_name());
         retail.setTenant_number(retailRequest.getTenant_number());
         retail.setArea(retailRequest.getArea());
