@@ -126,8 +126,12 @@ public class ScheduleService {
                 .scheduleDate(scheduleRequest.getScheduleDate())
                 .scheduleDateFrom(scheduleRequest.getScheduleDateFrom())
                 .scheduleDateTo(scheduleRequest.getScheduleDateTo())
+                .session(scheduleRequest.getSession())
                 .status(scheduleRequest.getStatus())
                 .total(scheduleRequest.getTotal())
+                .customerName(scheduleRequest.getCustomerName())
+                .customerEmail(scheduleRequest.getCustomerEmail())
+                .customerPhone(scheduleRequest.getCustomerPhone())
                 .venue(venue)
                 .build();
 
@@ -144,8 +148,12 @@ public class ScheduleService {
         schedule.setScheduleDate(scheduleRequest.getScheduleDate());
         schedule.setScheduleDateFrom(scheduleRequest.getScheduleDateFrom());
         schedule.setScheduleDateTo(scheduleRequest.getScheduleDateTo());
+        schedule.setSession(scheduleRequest.getSession());
         schedule.setStatus(scheduleRequest.getStatus());
         schedule.setTotal(scheduleRequest.getTotal());
+        schedule.setCustomerName(scheduleRequest.getCustomerName());
+        schedule.setCustomerEmail(scheduleRequest.getCustomerEmail());
+        schedule.setCustomerPhone(scheduleRequest.getCustomerPhone());
         schedule.setVenue(venue);
         scheduleRepository.save(schedule);
     }

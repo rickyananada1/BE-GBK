@@ -60,11 +60,23 @@ public class Schedule implements Serializable {
     @Column(name = "end_date")
     private Date scheduleDateTo;
 
+    @Column(name = "session")
+    private String session;
+
     @Column(name = "status")
     private String status;
 
     @Column(name = "total")
     private Integer total;
+
+    @Column(name = "customer_name")
+    private String customerName;
+
+    @Column(name = "customer_email")
+    private String customerEmail;
+
+    @Column(name = "customer_phone")
+    private String customerPhone;
 
     @CreatedDate
     @Column(name = "created_at")

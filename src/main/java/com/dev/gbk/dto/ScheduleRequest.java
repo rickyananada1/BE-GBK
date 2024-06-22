@@ -25,7 +25,11 @@ public class ScheduleRequest {
     private Date scheduleDate;
     private Date scheduleDateFrom;
     private Date scheduleDateTo;
+    private String session;
     private String status;
     private Integer total;
+    private String customerName;
+    private String customerEmail;
+    private String customerPhone;
     private Long venueId;
 }
