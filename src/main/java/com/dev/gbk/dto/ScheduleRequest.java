@@ -2,6 +2,7 @@ package com.dev.gbk.dto;
 
 import java.util.Date;
 
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +18,9 @@ public class ScheduleRequest {
     private String type;
     private String profileEvent;
     private String descriptionEvent;
+    @Nullable
     private String games;
+    @Nullable
     private String category;
     private Date scheduleDate;
     private Date scheduleDateFrom;

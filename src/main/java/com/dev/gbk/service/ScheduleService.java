@@ -1,6 +1,7 @@
 package com.dev.gbk.service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,9 +37,13 @@ public class ScheduleService {
     }
 
     public List<TimeSlot> getAvailableTimeSlots(Date startDate, Date endDate) {
-        // Format waktu dan tanggal untuk perbandingan
+        // Format waktu dan tanggal untuk perbandingan menjadi localDateTime
         SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+        LocalDateTime localStartDate = LocalDateTime.parse(dateTimeFormat.format(startDate));
+        if (endDate == null) {
+            endDate = new Date();
+        }
+        LocalDateTime localEndDate = LocalDateTime.parse(dateTimeFormat.format(endDate));
         // List untuk menyimpan slot waktu
         List<TimeSlot> timeSlots = new ArrayList<>();
 
@@ -77,10 +82,13 @@ public class ScheduleService {
             calendar.add(Calendar.DATE, 1);
         }
 
+        if (timeSlots.isEmpty()) {
+            return timeSlots;
+        }
         // Mendapatkan schedule yang sudah terbooking dalam rentang tanggal tersebut
-        List<Schedule> bookedSchedules = scheduleRepository.findByScheduleDateBetween(
-                dateTimeFormat.format(startDate),
-                dateTimeFormat.format(endDate));
+        List<Schedule> bookedSchedules = endDate == null ? scheduleRepository.findByScheduleDate(localStartDate)
+                : scheduleRepository.findByScheduleDateBetween(
+                        localStartDate, localEndDate);
 
         // Cek ketersediaan untuk setiap slot waktu
         for (Schedule schedule : bookedSchedules) {

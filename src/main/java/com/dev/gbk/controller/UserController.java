@@ -17,7 +17,6 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/api/users")
 @SecurityRequirement(name = "bearerAuth")
-@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
     private final UserService userService;
@@ -28,7 +27,7 @@ public class UserController {
 
     // GET all users
     @GetMapping
-    @PreAuthorize("hasAuthority('VIEW_USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_USER')")
     public ResponseEntity<Page<User>> getUsers(@RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
@@ -37,14 +36,14 @@ public class UserController {
 
     // GET user by username
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('VIEW_USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_USER')")
     public ResponseEntity<User> getUserByUsername(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
     // CREATE new user
     @PostMapping
-    @PreAuthorize("hasAuthority('CREATE_USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('CREATE_USER')")
     public ResponseEntity<HttpStatus> store(@RequestBody UserRequest userRequest) {
         userService.save(userRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -52,7 +51,7 @@ public class UserController {
 
     // UPDATE user
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('UPDATE_USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('UPDATE_USER')")
     public ResponseEntity<User> update(@PathVariable Long id, @RequestBody UserRequest userRequest) {
         userService.update(id, userRequest);
         return ResponseEntity.ok().build();
@@ -60,7 +59,7 @@ public class UserController {
 
     // DELETE user
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('DELETE_USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('DELETE_USER')")
     public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
@@ -68,7 +67,7 @@ public class UserController {
 
     // UPDATE roles for a user
     @PutMapping("/{id}/roles")
-    @PreAuthorize("hasAuthority('UPDATE_USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('UPDATE_USER')")
     public ResponseEntity<HttpStatus> updateUserRoles(@PathVariable Long id,
             @RequestBody Collection<String> roleNames) {
         userService.updateUserRoles(id, roleNames);
