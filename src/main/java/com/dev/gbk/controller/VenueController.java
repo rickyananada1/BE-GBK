@@ -5,11 +5,11 @@ import com.dev.gbk.dto.VenueRequest;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dev.gbk.model.Venue;
 import com.dev.gbk.service.VenueService;
+import com.dev.gbk.utils.ResponseHandler;
+
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,36 +35,38 @@ public class VenueController {
 
     @PreAuthorize("hasAuthority('VIEW_DATA_VENUE')")
     @GetMapping
-    public ResponseEntity<Page<Venue>> findAll(@RequestParam(value = "search", required = false) String search,
+    public ResponseEntity<Object> findAll(@RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
-        return ResponseEntity.ok(venueService.findAll(search, page, size));
+        return ResponseHandler.generateResponse("Success get all venues", HttpStatus.OK,
+                venueService.findAll(search, page, size));
     }
 
     @PreAuthorize("hasAuthority('CREATE_DATA_VENUE')")
     @PostMapping
-    public ResponseEntity<HttpStatus> store(@RequestBody VenueRequest venueRequest) {
-        venueService.save(venueRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<Object> store(@RequestBody VenueRequest venueRequest) {
+        return ResponseHandler.generateResponse("Success create venue", HttpStatus.CREATED,
+                venueService.save(venueRequest));
     }
 
     @PreAuthorize("hasAuthority('VIEW_DATA_VENUE')")
     @GetMapping("/{id}")
-    public ResponseEntity<Venue> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(venueService.findById(id));
+    public ResponseEntity<Object> findById(@PathVariable Long id) {
+        return ResponseHandler.generateResponse("Success get venue by id", HttpStatus.OK,
+                venueService.findById(id));
     }
 
     @PreAuthorize("hasAuthority('UPDATE_DATA_VENUE')")
     @PutMapping("/{id}")
-    public ResponseEntity<HttpStatus> update(@PathVariable Long id, @RequestBody VenueRequest venueRequest) {
-        venueService.update(id, venueRequest);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody VenueRequest venueRequest) {
+        return ResponseHandler.generateResponse("Success update venue", HttpStatus.OK,
+                venueService.update(id, venueRequest));
     }
 
     @PreAuthorize("hasAuthority('DELETE_DATA_VENUE')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
+    public ResponseEntity<Object> delete(@PathVariable Long id) {
         venueService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseHandler.generateResponse("Success delete venue", HttpStatus.OK, null);
     }
 }

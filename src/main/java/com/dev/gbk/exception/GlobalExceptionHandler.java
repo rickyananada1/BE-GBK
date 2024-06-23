@@ -13,6 +13,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.dev.gbk.payloads.ErrorDetails;
+import com.dev.gbk.utils.ResponseHandler;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -23,28 +24,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     // handle specific exceptions
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException exception,
+    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException exception,
             WebRequest webRequest) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),
                 webRequest.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+        return ResponseHandler.generateResponse("Resource not found", HttpStatus.NOT_FOUND, errorDetails);
     }
 
     @ExceptionHandler(GBKAPIException.class)
-    public ResponseEntity<ErrorDetails> handleGBKAPIException(GBKAPIException exception,
+    public ResponseEntity<Object> handleGBKAPIException(GBKAPIException exception,
             WebRequest webRequest) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),
                 webRequest.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+        return ResponseHandler.generateResponse("Bad Request", HttpStatus.BAD_REQUEST, errorDetails);
     }
 
     // global exceptions
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDetails> handleGlobalException(Exception exception,
+    public ResponseEntity<Object> handleGlobalException(Exception exception,
             WebRequest webRequest) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),
                 webRequest.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseHandler.generateResponse("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR,
+                errorDetails);
     }
 
     @Override
@@ -59,14 +61,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             errors.put(fieldName, message);
         });
 
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return ResponseHandler.generateResponse("Bad Request", HttpStatus.BAD_REQUEST, errors);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorDetails> handleAccessDeniedException(AccessDeniedException exception,
+    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException exception,
             WebRequest webRequest) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),
                 webRequest.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+        return ResponseHandler.generateResponse("Unauthorized", HttpStatus.UNAUTHORIZED, errorDetails);
     }
 }

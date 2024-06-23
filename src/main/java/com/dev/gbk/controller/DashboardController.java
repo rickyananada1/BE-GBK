@@ -3,6 +3,7 @@ package com.dev.gbk.controller;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dev.gbk.dto.OccupancyDTO;
+import com.dev.gbk.utils.ResponseHandler;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
@@ -19,7 +21,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class DashboardController {
     @GetMapping("/occupancies")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    public ResponseEntity<List<OccupancyDTO>> occupancies() {
+    public ResponseEntity<Object> occupancies() {
         List<OccupancyDTO> occupancyList = Arrays.asList(
                 new OccupancyDTO("Occ Fisik", "60.4"),
                 new OccupancyDTO("Occ PKBLU", "40.2"),
@@ -28,12 +30,12 @@ public class DashboardController {
                 new OccupancyDTO("Occ Fisik vs Pendapatan", "80.4"),
                 new OccupancyDTO("Occ Timnas", "40.4"));
 
-        return ResponseEntity.ok(occupancyList);
+        return ResponseHandler.generateResponse("Success get dashboard", HttpStatus.OK, occupancyList);
     }
 
     @GetMapping("/events")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    public ResponseEntity<List<OccupancyDTO>> events() {
+    public ResponseEntity<Object> events() {
         List<OccupancyDTO> events = Arrays.asList(
                 new OccupancyDTO("Keagamaan", "10.0"),
                 new OccupancyDTO("Pendidikan", "10.0"),
@@ -46,17 +48,18 @@ public class DashboardController {
                 new OccupancyDTO("Olahraga", "10.0"),
                 new OccupancyDTO("Konser", "10.0"));
 
-        return ResponseEntity.ok(events);
+        return ResponseHandler.generateResponse("Success get dashboard", HttpStatus.OK, events);
     }
 
     @GetMapping("/event-classification")
-    public ResponseEntity<List<OccupancyDTO>> eventClassification() {
+    public ResponseEntity<Object> eventClassification() {
         List<OccupancyDTO> occupancyList = Arrays.asList(
                 new OccupancyDTO("Pemerintah", "10.0"),
                 new OccupancyDTO("Lain-lain", "40.0"),
                 new OccupancyDTO("Nasional", "30.0"),
                 new OccupancyDTO("Internasional", "20.0"));
-        return ResponseEntity.ok(occupancyList);
+
+        return ResponseHandler.generateResponse("Success get dashboard", HttpStatus.OK, occupancyList);
     }
 
 }

@@ -32,7 +32,8 @@ public class RetailService {
     public Page<Retail> findAll(String search, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Optional<Specification<Retail>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.map(retailSpecification -> retailRepository.findAll(retailSpecification, pageable)).orElseGet(() -> retailRepository.findAll(pageable));
+        return specification.map(retailSpecification -> retailRepository.findAll(retailSpecification, pageable))
+                .orElseGet(() -> retailRepository.findAll(pageable));
     }
 
     public List<Retail> findAll() {
@@ -44,7 +45,7 @@ public class RetailService {
                 .orElseThrow(() -> new ResourceNotFoundException("Retail not found"));
     }
 
-    public void save(RetailRequest retailRequest) {
+    public Retail save(RetailRequest retailRequest) {
         if (retailRepository.findByTenantName(retailRequest.getTenant_name()).isPresent()) {
             throw new GBKAPIException("Retail already exists");
         }
@@ -56,10 +57,10 @@ public class RetailService {
                 .tenant_number(retailRequest.getTenant_number()).area(retailRequest.getArea())
                 .size(retailRequest.getSize()).price(retailRequest.getPrice()).year(retailRequest.getYear())
                 .status(retailRequest.getStatus()).build();
-        retailRepository.save(retail);
+        return retailRepository.save(retail);
     }
 
-    public void update(Long id, RetailRequest retailRequest) {
+    public Retail update(Long id, RetailRequest retailRequest) {
         Optional<Retail> existingRetail = retailRepository.findByTenantName(retailRequest.getTenant_name());
 
         if (existingRetail.isPresent() && !existingRetail.get().getId().equals(id)) {
@@ -79,8 +80,7 @@ public class RetailService {
         retail.setPrice(retailRequest.getPrice());
         retail.setYear(retailRequest.getYear());
         retail.setStatus(retailRequest.getStatus());
-        retailRepository.save(retail);
-
+        return retailRepository.save(retail);
     }
 
     public void deleteById(Long id) {

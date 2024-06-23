@@ -40,10 +40,11 @@ public class UserService {
     public Page<User> findAll(String search, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Optional<Specification<User>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.map(userSpecification -> userRepository.findAll(userSpecification, pageable)).orElseGet(() -> userRepository.findAll(pageable));
+        return specification.map(userSpecification -> userRepository.findAll(userSpecification, pageable))
+                .orElseGet(() -> userRepository.findAll(pageable));
     }
 
-    public void save(UserRequest userRequest) {
+    public User save(UserRequest userRequest) {
         // check if user exists
         if (userRepository.existsByUsernameOrEmail(userRequest.getUsername(), userRequest.getEmail())) {
             throw new GBKAPIException("User already exists");
@@ -56,14 +57,14 @@ public class UserService {
                         .filter(Objects::nonNull).collect(Collectors.toList()))
                 .unit(userRequest.getUnit()).build();
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    public void update(Long id, UserRequest userRequest) {
+    public User update(Long id, UserRequest userRequest) {
         if (userRepository.existsByUsernameAndIdNot(userRequest.getUsername(), id)) {
             throw new GBKAPIException("Username is already exists!.");
         }
@@ -84,7 +85,7 @@ public class UserService {
         user.setRoles(userRequest.getRoles().stream().map(roleName -> roleRepository.findByName(roleName).orElse(null))
                 .filter(Objects::nonNull).collect(Collectors.toList()));
         user.setUnit(userRequest.getUnit());
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public void delete(Long id) {
@@ -92,12 +93,13 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public void updateUserRoles(Long id, Collection<String> roleNames) {
+    public User updateUserRoles(Long id, Collection<String> roleNames) {
         User user = findById(id);
         Collection<Role> roles = roleNames.stream()
                 .map(name -> roleRepository.findByName(name).orElse(null))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         user.setRoles(roles);
+        return userRepository.save(user);
     }
 }

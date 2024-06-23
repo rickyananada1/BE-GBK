@@ -40,7 +40,8 @@ public class RoleService {
     public Page<Role> findAll(String search, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Optional<Specification<Role>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.map(roleSpecification -> roleRepository.findAll(roleSpecification, pageable)).orElseGet(() -> roleRepository.findAll(pageable));
+        return specification.map(roleSpecification -> roleRepository.findAll(roleSpecification, pageable))
+                .orElseGet(() -> roleRepository.findAll(pageable));
     }
 
     public Role findByName(String name) {
@@ -51,21 +52,21 @@ public class RoleService {
         return roleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Role not found"));
     }
 
-    public void save(RoleRequest roleRequest) {
+    public Role save(RoleRequest roleRequest) {
         if (roleRepository.existsByName(roleRequest.getName())) {
             throw new GBKAPIException("Role already exists");
         }
         Role role = Role.builder().name(roleRequest.getName()).build();
-        roleRepository.save(role);
+        return roleRepository.save(role);
     }
 
-    public void update(Long id, RoleRequest roleRequest) {
+    public Role update(Long id, RoleRequest roleRequest) {
         if (roleRepository.existsByNameAndIdNot(roleRequest.getName(), id)) {
             throw new GBKAPIException("Role already exists");
         }
         Role role = findById(id);
         role.setName(roleRequest.getName());
-        roleRepository.save(role);
+        return roleRepository.save(role);
     }
 
     public void delete(Long id) {
@@ -73,13 +74,13 @@ public class RoleService {
         roleRepository.deleteById(id);
     }
 
-    public void updateRolePermissions(Long id, List<String> permissionNames) {
+    public Role updateRolePermissions(Long id, List<String> permissionNames) {
         Role role = findById(id);
         List<Permission> permissions = permissionNames.stream()
                 .map(name -> permissionRepository.findByName(name).orElse(null))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         role.setPermissions(permissions);
-        roleRepository.save(role);
+        return roleRepository.save(role);
     }
 }

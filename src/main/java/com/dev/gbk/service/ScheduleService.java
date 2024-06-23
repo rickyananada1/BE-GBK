@@ -120,7 +120,7 @@ public class ScheduleService {
         return scheduleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Schedule not found"));
     }
 
-    public void store(ScheduleRequest scheduleRequest, Venue venue) {
+    public Schedule store(ScheduleRequest scheduleRequest, Venue venue) {
         Schedule schedule = Schedule
                 .builder().type(scheduleRequest.getType())
                 .profileEvent(scheduleRequest.getProfileEvent())
@@ -139,10 +139,10 @@ public class ScheduleService {
                 .venue(venue)
                 .build();
 
-        scheduleRepository.save(schedule);
+        return scheduleRepository.save(schedule);
     }
 
-    public void update(Long id, ScheduleRequest scheduleRequest, Venue venue) {
+    public Schedule update(Long id, ScheduleRequest scheduleRequest, Venue venue) {
         Schedule schedule = findById(id);
         schedule.setType(scheduleRequest.getType());
         schedule.setProfileEvent(scheduleRequest.getProfileEvent());
@@ -159,7 +159,7 @@ public class ScheduleService {
         schedule.setCustomerEmail(scheduleRequest.getCustomerEmail());
         schedule.setCustomerPhone(scheduleRequest.getCustomerPhone());
         schedule.setVenue(venue);
-        scheduleRepository.save(schedule);
+        return scheduleRepository.save(schedule);
     }
 
     public void delete(Long id) {

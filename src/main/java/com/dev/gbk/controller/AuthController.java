@@ -11,6 +11,7 @@ import com.dev.gbk.dto.LoginRequest;
 import com.dev.gbk.dto.UserRequest;
 import com.dev.gbk.payloads.JWTAuthResponse;
 import com.dev.gbk.service.AuthService;
+import com.dev.gbk.utils.ResponseHandler;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -34,8 +35,8 @@ public class AuthController {
 
 	// Build Register REST API
 	@PostMapping(value = { "/register", "/signup" })
-	public ResponseEntity<String> register(@RequestBody UserRequest userRequest) {
+	public ResponseEntity<Object> register(@RequestBody UserRequest userRequest) {
 		authService.register(userRequest);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		return ResponseHandler.generateResponse("User register successfully", HttpStatus.OK, null);
 	}
 }

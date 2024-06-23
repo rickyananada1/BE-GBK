@@ -3,7 +3,6 @@ package com.dev.gbk.model;
 import java.io.Serializable;
 import java.util.Collection;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
@@ -32,7 +31,6 @@ public class Menu implements Serializable {
     @Column(length = 60)
     private String name;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "menu")
     @JsonManagedReference
     private Collection<Permission> permissions;

@@ -32,7 +32,8 @@ public class VenueService {
     public Page<Venue> findAll(String search, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Optional<Specification<Venue>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.map(venueSpecification -> venueRepository.findAll(venueSpecification, pageable)).orElseGet(() -> venueRepository.findAll(pageable));
+        return specification.map(venueSpecification -> venueRepository.findAll(venueSpecification, pageable))
+                .orElseGet(() -> venueRepository.findAll(pageable));
     }
 
     public Venue findById(Long id) {
@@ -57,7 +58,7 @@ public class VenueService {
         return venueRepository.save(v);
     }
 
-    public void update(Long id, VenueRequest venueRequest) {
+    public Venue update(Long id, VenueRequest venueRequest) {
         // check if venue exists with different id
         if (venueRepository.existsByVenueAndIdNot(venueRequest.getVenue(), id)) {
             throw new GBKAPIException("Venue already exists");
@@ -75,7 +76,7 @@ public class VenueService {
         venue.setMorning_weekdays(venue.getMorning_weekdays());
         venue.setAfternoof_weekdays(venue.getAfternoof_weekdays());
         venue.setEvening_weekdays(venue.getEvening_weekdays());
-        venueRepository.save(venue);
+        return venueRepository.save(venue);
     }
 
     public void deleteById(Long id) {

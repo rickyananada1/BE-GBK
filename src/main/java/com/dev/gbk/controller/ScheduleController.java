@@ -1,18 +1,17 @@
 package com.dev.gbk.controller;
 
 import com.dev.gbk.dto.ScheduleRequest;
-import com.dev.gbk.model.Schedule;
 import com.dev.gbk.model.TimeSlot;
 import com.dev.gbk.model.Venue;
 import com.dev.gbk.service.ScheduleService;
 import com.dev.gbk.service.VenueService;
+import com.dev.gbk.utils.ResponseHandler;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,48 +41,49 @@ public class ScheduleController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DATA_SCHEDULE')")
-    public ResponseEntity<Page<Schedule>> findAll(@RequestParam(value = "search", required = false) String search,
+    public ResponseEntity<Object> findAll(@RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
-        return ResponseEntity.ok(scheduleService.findAll(search, page, size));
+        return ResponseHandler.generateResponse("Success get all schedules", HttpStatus.OK,
+                scheduleService.findAll(search, page, size));
     }
 
     @GetMapping("/available")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DATA_SCHEDULE')")
-    public ResponseEntity<List<TimeSlot>> getAvailableTimeSlots(
+    public ResponseEntity<Object> getAvailableTimeSlots(
             @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
             @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-
         List<TimeSlot> availableTimeSlots = scheduleService.getAvailableTimeSlots(startDate, endDate);
-        return ResponseEntity.ok(availableTimeSlots);
+        return ResponseHandler.generateResponse("Success get available time slots", HttpStatus.OK, availableTimeSlots);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DATA_SCHEDULE')")
-    public ResponseEntity<Schedule> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(scheduleService.findById(id));
+    public ResponseEntity<Object> findById(@PathVariable Long id) {
+        return ResponseHandler.generateResponse("Success get schedule by id", HttpStatus.OK,
+                scheduleService.findById(id));
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('CREATE_SCHEDULE')")
-    public ResponseEntity<HttpStatus> store(@RequestBody ScheduleRequest scheduleRequest) {
+    public ResponseEntity<Object> store(@RequestBody ScheduleRequest scheduleRequest) {
         Venue venue = venueService.findById(scheduleRequest.getVenueId());
-        scheduleService.store(scheduleRequest, venue);
-        return ResponseEntity.ok().build();
+        return ResponseHandler.generateResponse("Success create schedule", HttpStatus.CREATED,
+                scheduleService.store(scheduleRequest, venue));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('UPDATE_SCHEDULE')")
-    public ResponseEntity<HttpStatus> update(@PathVariable Long id, @RequestBody ScheduleRequest scheduleRequest) {
+    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody ScheduleRequest scheduleRequest) {
         Venue venue = venueService.findById(scheduleRequest.getVenueId());
-        scheduleService.update(id, scheduleRequest, venue);
-        return ResponseEntity.ok().build();
+        return ResponseHandler.generateResponse("Success update schedule", HttpStatus.OK,
+                scheduleService.update(id, scheduleRequest, venue));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('DELETE_SCHEDULE')")
-    public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
+    public ResponseEntity<Object> delete(@PathVariable Long id) {
         scheduleService.delete(id);
-        return ResponseEntity.ok().build();
+        return ResponseHandler.generateResponse("Success delete schedule", HttpStatus.OK, null);
     }
 }
