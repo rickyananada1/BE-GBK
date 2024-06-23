@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "bookings")
+@Table(name = "schedules")
 public class Schedule implements Serializable {
 
     @Id

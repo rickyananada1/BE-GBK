@@ -32,8 +32,8 @@ public class UserSeeder implements ApplicationRunner {
             List<String> seeder = Arrays.asList(args.getOptionValues("seeder").get(0).split(","));
             if (seeder.contains("user")) {
                 seedUser();
-                log.info("Success run user seeder");
             }
+            log.info("Success run user seeder");
         } else {
             log.info("User seeder skipped");
         }

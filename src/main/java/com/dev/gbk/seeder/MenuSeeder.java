@@ -29,7 +29,6 @@ public class MenuSeeder implements ApplicationRunner {
             if (seeder.contains("menu")) {
                 seedMenu();
             }
-
             log.info("Success run MenuSeeder");
         } else {
             log.info("Menu seeder skipped");

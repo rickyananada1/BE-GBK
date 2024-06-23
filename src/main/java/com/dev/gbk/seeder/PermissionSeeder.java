@@ -32,9 +32,7 @@ public class PermissionSeeder implements ApplicationRunner {
             if (seeder.contains("permission")) {
                 seedPermission();
             }
-
             log.info("Success run role seeder");
-
         } else {
             log.info("Permission seeder skipped");
         }
@@ -46,9 +44,6 @@ public class PermissionSeeder implements ApplicationRunner {
         menuService.findAll().forEach(menus::add);
 
         for (var menu : menus) {
-            // create permission based on menu, view, create, update, delete
-
-            // view
             // change menu space to _ and uppercase
             Permission view = Permission.builder()
                     .name("VIEW_" + menu.getName().toUpperCase().replace(" ", "_"))
@@ -74,6 +69,9 @@ public class PermissionSeeder implements ApplicationRunner {
             permissionService.save(create);
             permissionService.save(update);
             permissionService.save(delete);
+
+            // menu.setPermissions(List.of(view, create, update, delete));
+            // menuService.update(menu);
 
             log.info("Success run PermissionSeeder {}", menu.getName());
         }

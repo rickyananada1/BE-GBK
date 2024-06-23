@@ -30,11 +30,9 @@ public class RoleSeeder implements ApplicationRunner {
             List<String> seeder = Arrays.asList(args.getOptionValues("seeder").get(0).split(","));
             if (seeder.contains("role")) {
                 seedRoles();
-                log.info("Success run Role seeder");
             }
-        } else
-
-        {
+            log.info("Success run Role seeder");
+        } else {
             log.info("Role seeder skipped");
         }
     }
@@ -49,13 +47,13 @@ public class RoleSeeder implements ApplicationRunner {
 
         admin.setPermissions(permissions);
 
-        this.roleService.save(admin);
+        roleService.save(admin);
 
         RoleRequest user = RoleRequest.builder()
                 .name("ROLE_USER")
                 .build();
 
-        this.roleService.save(user);
+        roleService.save(user);
 
         log.info("Success run RoleSeeder");
 

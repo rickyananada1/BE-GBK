@@ -32,4 +32,9 @@ public class MenuService {
         return menuRepository.findAll();
     }
 
+    // update
+    public void update(Menu menu) {
+        menuRepository.save(menu);
+    }
+
 }

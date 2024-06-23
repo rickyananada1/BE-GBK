@@ -5,8 +5,6 @@ import com.dev.gbk.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,8 +20,6 @@ import java.util.stream.Collectors;
 public class CustomUserDetailsService implements UserDetailsService {
 
         private final UserRepository userRepository;
-
-        private static final Logger log = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
         public CustomUserDetailsService(UserRepository userRepository) {
                 this.userRepository = userRepository;
@@ -47,8 +43,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                                 .collect(Collectors.toSet());
 
                 authorities.addAll(permissions);
-
-            log.info("User found with username: {}, Authorities: {}", user.getUsername(), authorities);
 
                 return new org.springframework.security.core.userdetails.User(
                                 user.getUsername(),
