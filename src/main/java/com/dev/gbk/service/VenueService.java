@@ -50,7 +50,8 @@ public class VenueService {
                 .size(venueRequest.getSize()).contact(venueRequest.getContact()).type(venueRequest.getType())
                 .status(venueRequest.getStatus()).weekend(venueRequest.getWeekend())
                 .total_orders(venueRequest.getTotal_orders())
-                .morning_weekdays(venueRequest.getAfternoof_weekdays())
+                .morning_weekdays(venueRequest.getMorning_weekdays())
+                .afternoof_weekdays(venueRequest.getAfternoof_weekdays())
                 .evening_weekdays(venueRequest.getEvening_weekdays())
                 .venue(venueRequest.getVenue())
                 .build();
