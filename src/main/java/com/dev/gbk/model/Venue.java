@@ -64,5 +64,5 @@ public class Venue implements Serializable {
     private String evening_weekdays;
 
     @OneToMany
-    private Collection<Schedule> bookings;
+    private Collection<Schedule> schedules;
 }

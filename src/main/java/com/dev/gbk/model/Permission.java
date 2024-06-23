@@ -2,6 +2,11 @@ package com.dev.gbk.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,7 +36,8 @@ public class Permission implements Serializable {
     @Column(length = 60, unique = true)
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "menu_id")
+    @JsonBackReference
     private Menu menu;
 }
