@@ -40,8 +40,7 @@ public class RoleService {
     public Page<Role> findAll(String search, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Optional<Specification<Role>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.isPresent() ? roleRepository.findAll(specification.get(), pageable)
-                : roleRepository.findAll(pageable);
+        return specification.map(roleSpecification -> roleRepository.findAll(roleSpecification, pageable)).orElseGet(() -> roleRepository.findAll(pageable));
     }
 
     public Role findByName(String name) {

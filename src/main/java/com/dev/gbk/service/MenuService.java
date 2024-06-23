@@ -1,5 +1,6 @@
 package com.dev.gbk.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class MenuService {
         return menuRepository.save(menu);
     }
 
-    public Iterable<Menu> findAll() {
+    public List<Menu> findAll() {
         return menuRepository.findAll();
     }
 

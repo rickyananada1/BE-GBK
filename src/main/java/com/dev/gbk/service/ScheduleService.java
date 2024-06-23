@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.dev.gbk.dto.ScheduleRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,8 +29,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class ScheduleService {
 
-    private ScheduleRepository scheduleRepository;
+    private final ScheduleRepository scheduleRepository;
 
+    // logger
+    private final Logger log = LoggerFactory.getLogger(ScheduleService.class);
     private final SpecificationBuilderImpl<Schedule> specificationBuilder = new SpecificationBuilderImpl<>(
             new ObjectMapper(), Schedule.class);
 
@@ -74,7 +79,7 @@ public class ScheduleService {
                     TimeSlot slot = new TimeSlot(slotStartDate, slotEndDate, "Available");
                     timeSlots.add(slot);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage());
                 }
             }
 
@@ -86,9 +91,8 @@ public class ScheduleService {
             return timeSlots;
         }
         // Mendapatkan schedule yang sudah terbooking dalam rentang tanggal tersebut
-        List<Schedule> bookedSchedules = endDate == null ? scheduleRepository.findByScheduleDate(localStartDate)
-                : scheduleRepository.findByScheduleDateBetween(
-                        localStartDate, localEndDate);
+        List<Schedule> bookedSchedules = scheduleRepository.findByScheduleDateBetween(
+                localStartDate, localEndDate);
 
         // Cek ketersediaan untuk setiap slot waktu
         for (Schedule schedule : bookedSchedules) {
@@ -108,8 +112,8 @@ public class ScheduleService {
     public Page<Schedule> findAll(String search, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Optional<Specification<Schedule>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.isPresent() ? scheduleRepository.findAll(specification.get(), pageable)
-                : scheduleRepository.findAll(pageable);
+        return specification.map(scheduleSpecification -> scheduleRepository.findAll(scheduleSpecification, pageable))
+                .orElseGet(() -> scheduleRepository.findAll(pageable));
     }
 
     public Schedule findById(Long id) {

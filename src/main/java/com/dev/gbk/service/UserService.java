@@ -40,8 +40,7 @@ public class UserService {
     public Page<User> findAll(String search, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Optional<Specification<User>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.isPresent() ? userRepository.findAll(specification.get(), pageable)
-                : userRepository.findAll(pageable);
+        return specification.map(userSpecification -> userRepository.findAll(userSpecification, pageable)).orElseGet(() -> userRepository.findAll(pageable));
     }
 
     public void save(UserRequest userRequest) {
@@ -91,10 +90,6 @@ public class UserService {
     public void delete(Long id) {
         userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
         userRepository.deleteById(id);
-    }
-
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
     }
 
     public void updateUserRoles(Long id, Collection<String> roleNames) {

@@ -32,8 +32,7 @@ public class RetailService {
     public Page<Retail> findAll(String search, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Optional<Specification<Retail>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.isPresent() ? retailRepository.findAll(specification.get(), pageable)
-                : retailRepository.findAll(pageable);
+        return specification.map(retailSpecification -> retailRepository.findAll(retailSpecification, pageable)).orElseGet(() -> retailRepository.findAll(pageable));
     }
 
     public List<Retail> findAll() {
