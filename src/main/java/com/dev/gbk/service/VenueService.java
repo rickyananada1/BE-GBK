@@ -1,9 +1,13 @@
 package com.dev.gbk.service;
 
 import com.dev.gbk.model.Venue;
+import com.dev.gbk.payloads.ListDataVenueInfoGbk;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +27,8 @@ public class VenueService {
     private final VenueRepository venueRepository;
     private final SpecificationBuilderImpl<Venue> specificationBuilder = new SpecificationBuilderImpl<>(
             new ObjectMapper(), Venue.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(VenueService.class);
 
     public VenueService(VenueRepository venueRepository) {
         this.venueRepository = venueRepository;
@@ -83,4 +89,27 @@ public class VenueService {
         findById(id);
         venueRepository.deleteById(id);
     }
+
+    public void synchronizeVenues(List<ListDataVenueInfoGbk> venues) {
+        for (ListDataVenueInfoGbk venue : venues) {
+            Optional<Venue> existingVenue = venueRepository.findByVenue(venue.getName());
+            if (existingVenue.isPresent()) {
+                Venue updatedVenue = existingVenue.get();
+                updatedVenue.setUnit(venue.getUnitName());
+                updatedVenue.setCapacity(venue.getCapacityVisitor());
+                updatedVenue.setSize(venue.getLarge());
+                updatedVenue.setContact(venue.getPhoneVenue());
+                venueRepository.save(updatedVenue);
+            } else {
+                Venue v = Venue.builder().unit(venue.getUnitName())
+                        .capacity(Integer.valueOf(venue.getCapacityVisitor()))
+                        .size(venue.getLarge())
+                        .contact(venue.getPhoneVenue())
+                        .venue(venue.getName())
+                        .build();
+                venueRepository.save(v);
+            }
+        }
+    }
+
 }

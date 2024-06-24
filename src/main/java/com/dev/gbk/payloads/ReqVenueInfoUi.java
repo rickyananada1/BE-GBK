@@ -12,5 +12,4 @@ public class ReqVenueInfoUi {
     private int isActive;
     @NotNull
     private int status;
-
 }

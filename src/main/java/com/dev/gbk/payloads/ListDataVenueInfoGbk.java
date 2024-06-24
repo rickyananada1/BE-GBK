@@ -24,7 +24,7 @@ public class ListDataVenueInfoGbk {
     @JsonProperty("Capacity")
     private String capacity;
     @JsonProperty("CapacityVisitor")
-    private String capacityVisitor;
+    private Integer capacityVisitor;
     @JsonProperty("PhoneVenue")
     private String phoneVenue;
     @JsonProperty("Description")
