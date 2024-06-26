@@ -6,8 +6,6 @@ import com.dev.gbk.payloads.ListDataVenueInfoGbk;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,8 +26,6 @@ public class VenueService {
     private final SpecificationBuilderImpl<Venue> specificationBuilder = new SpecificationBuilderImpl<>(
             new ObjectMapper(), Venue.class);
 
-    private static final Logger logger = LoggerFactory.getLogger(VenueService.class);
-
     public VenueService(VenueRepository venueRepository) {
         this.venueRepository = venueRepository;
 
@@ -40,6 +36,10 @@ public class VenueService {
         Optional<Specification<Venue>> specification = specificationBuilder.parseAndBuild(search);
         return specification.map(venueSpecification -> venueRepository.findAll(venueSpecification, pageable))
                 .orElseGet(() -> venueRepository.findAll(pageable));
+    }
+
+    public List<Venue> findAll() {
+        return venueRepository.findAll();
     }
 
     public Venue findById(Long id) {
@@ -102,7 +102,7 @@ public class VenueService {
                 venueRepository.save(updatedVenue);
             } else {
                 Venue v = Venue.builder().unit(venue.getUnitName())
-                        .capacity(Integer.valueOf(venue.getCapacityVisitor()))
+                        .capacity(venue.getCapacityVisitor())
                         .size(venue.getLarge())
                         .contact(venue.getPhoneVenue())
                         .venue(venue.getName())

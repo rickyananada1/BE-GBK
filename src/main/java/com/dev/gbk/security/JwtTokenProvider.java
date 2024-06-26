@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import com.dev.gbk.exception.GBKAPIException;
 
-import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 
@@ -52,7 +51,7 @@ public class JwtTokenProvider {
     public String getUsername(String token) {
 
         return Jwts.parserBuilder()
-                .setSigningKey((SecretKey) key())
+                .setSigningKey(key())
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
@@ -64,7 +63,7 @@ public class JwtTokenProvider {
         try {
             // check if token is valid
             Jwts.parserBuilder()
-                    .setSigningKey((SecretKey) key())
+                    .setSigningKey(key())
                     .build()
                     .parse(token);
             return true;

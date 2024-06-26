@@ -47,15 +47,18 @@ public class MenuSeeder implements ApplicationRunner {
         menus.add("Upload Transaction");
         menus.add("Role");
         menus.add("User");
+        try {
+            for (var menu : menus) {
+                Menu m = Menu.builder()
+                        .name(menu)
+                        .build();
 
-        for (var menu : menus) {
-            Menu m = Menu.builder()
-                    .name(menu)
-                    .build();
+                this.menuService.save(m);
 
-            this.menuService.save(m);
-
-            log.info("Success run MenuSeeder {}", menus.get(menus.indexOf(menu)));
+                log.info("Success run MenuSeeder {}", menus.get(menus.indexOf(menu)));
+            }
+        } catch (Exception e) {
+            log.error("Failed run MenuSeeder {}");
         }
     }
 }

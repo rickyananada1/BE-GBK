@@ -41,21 +41,25 @@ public class RoleSeeder implements ApplicationRunner {
         List<String> permissions = new ArrayList<>();
         permissionService.findAll().forEach(permission -> permissions.add(permission.getName()));
 
-        RoleRequest admin = RoleRequest.builder()
-                .name("ROLE_ADMIN")
-                .build();
+        try {
+            RoleRequest admin = RoleRequest.builder()
+                    .name("ROLE_ADMIN")
+                    .build();
 
-        admin.setPermissions(permissions);
+            admin.setPermissions(permissions);
 
-        roleService.save(admin);
+            roleService.save(admin);
 
-        RoleRequest user = RoleRequest.builder()
-                .name("ROLE_USER")
-                .build();
+            RoleRequest user = RoleRequest.builder()
+                    .name("ROLE_USER")
+                    .build();
 
-        roleService.save(user);
+            roleService.save(user);
 
-        log.info("Success run RoleSeeder");
+            log.info("Success run RoleSeeder");
 
+        } catch (Exception e) {
+            log.error("Failed run RoleSeeder");
+        }
     }
 }

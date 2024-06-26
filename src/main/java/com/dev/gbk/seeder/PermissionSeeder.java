@@ -32,7 +32,7 @@ public class PermissionSeeder implements ApplicationRunner {
             if (seeder.contains("permission")) {
                 seedPermission();
             }
-            log.info("Success run role seeder");
+            log.info("Success run Permission seeder");
         } else {
             log.info("Permission seeder skipped");
         }
@@ -43,37 +43,42 @@ public class PermissionSeeder implements ApplicationRunner {
         List<Menu> menus = new ArrayList<>();
         menuService.findAll().forEach(menus::add);
 
-        for (var menu : menus) {
-            // change menu space to _ and uppercase
-            Permission view = Permission.builder()
-                    .name("VIEW_" + menu.getName().toUpperCase().replace(" ", "_"))
-                    .build();
+        try {
+            for (var menu : menus) {
+                // change menu space to _ and uppercase
+                Permission view = Permission.builder()
+                        .name("VIEW_" + menu.getName().toUpperCase().replace(" ", "_"))
+                        .build();
 
-            // create
-            Permission create = Permission.builder()
-                    .name("CREATE_" + menu.getName().toUpperCase().replace(" ", "_"))
-                    .build();
+                // create
+                Permission create = Permission.builder()
+                        .name("CREATE_" + menu.getName().toUpperCase().replace(" ", "_"))
+                        .build();
 
-            // update
-            Permission update = Permission.builder()
-                    .name("UPDATE_" + menu.getName().toUpperCase().replace(" ", "_"))
-                    .build();
+                // update
+                Permission update = Permission.builder()
+                        .name("UPDATE_" + menu.getName().toUpperCase().replace(" ", "_"))
+                        .build();
 
-            // delete
-            Permission delete = Permission.builder()
-                    .name("DELETE_" + menu.getName().toUpperCase().replace(" ", "_"))
-                    .build();
+                // delete
+                Permission delete = Permission.builder()
+                        .name("DELETE_" + menu.getName().toUpperCase().replace(" ", "_"))
+                        .build();
 
-            // save permission
-            permissionService.save(view);
-            permissionService.save(create);
-            permissionService.save(update);
-            permissionService.save(delete);
+                // save permission
+                permissionService.save(view);
+                permissionService.save(create);
+                permissionService.save(update);
+                permissionService.save(delete);
 
-            // menu.setPermissions(List.of(view, create, update, delete));
-            // menuService.update(menu);
+                // menu.setPermissions(List.of(view, create, update, delete));
+                // menuService.update(menu);
 
-            log.info("Success run PermissionSeeder {}", menu.getName());
+                log.info("Success run PermissionSeeder {}", menu.getName());
+            }
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
     }
 

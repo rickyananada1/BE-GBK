@@ -1,6 +1,6 @@
 package com.dev.gbk.model;
 
-import java.util.Date;
+import java.time.LocalTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TimeSlot {
-    private Date fromTime;
-    private Date toTime;
+    private LocalTime fromTime;
+    private LocalTime toTime;
     private String status;
 }

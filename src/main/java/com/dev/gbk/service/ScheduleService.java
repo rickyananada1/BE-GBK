@@ -1,10 +1,8 @@
 package com.dev.gbk.service;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +20,10 @@ import com.dev.gbk.exception.ResourceNotFoundException;
 import com.dev.gbk.model.Schedule;
 import com.dev.gbk.model.TimeSlot;
 import com.dev.gbk.model.Venue;
+import com.dev.gbk.payloads.ListScheduleGbk;
 import com.dev.gbk.repository.ScheduleRepository;
 import com.dev.gbk.spesification.SpecificationBuilderImpl;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -41,66 +41,112 @@ public class ScheduleService {
         this.scheduleRepository = scheduleRepository;
     }
 
-    public List<TimeSlot> getAvailableTimeSlots(Date startDate, Date endDate) {
-        // Format waktu dan tanggal untuk perbandingan menjadi localDateTime
-        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime localStartDate = LocalDateTime.parse(dateTimeFormat.format(startDate));
-        if (endDate == null) {
-            endDate = new Date();
-        }
-        LocalDateTime localEndDate = LocalDateTime.parse(dateTimeFormat.format(endDate));
-        // List untuk menyimpan slot waktu
+    // public List<TimeSlot> getAvailableTimeSlots(Date startDate, Date endDate) {
+    // // List untuk menyimpan slot waktu
+    // List<TimeSlot> timeSlots = new ArrayList<>();
+
+    // // Mendapatkan slot waktu untuk setiap hari dalam rentang tanggal
+    // Calendar calendar = Calendar.getInstance();
+    // calendar.setTime(startDate);
+
+    // while (!calendar.getTime().after(endDate)) {
+    // Date currentDate = calendar.getTime();
+
+    // // Mendapatkan slot waktu dari jam 6 pagi sampai 10 malam
+    // for (int hour = 6; hour < 22; hour += 2) {
+    // try {
+    // Calendar fromTimeCal = Calendar.getInstance();
+    // fromTimeCal.setTime(currentDate);
+    // fromTimeCal.set(Calendar.HOUR_OF_DAY, hour);
+    // fromTimeCal.set(Calendar.MINUTE, 0);
+
+    // Calendar toTimeCal = Calendar.getInstance();
+    // toTimeCal.setTime(currentDate);
+    // toTimeCal.set(Calendar.HOUR_OF_DAY, hour + 2);
+    // toTimeCal.set(Calendar.MINUTE, 0);
+
+    // LocalTime slotStartDate = LocalTime.of(fromTimeCal.get(Calendar.HOUR_OF_DAY),
+    // fromTimeCal.get(Calendar.MINUTE));
+    // LocalTime slotEndDate = LocalTime.of(toTimeCal.get(Calendar.HOUR_OF_DAY),
+    // toTimeCal.get(Calendar.MINUTE));
+
+    // // Membuat objek TimeSlot
+    // TimeSlot slot = new TimeSlot(slotStartDate, slotEndDate, "Available");
+    // timeSlots.add(slot);
+    // } catch (Exception e) {
+    // log.error(e.getMessage());
+    // }
+    // }
+
+    // // Menambah 1 hari
+    // calendar.add(Calendar.DATE, 1);
+    // }
+
+    // if (timeSlots.isEmpty()) {
+    // return timeSlots;
+    // }
+    // // Mendapatkan schedule yang sudah terbooking dalam rentang tanggal tersebut
+    // List<Schedule> bookedSchedules =
+    // scheduleRepository.findByScheduleDateBetween(
+    // startDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate(),
+    // endDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate());
+
+    // // Cek ketersediaan untuk setiap slot waktu
+    // for (Schedule schedule : bookedSchedules) {
+    // for (TimeSlot slot : timeSlots) {
+
+    // if ((slot.getFromTime().isAfter(schedule.getScheduleTimeFrom())
+    // || slot.getFromTime().equals(schedule.getScheduleTimeFrom())) &&
+    // (slot.getToTime().isBefore(schedule.getScheduleTimeTo())
+    // || slot.getToTime().equals(schedule.getScheduleTimeTo()))) {
+    // slot.setStatus("Booked");
+    // }
+    // }
+    // }
+
+    // return timeSlots;
+    // }
+
+    public List<TimeSlot> getAvailableTimeSlots(LocalDate startDate, LocalDate endDate) {
+        // List to store time slots
         List<TimeSlot> timeSlots = new ArrayList<>();
 
-        // Mendapatkan slot waktu untuk setiap hari dalam rentang tanggal
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(startDate);
+        // Generate time slots for each day within the date range
+        LocalDate currentDate = startDate;
 
-        while (!calendar.getTime().after(endDate)) {
-            Date currentDate = calendar.getTime();
-
-            // Mendapatkan slot waktu dari jam 6 pagi sampai 10 malam
+        while (!currentDate.isAfter(endDate)) {
+            // Generate time slots from 6 AM to 10 PM
             for (int hour = 6; hour < 22; hour += 2) {
                 try {
-                    Calendar fromTimeCal = Calendar.getInstance();
-                    fromTimeCal.setTime(currentDate);
-                    fromTimeCal.set(Calendar.HOUR_OF_DAY, hour);
-                    fromTimeCal.set(Calendar.MINUTE, 0);
+                    LocalTime fromTime = LocalTime.of(hour, 0);
+                    LocalTime toTime = LocalTime.of(hour + 2, 0);
 
-                    Calendar toTimeCal = Calendar.getInstance();
-                    toTimeCal.setTime(currentDate);
-                    toTimeCal.set(Calendar.HOUR_OF_DAY, hour + 2);
-                    toTimeCal.set(Calendar.MINUTE, 0);
-
-                    Date slotStartDate = fromTimeCal.getTime();
-                    Date slotEndDate = toTimeCal.getTime();
-
-                    // Membuat objek TimeSlot
-                    TimeSlot slot = new TimeSlot(slotStartDate, slotEndDate, "Available");
+                    // Create TimeSlot object
+                    TimeSlot slot = new TimeSlot(fromTime, toTime, "Available");
                     timeSlots.add(slot);
                 } catch (Exception e) {
                     log.error(e.getMessage());
                 }
             }
 
-            // Menambah 1 hari
-            calendar.add(Calendar.DATE, 1);
+            // Add one day
+            currentDate = currentDate.plusDays(1);
         }
 
         if (timeSlots.isEmpty()) {
             return timeSlots;
         }
-        // Mendapatkan schedule yang sudah terbooking dalam rentang tanggal tersebut
-        List<Schedule> bookedSchedules = scheduleRepository.findByScheduleDateBetween(
-                localStartDate, localEndDate);
 
-        // Cek ketersediaan untuk setiap slot waktu
+        // Get booked schedules within the date range
+        List<Schedule> bookedSchedules = scheduleRepository.findByScheduleDateBetween(startDate, endDate);
+
+        // Check availability for each time slot
         for (Schedule schedule : bookedSchedules) {
             for (TimeSlot slot : timeSlots) {
-                if ((slot.getFromTime().after(schedule.getScheduleDateFrom())
-                        || slot.getFromTime().equals(schedule.getScheduleDateFrom())) &&
-                        (slot.getToTime().before(schedule.getScheduleDateTo())
-                                || slot.getToTime().equals(schedule.getScheduleDateTo()))) {
+                if ((slot.getFromTime().equals(schedule.getScheduleTimeFrom()) ||
+                        slot.getFromTime().isAfter(schedule.getScheduleTimeFrom())) &&
+                        (slot.getToTime().equals(schedule.getScheduleTimeTo()) ||
+                                slot.getToTime().isBefore(schedule.getScheduleTimeTo()))) {
                     slot.setStatus("Booked");
                 }
             }
@@ -121,15 +167,21 @@ public class ScheduleService {
     }
 
     public Schedule store(ScheduleRequest scheduleRequest, Venue venue) {
+        // if (scheduleRepository.existsByBookingNumber(
+        // scheduleRequest.getBookingNumber())) {
+        // throw new ResourceNotFoundException("Schedule already exists");
+        // }
         Schedule schedule = Schedule
-                .builder().type(scheduleRequest.getType())
+                .builder()
+                .bookingNumber(scheduleRequest.getBookingNumber())
+                .type(scheduleRequest.getType())
                 .profileEvent(scheduleRequest.getProfileEvent())
                 .descriptionEvent(scheduleRequest.getDescriptionEvent())
                 .games(scheduleRequest.getGames())
                 .category(scheduleRequest.getCategory())
                 .scheduleDate(scheduleRequest.getScheduleDate())
-                .scheduleDateFrom(scheduleRequest.getScheduleDateFrom())
-                .scheduleDateTo(scheduleRequest.getScheduleDateTo())
+                .scheduleTimeFrom(scheduleRequest.getScheduleTimeFrom())
+                .scheduleTimeTo(scheduleRequest.getScheduleTimeTo())
                 .session(scheduleRequest.getSession())
                 .status(scheduleRequest.getStatus())
                 .total(scheduleRequest.getTotal())
@@ -150,8 +202,8 @@ public class ScheduleService {
         schedule.setGames(scheduleRequest.getGames());
         schedule.setCategory(scheduleRequest.getCategory());
         schedule.setScheduleDate(scheduleRequest.getScheduleDate());
-        schedule.setScheduleDateFrom(scheduleRequest.getScheduleDateFrom());
-        schedule.setScheduleDateTo(scheduleRequest.getScheduleDateTo());
+        schedule.setScheduleTimeFrom(scheduleRequest.getScheduleTimeFrom());
+        schedule.setScheduleTimeTo(scheduleRequest.getScheduleTimeTo());
         schedule.setSession(scheduleRequest.getSession());
         schedule.setStatus(scheduleRequest.getStatus());
         schedule.setTotal(scheduleRequest.getTotal());
@@ -166,4 +218,20 @@ public class ScheduleService {
         findById(id);
         scheduleRepository.deleteById(id);
     }
+
+    public void synchronizeSchedules(List<ListScheduleGbk> schedules, Venue venue) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        log.info("Synchronizing schedules");
+        for (ListScheduleGbk schedule : schedules) {
+            ScheduleRequest scheduleRequest = objectMapper.convertValue(schedule, ScheduleRequest.class);
+            if (scheduleRepository.existsByScheduleDateAndScheduleTimeFromAndScheduleTimeTo(
+                    scheduleRequest.getScheduleDate(), scheduleRequest.getScheduleTimeFrom(),
+                    scheduleRequest.getScheduleTimeTo())) {
+                continue;
+            }
+            store(scheduleRequest, venue);
+        }
+    }
+
 }

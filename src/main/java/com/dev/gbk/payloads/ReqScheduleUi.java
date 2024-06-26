@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 public class ReqScheduleUi {
     @NotNull
-    private int venueId;
+    private Long venueId;
     @NotNull
     @NotBlank
     private String dateFrom;

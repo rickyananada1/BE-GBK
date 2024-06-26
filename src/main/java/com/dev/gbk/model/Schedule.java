@@ -1,6 +1,8 @@
 package com.dev.gbk.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 import org.springframework.data.annotation.CreatedBy;
@@ -32,6 +34,9 @@ public class Schedule implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "booking_number")
+    private String bookingNumber;
+
     @ManyToOne
     @JoinColumn(name = "venue_id")
     private Venue venue;
@@ -52,13 +57,13 @@ public class Schedule implements Serializable {
     private String category;
 
     @Column(name = "date")
-    private Date scheduleDate;
+    private LocalDate scheduleDate;
 
-    @Column(name = "start_date")
-    private Date scheduleDateFrom;
+    @Column(name = "start_time")
+    private LocalTime scheduleTimeFrom;
 
-    @Column(name = "end_date")
-    private Date scheduleDateTo;
+    @Column(name = "end_time")
+    private LocalTime scheduleTimeTo;
 
     @Column(name = "session")
     private String session;

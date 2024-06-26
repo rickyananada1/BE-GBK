@@ -43,27 +43,30 @@ public class UserSeeder implements ApplicationRunner {
         List<String> roleAdminList = new ArrayList<>();
         roleAdminList.add(roleService.findByName("ROLE_ADMIN").getName());
         // map to string
+        try {
+            UserRequest admin = UserRequest.builder()
+                    .name("Admin")
+                    .username("admin")
+                    .email("admin@gmail")
+                    .password(passwordEncoder.encode("password"))
+                    .roles(roleAdminList)
+                    .build();
+            this.userService.save(admin);
 
-        UserRequest admin = UserRequest.builder()
-                .name("Admin")
-                .username("admin")
-                .email("admin@gmail")
-                .password(passwordEncoder.encode("password"))
-                .roles(roleAdminList)
-                .build();
-        this.userService.save(admin);
+            List<String> roleUserList = new ArrayList<>();
+            roleUserList.add(roleService.findByName("ROLE_USER").getName());
 
-        List<String> roleUserList = new ArrayList<>();
-        roleUserList.add(roleService.findByName("ROLE_USER").getName());
-
-        UserRequest user = UserRequest.builder()
-                .name("User")
-                .username("user")
-                .email("user@gmail")
-                .password(passwordEncoder.encode("password"))
-                .roles(roleUserList)
-                .build();
-        this.userService.save(user);
-        log.info("Success run UserSeeder");
+            UserRequest user = UserRequest.builder()
+                    .name("User")
+                    .username("user")
+                    .email("user@gmail")
+                    .password(passwordEncoder.encode("password"))
+                    .roles(roleUserList)
+                    .build();
+            this.userService.save(user);
+            log.info("Success run UserSeeder");
+        } catch (Exception e) {
+            log.error("Failed run UserSeeder");
+        }
     }
 }
