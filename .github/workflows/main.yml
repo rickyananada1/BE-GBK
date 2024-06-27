@@ -100,5 +100,5 @@ jobs:
               fi
               docker compose -f compose.yaml up -d --build
               docker pull ghcr.io/rickyananada1/be-gbk:dev
-              docker run -d -p 8080:8080 ghcr.io/rickyananada1/be-gbk:dev
+              docker run -d -p 8000:8080 ghcr.io/rickyananada1/be-gbk:dev
               
