@@ -99,5 +99,6 @@ jobs:
                 cd BE-GBK
               fi
               docker compose -f compose.yaml up -d --build
-              mvn clean spring-boot:run
+              docker pull ghcr.io/rickyananada1/be-gbk:dev
+              docker run -d -p 8080:8080 ghcr.io/rickyananada1/be-gbk:dev
               
