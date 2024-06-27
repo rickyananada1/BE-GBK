@@ -99,4 +99,5 @@ jobs:
                 cd BE-GBK
               fi
               docker compose -f compose.yaml up -d --build
+              mvn clean spring-boot:run
               
