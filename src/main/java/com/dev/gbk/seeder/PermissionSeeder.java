@@ -71,8 +71,8 @@ public class PermissionSeeder implements ApplicationRunner {
                 permissionService.save(update);
                 permissionService.save(delete);
 
-                // menu.setPermissions(List.of(view, create, update, delete));
-                // menuService.update(menu);
+                menu.setPermissions(List.of(view, create, update, delete));
+                menuService.update(menu);
 
                 log.info("Success run PermissionSeeder {}", menu.getName());
             }
