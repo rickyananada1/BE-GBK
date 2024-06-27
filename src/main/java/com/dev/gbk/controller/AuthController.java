@@ -1,5 +1,7 @@
 package com.dev.gbk.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +19,7 @@ import com.dev.gbk.utils.ResponseHandler;
 @RequestMapping("/api/auth")
 public class AuthController {
 	private final AuthService authService;
+	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
 	public AuthController(AuthService authService) {
 		this.authService = authService;
@@ -25,6 +28,7 @@ public class AuthController {
 	// Build Login REST API
 	@PostMapping(value = { "/login", "/signin" })
 	public ResponseEntity<JWTAuthResponse> login(@RequestBody LoginRequest loginRequest) {
+		logger.info("username: " + loginRequest.getUsernameOrEmail() + " password: " + loginRequest.getPassword());
 		String token = authService.login(loginRequest);
 
 		JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();

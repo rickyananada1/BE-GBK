@@ -47,7 +47,7 @@ public class UserSeeder implements ApplicationRunner {
             UserRequest admin = UserRequest.builder()
                     .name("Admin")
                     .username("admin")
-                    .email("admin@gmail")
+                    .email("admin@gmail.com")
                     .password(passwordEncoder.encode("password"))
                     .roles(roleAdminList)
                     .build();
@@ -59,7 +59,7 @@ public class UserSeeder implements ApplicationRunner {
             UserRequest user = UserRequest.builder()
                     .name("User")
                     .username("user")
-                    .email("user@gmail")
+                    .email("user@gmail.com")
                     .password(passwordEncoder.encode("password"))
                     .roles(roleUserList)
                     .build();
