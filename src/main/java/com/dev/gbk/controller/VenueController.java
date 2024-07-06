@@ -35,7 +35,8 @@ public class VenueController {
 
     @PreAuthorize("hasAuthority('VIEW_DATA_VENUE')")
     @GetMapping
-    public ResponseEntity<Object> findAll(@RequestParam(value = "search", required = false) String search,
+    public ResponseEntity<Object> findAll(
+            @RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
         return ResponseHandler.generateResponse("Success get all venues", HttpStatus.OK,
