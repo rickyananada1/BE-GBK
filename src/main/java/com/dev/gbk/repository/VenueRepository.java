@@ -18,7 +18,6 @@ public interface VenueRepository extends JpaRepository<Venue, Long>, JpaSpecific
     boolean existsByVenueAndIdNot(String venue, Long id);
 
     @Query("SELECT v FROM Venue v WHERE " +
-            "(LOWER(v.unit) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-            "LOWER(v.venue) LIKE LOWER(CONCAT('%', :search, '%')))")
+            "v.unit LIKE %:search% OR v.venue LIKE %:search%")
     Page<Venue> searchVenues(String search, Pageable pageable);
 }
