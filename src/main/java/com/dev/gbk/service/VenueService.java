@@ -33,9 +33,12 @@ public class VenueService {
 
     public Page<Venue> findAll(String search, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Optional<Specification<Venue>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.map(venueSpecification -> venueRepository.findAll(venueSpecification, pageable))
-                .orElseGet(() -> venueRepository.findAll(pageable));
+
+        if (search != null && !search.trim().isEmpty()) {
+            return venueRepository.searchVenues(search, pageable);
+        } else {
+            return venueRepository.findAll(pageable);
+        }
     }
 
     public List<Venue> findAll() {
