@@ -2,6 +2,7 @@ package com.dev.gbk.repository;
 
 import java.util.Optional;
 
+import feign.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -18,6 +19,7 @@ public interface VenueRepository extends JpaRepository<Venue, Long>, JpaSpecific
     boolean existsByVenueAndIdNot(String venue, Long id);
 
     @Query("SELECT v FROM Venue v WHERE " +
-            "v.unit LIKE %:search% OR v.venue LIKE %:search%")
-    Page<Venue> searchVenues(String search, Pageable pageable);
+            "(LOWER(v.unit) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(v.venue) LIKE LOWER(CONCAT('%', :search, '%')))")
+    Page<Venue> searchVenues(@Param("search") String search, Pageable pageable);
 }
