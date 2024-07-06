@@ -35,6 +35,7 @@ public class VenueService {
         Pageable pageable = PageRequest.of(page, size);
 
         if (search != null && !search.trim().isEmpty()) {
+            System.out.println("search: " + search);
             return venueRepository.searchVenues(search, pageable);
         } else {
             return venueRepository.findAll(pageable);
