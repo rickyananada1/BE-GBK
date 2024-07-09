@@ -49,7 +49,7 @@ public class ScheduleTasks {
 
     // every day at
     @Scheduled(cron = "0 0 0 * * *")
-    // @Scheduled(fixedRate = 300000)
+//     @Scheduled(fixedRate = 300000)
     public void synchronizeVenueData() {
         logger.info("Synchronizing Venue Data :: Execution Time - {}", dateTimeFormatter.format(LocalDateTime.now()));
 

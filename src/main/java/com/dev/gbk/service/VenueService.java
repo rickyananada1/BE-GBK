@@ -6,6 +6,8 @@ import com.dev.gbk.payloads.ListDataVenueInfoGbk;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,7 @@ import com.dev.gbk.dto.VenueRequest;
 import com.dev.gbk.exception.GBKAPIException;
 import com.dev.gbk.exception.ResourceNotFoundException;
 import com.dev.gbk.repository.VenueRepository;
+import com.dev.gbk.spesification.SpecificationBuilder;
 import com.dev.gbk.spesification.SpecificationBuilderImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,8 +26,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class VenueService {
 
     private final VenueRepository venueRepository;
-    private final SpecificationBuilderImpl<Venue> specificationBuilder = new SpecificationBuilderImpl<>(
+    private final SpecificationBuilder<Venue> specificationBuilder = new SpecificationBuilderImpl<>(
             new ObjectMapper(), Venue.class);
+    private static final Logger logger = LoggerFactory.getLogger(VenueService.class);
 
     public VenueService(VenueRepository venueRepository) {
         this.venueRepository = venueRepository;
@@ -33,13 +37,11 @@ public class VenueService {
 
     public Page<Venue> findAll(String search, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-
-        if (search != null && !search.trim().isEmpty()) {
-            Page<Venue> result = venueRepository.searchVenues(search, pageable);
-            return result;
-        } else {
-            return venueRepository.findAll(pageable);
-        }
+        Optional<Specification<Venue>> specification = specificationBuilder.parseAndBuild(search);
+        logger.info(search);
+        logger.info(specification.toString());
+        return specification.map(venueSpecification -> venueRepository.findAll(venueSpecification, pageable))
+                .orElseGet(() -> venueRepository.findAll(pageable));
     }
 
     public List<Venue> findAll() {

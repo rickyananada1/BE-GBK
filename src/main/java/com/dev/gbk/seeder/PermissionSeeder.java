@@ -23,7 +23,7 @@ public class PermissionSeeder implements ApplicationRunner {
     private final MenuService menuService;
     private final PermissionService permissionService;
 
-    private static final Logger log = LoggerFactory.getLogger(RoleSeeder.class);
+    private static final Logger log = LoggerFactory.getLogger(PermissionSeeder.class);
 
     @Override
     public void run(ApplicationArguments args) {
