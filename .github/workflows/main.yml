@@ -98,5 +98,8 @@ jobs:
                 git clone -b dev git@github.com:rickyananada1/BE-GBK.git
                 cd BE-GBK
               fi
+              mvn spring-boot:stop
+              mvn clean install
+              mvn spring-boot:start
               
               

@@ -46,10 +46,6 @@ public class RetailService {
     }
 
     public Retail save(RetailRequest retailRequest) {
-        if (retailRepository.findByTenantName(retailRequest.getTenant_name()).isPresent()) {
-            throw new GBKAPIException("Retail already exists");
-        }
-
         if (retailRepository.findByTenantNumber(retailRequest.getTenant_number()).isPresent()) {
             throw new GBKAPIException("Tenant number already exists");
         }
@@ -61,12 +57,7 @@ public class RetailService {
     }
 
     public Retail update(Long id, RetailRequest retailRequest) {
-        Optional<Retail> existingRetail = retailRepository.findByTenantName(retailRequest.getTenant_name());
-
-        if (existingRetail.isPresent() && !existingRetail.get().getId().equals(id)) {
-            throw new GBKAPIException("Tenant name already exists");
-        }
-        existingRetail = retailRepository.findByTenantNumber(retailRequest.getTenant_number());
+        Optional<Retail> existingRetail = retailRepository.findByTenantNumber(retailRequest.getTenant_number());
 
         if (existingRetail.isPresent() && !existingRetail.get().getId().equals(id)) {
             throw new GBKAPIException("Tenant number already exists");
