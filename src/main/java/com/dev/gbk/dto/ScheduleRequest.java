@@ -3,6 +3,7 @@ package com.dev.gbk.dto;
 import jakarta.annotation.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,10 +34,13 @@ public class ScheduleRequest {
     @JsonProperty("Category")
     private String category;
     @JsonProperty("ScheduleDate")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private String scheduleDate;
     @JsonProperty("ScheduleTimeFrom")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private String scheduleTimeFrom;
     @JsonProperty("ScheduleTimeTo")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private String scheduleTimeTo;
     @JsonProperty("Session")
     private String session;

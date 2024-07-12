@@ -101,5 +101,6 @@ jobs:
               mvn spring-boot:stop
               mvn clean install
               mvn spring-boot:start
+              ctrl + c
               
               

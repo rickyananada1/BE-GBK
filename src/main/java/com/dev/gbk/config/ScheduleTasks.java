@@ -48,32 +48,35 @@ public class ScheduleTasks {
     }
 
     // every day at
-    @Scheduled(cron = "0 0 0 * * *")
-//     @Scheduled(fixedRate = 300000)
-    public void synchronizeVenueData() {
-        logger.info("Synchronizing Venue Data :: Execution Time - {}", dateTimeFormatter.format(LocalDateTime.now()));
-
-        try {
-            ReqGbkToken reqGbkToken = new ReqGbkToken(gbkApiId, gbkApiKey);
-            ResponseEntity<RespGbkToken> respGbkToken = gbkFeignClient.getTokenGbk(reqGbkToken);
-            if (respGbkToken.getStatusCode().is2xxSuccessful()) {
-                String gbkToken = respGbkToken.getBody().getToken();
-                ReqVenueInfoGbk reqVenueInfoGbk = new ReqVenueInfoGbk(gbkApiId, "", 1, 0);
-                ResponseEntity<RespVenueInfoGbk> respVenueInfoGbk = gbkFeignClient.getVenueInfoGbk("Bearer " + gbkToken,
-                        reqVenueInfoGbk);
-                if (respVenueInfoGbk.getStatusCode().is2xxSuccessful()) {
-                    if (!respVenueInfoGbk.getBody().getData().isEmpty()) {
-                        venueService.synchronizeVenues(respVenueInfoGbk.getBody().getData());
-                    }
-                    logger.info("Synchronizing Venue Data :: Success");
-                } else {
-                    logger.error("Synchronizing Venue Data :: Failed");
-                }
-            }
-        } catch (Exception e) {
-            logger.error("Error during venue synchronization: {}", e.getMessage());
-        }
-    }
+    // @Scheduled(cron = "0 0 0 * * *")
+    // @Scheduled(fixedRate = 300000)
+    // public void synchronizeVenueData() {
+    // logger.info("Synchronizing Venue Data :: Execution Time - {}",
+    // dateTimeFormatter.format(LocalDateTime.now()));
+    //
+    // try {
+    // ReqGbkToken reqGbkToken = new ReqGbkToken(gbkApiId, gbkApiKey);
+    // ResponseEntity<RespGbkToken> respGbkToken =
+    // gbkFeignClient.getTokenGbk(reqGbkToken);
+    // if (respGbkToken.getStatusCode().is2xxSuccessful()) {
+    // String gbkToken = respGbkToken.getBody().getToken();
+    // ReqVenueInfoGbk reqVenueInfoGbk = new ReqVenueInfoGbk(gbkApiId, "", 1, 0);
+    // ResponseEntity<RespVenueInfoGbk> respVenueInfoGbk =
+    // gbkFeignClient.getVenueInfoGbk("Bearer " + gbkToken,
+    // reqVenueInfoGbk);
+    // if (respVenueInfoGbk.getStatusCode().is2xxSuccessful()) {
+    // if (!respVenueInfoGbk.getBody().getData().isEmpty()) {
+    // venueService.synchronizeVenues(respVenueInfoGbk.getBody().getData());
+    // }
+    // logger.info("Synchronizing Venue Data :: Success");
+    // } else {
+    // logger.error("Synchronizing Venue Data :: Failed");
+    // }
+    // }
+    // } catch (Exception e) {
+    // logger.error("Error during venue synchronization: {}", e.getMessage());
+    // }
+    // }
 
     // synchronize schedule data every 5 minutes
     @Scheduled(fixedRate = 300000)
