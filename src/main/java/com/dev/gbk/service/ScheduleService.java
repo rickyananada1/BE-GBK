@@ -131,6 +131,7 @@ public class ScheduleService {
 
     public Schedule update(Long id, ScheduleRequest scheduleRequest, Venue venue) {
         Schedule schedule = findById(id);
+        schedule.setBookingNumber(scheduleRequest.getBookingNumber());
         schedule.setType(scheduleRequest.getType());
         schedule.setProfileEvent(scheduleRequest.getProfileEvent());
         schedule.setDescriptionEvent(scheduleRequest.getDescriptionEvent());
