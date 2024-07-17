@@ -36,9 +36,11 @@ public class ScheduleRequest {
     @JsonProperty("ScheduleDate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private String scheduleDate;
+    @Nullable
     @JsonProperty("ScheduleTimeFrom")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private String scheduleTimeFrom;
+    @Nullable
     @JsonProperty("ScheduleTimeTo")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private String scheduleTimeTo;
