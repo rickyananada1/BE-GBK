@@ -17,6 +17,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
 
     List<Schedule> findByScheduleDate(Date dateStart);
 
+    List<Schedule> findByStatusAndCreatedAtBefore(String status, LocalDate date);
+
     boolean existsByScheduleDateAndScheduleTimeFromAndScheduleTimeTo(LocalDate date, LocalTime timeFrom,
             LocalTime timeTo);
 

@@ -1,6 +1,7 @@
 package com.dev.gbk.controller;
 
 import com.dev.gbk.dto.ScheduleRequest;
+import com.dev.gbk.model.Schedule;
 import com.dev.gbk.model.TimeSlot;
 import com.dev.gbk.model.Venue;
 import com.dev.gbk.service.ScheduleService;
@@ -48,6 +49,13 @@ public class ScheduleController {
                 scheduleService.findAll(search, page, size));
     }
 
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DATA_SCHEDULE')")
+    public ResponseEntity<Object> findAll() {
+        return ResponseHandler.generateResponse("Success get all schedules", HttpStatus.OK,
+                scheduleService.findAll());
+    }
+
     @GetMapping("/available")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DATA_SCHEDULE')")
     public ResponseEntity<Object> getAvailableTimeSlots(
@@ -55,6 +63,14 @@ public class ScheduleController {
             @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
         List<TimeSlot> availableTimeSlots = scheduleService.getAvailableTimeSlots(startDate, endDate);
         return ResponseHandler.generateResponse("Success get available time slots", HttpStatus.OK, availableTimeSlots);
+    }
+
+    @GetMapping("/pending")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DATA_SCHEDULE')")
+    public ResponseEntity<Object> findPendingSchedules() {
+        LocalDate currentDate = LocalDate.now();
+        List<Schedule> schedules = scheduleService.findPendingSchedulesCreatedBefore(currentDate);
+        return ResponseHandler.generateResponse("Success get pending schedules", HttpStatus.OK, schedules);
     }
 
     @GetMapping("/{id}")

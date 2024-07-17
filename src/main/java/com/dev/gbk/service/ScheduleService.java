@@ -97,6 +97,20 @@ public class ScheduleService {
                 .orElseGet(() -> scheduleRepository.findAll(pageable));
     }
 
+    public List<Schedule> findAll() {
+        return scheduleRepository.findAll();
+    }
+
+    public List<Schedule> findAll(String search) {
+        Optional<Specification<Schedule>> specification = specificationBuilder.parseAndBuild(search);
+        return specification.map(scheduleSpecification -> scheduleRepository.findAll(scheduleSpecification))
+                .orElseGet(() -> scheduleRepository.findAll());
+    }
+
+    public List<Schedule> findPendingSchedulesCreatedBefore(LocalDate date) {
+        return scheduleRepository.findByStatusAndCreatedAtBefore("pending", date.minusDays(3));
+    }
+
     public Schedule findById(Long id) {
         return scheduleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Schedule not found"));
     }

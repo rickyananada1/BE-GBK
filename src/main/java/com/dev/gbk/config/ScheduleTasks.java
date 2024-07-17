@@ -10,10 +10,8 @@ import org.springframework.stereotype.Component;
 import com.dev.gbk.model.Venue;
 import com.dev.gbk.payloads.ReqGbkToken;
 import com.dev.gbk.payloads.ReqScheduleGbk;
-import com.dev.gbk.payloads.ReqVenueInfoGbk;
 import com.dev.gbk.payloads.RespGbkToken;
 import com.dev.gbk.payloads.RespScheduleGbk;
-import com.dev.gbk.payloads.RespVenueInfoGbk;
 import com.dev.gbk.service.GbkFeignClient;
 import com.dev.gbk.service.ScheduleService;
 import com.dev.gbk.service.VenueService;
@@ -46,37 +44,6 @@ public class ScheduleTasks {
         this.venueService = venueService;
         this.scheduleService = scheduleService;
     }
-
-    // every day at
-    // @Scheduled(cron = "0 0 0 * * *")
-    // @Scheduled(fixedRate = 300000)
-    // public void synchronizeVenueData() {
-    // logger.info("Synchronizing Venue Data :: Execution Time - {}",
-    // dateTimeFormatter.format(LocalDateTime.now()));
-    //
-    // try {
-    // ReqGbkToken reqGbkToken = new ReqGbkToken(gbkApiId, gbkApiKey);
-    // ResponseEntity<RespGbkToken> respGbkToken =
-    // gbkFeignClient.getTokenGbk(reqGbkToken);
-    // if (respGbkToken.getStatusCode().is2xxSuccessful()) {
-    // String gbkToken = respGbkToken.getBody().getToken();
-    // ReqVenueInfoGbk reqVenueInfoGbk = new ReqVenueInfoGbk(gbkApiId, "", 1, 0);
-    // ResponseEntity<RespVenueInfoGbk> respVenueInfoGbk =
-    // gbkFeignClient.getVenueInfoGbk("Bearer " + gbkToken,
-    // reqVenueInfoGbk);
-    // if (respVenueInfoGbk.getStatusCode().is2xxSuccessful()) {
-    // if (!respVenueInfoGbk.getBody().getData().isEmpty()) {
-    // venueService.synchronizeVenues(respVenueInfoGbk.getBody().getData());
-    // }
-    // logger.info("Synchronizing Venue Data :: Success");
-    // } else {
-    // logger.error("Synchronizing Venue Data :: Failed");
-    // }
-    // }
-    // } catch (Exception e) {
-    // logger.error("Error during venue synchronization: {}", e.getMessage());
-    // }
-    // }
 
     // synchronize schedule data every 5 minutes
     @Scheduled(fixedRate = 300000)
