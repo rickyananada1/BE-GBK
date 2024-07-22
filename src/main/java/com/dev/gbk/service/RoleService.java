@@ -1,5 +1,6 @@
 package com.dev.gbk.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -82,5 +83,11 @@ public class RoleService {
                 .collect(Collectors.toList());
         role.setPermissions(permissions);
         return roleRepository.save(role);
+    }
+
+    public Collection<Permission> getPermissionsByRole(String roleName) {
+        Role role = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+        return role.getPermissions();
     }
 }

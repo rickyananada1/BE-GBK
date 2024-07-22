@@ -65,11 +65,12 @@ public class ScheduleController {
         return ResponseHandler.generateResponse("Success get available time slots", HttpStatus.OK, availableTimeSlots);
     }
 
-    @GetMapping("/pending")
+    @GetMapping("/reminder")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DATA_SCHEDULE')")
-    public ResponseEntity<Object> findPendingSchedules() {
-        LocalDate currentDate = LocalDate.now();
-        List<Schedule> schedules = scheduleService.findPendingSchedulesCreatedBefore(currentDate);
+    public ResponseEntity<Object> findPendingSchedules(
+            @RequestParam(value = "venue", required = false) Long venue) {
+
+        List<Schedule> schedules = scheduleService.findPendingSchedulesCreatedBefore(venue);
         return ResponseHandler.generateResponse("Success get pending schedules", HttpStatus.OK, schedules);
     }
 
