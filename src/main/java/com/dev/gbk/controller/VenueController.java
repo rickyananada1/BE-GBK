@@ -43,6 +43,13 @@ public class VenueController {
                 venueService.findAll(search, page, size));
     }
 
+    @PreAuthorize("hasAuthority('VIEW_DATA_VENUE')")
+    @GetMapping("/all")
+    public ResponseEntity<Object> findAll() {
+        return ResponseHandler.generateResponse("Success get all venues", HttpStatus.OK,
+                venueService.findAll());
+    }
+
     @PreAuthorize("hasAuthority('CREATE_DATA_VENUE')")
     @PostMapping
     public ResponseEntity<Object> store(@RequestBody VenueRequest venueRequest) {

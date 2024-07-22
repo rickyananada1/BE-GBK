@@ -116,31 +116,55 @@ public class ScheduleService {
     }
 
     public Schedule store(ScheduleRequest scheduleRequest, Venue venue) {
-        // if (scheduleRepository.existsByBookingNumber(
-        // scheduleRequest.getBookingNumber())) {
-        // throw new ResourceNotFoundException("Schedule already exists");
-        // }
-        Schedule schedule = Schedule
-                .builder()
-                .bookingNumber(scheduleRequest.getBookingNumber())
-                .type(scheduleRequest.getType())
-                .profileEvent(scheduleRequest.getProfileEvent())
-                .descriptionEvent(scheduleRequest.getDescriptionEvent())
-                .games(scheduleRequest.getGames())
-                .category(scheduleRequest.getCategory())
-                .scheduleDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleDate()))
-                .scheduleTimeFrom(Utils.convertStringToLocalTime(scheduleRequest.getScheduleTimeFrom()))
-                .scheduleTimeTo(Utils.convertStringToLocalTime(scheduleRequest.getScheduleTimeTo()))
-                .session(scheduleRequest.getSession())
-                .status(scheduleRequest.getStatus())
-                .total(scheduleRequest.getTotal())
-                .customerName(scheduleRequest.getCustomerName())
-                .customerEmail(scheduleRequest.getCustomerEmail())
-                .customerPhone(scheduleRequest.getCustomerPhone())
-                .venue(venue)
-                .build();
+        if (scheduleRequest.getScheduleTimeFrom() != null && scheduleRequest.getScheduleTimeTo() != null) {
+            LocalDate startDate = Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate());
+            LocalDate endDate = Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndDate());
 
-        return scheduleRepository.save(schedule);
+            List<Schedule> schedules = new ArrayList<>();
+            for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+                Schedule schedule = Schedule.builder()
+                        .bookingNumber(scheduleRequest.getBookingNumber())
+                        .type(scheduleRequest.getType())
+                        .profileEvent(scheduleRequest.getProfileEvent())
+                        .descriptionEvent(scheduleRequest.getDescriptionEvent())
+                        .games(scheduleRequest.getGames())
+                        .category(scheduleRequest.getCategory())
+                        .scheduleDate(date)
+                        .session(scheduleRequest.getSession())
+                        .status(scheduleRequest.getStatus())
+                        .total(scheduleRequest.getTotal())
+                        .customerName(scheduleRequest.getCustomerName())
+                        .customerEmail(scheduleRequest.getCustomerEmail())
+                        .customerPhone(scheduleRequest.getCustomerPhone())
+                        .venue(venue)
+                        .build();
+                if (scheduleRequest.getScheduleTimeFrom() != null && scheduleRequest.getScheduleTimeTo() != null) {
+                    schedule.setScheduleTimeFrom(Utils.convertStringToLocalTime(scheduleRequest.getScheduleTimeFrom()));
+                    schedule.setScheduleTimeTo(Utils.convertStringToLocalTime(scheduleRequest.getScheduleTimeTo()));
+                }
+                schedules.add(schedule);
+            }
+
+            return scheduleRepository.saveAll(schedules).get(0);
+        } else {
+            Schedule schedule = Schedule.builder()
+                    .bookingNumber(scheduleRequest.getBookingNumber())
+                    .type(scheduleRequest.getType())
+                    .profileEvent(scheduleRequest.getProfileEvent())
+                    .descriptionEvent(scheduleRequest.getDescriptionEvent())
+                    .games(scheduleRequest.getGames())
+                    .category(scheduleRequest.getCategory())
+                    .scheduleDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate()))
+                    .session(scheduleRequest.getSession())
+                    .status(scheduleRequest.getStatus())
+                    .total(scheduleRequest.getTotal())
+                    .customerName(scheduleRequest.getCustomerName())
+                    .customerEmail(scheduleRequest.getCustomerEmail())
+                    .customerPhone(scheduleRequest.getCustomerPhone())
+                    .venue(venue)
+                    .build();
+            return scheduleRepository.save(schedule);
+        }
     }
 
     public Schedule update(Long id, ScheduleRequest scheduleRequest, Venue venue) {
@@ -152,8 +176,10 @@ public class ScheduleService {
         schedule.setGames(scheduleRequest.getGames());
         schedule.setCategory(scheduleRequest.getCategory());
         schedule.setScheduleDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleDate()));
-        schedule.setScheduleTimeFrom(Utils.convertStringToLocalTime(scheduleRequest.getScheduleTimeFrom()));
-        schedule.setScheduleTimeTo(Utils.convertStringToLocalTime(scheduleRequest.getScheduleTimeTo()));
+        if (scheduleRequest.getScheduleTimeFrom() != null && scheduleRequest.getScheduleTimeTo() != null) {
+            schedule.setScheduleTimeFrom(Utils.convertStringToLocalTime(scheduleRequest.getScheduleTimeFrom()));
+            schedule.setScheduleTimeTo(Utils.convertStringToLocalTime(scheduleRequest.getScheduleTimeTo()));
+        }
         schedule.setSession(scheduleRequest.getSession());
         schedule.setStatus(scheduleRequest.getStatus());
         schedule.setTotal(scheduleRequest.getTotal());

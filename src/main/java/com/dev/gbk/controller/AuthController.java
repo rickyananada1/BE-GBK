@@ -1,5 +1,7 @@
 package com.dev.gbk.controller;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -27,14 +29,15 @@ public class AuthController {
 
 	// Build Login REST API
 	@PostMapping(value = { "/login", "/signin" })
-	public ResponseEntity<JWTAuthResponse> login(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
 		logger.info("username: " + loginRequest.getUsernameOrEmail() + " password: " + loginRequest.getPassword());
-		String token = authService.login(loginRequest);
+		Map<String, Object> authResponse = authService.login(loginRequest);
 
 		JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
-		jwtAuthResponse.setAccessToken(token);
+		jwtAuthResponse.setAccessToken((String) authResponse.get("token"));
+		jwtAuthResponse.setUser(authResponse.get("user"));
 
-		return ResponseEntity.ok(jwtAuthResponse);
+		return ResponseHandler.generateResponse("Login successfully", HttpStatus.OK, jwtAuthResponse);
 	}
 
 	// Build Register REST API

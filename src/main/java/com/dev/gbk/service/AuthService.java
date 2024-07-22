@@ -17,7 +17,9 @@ import com.dev.gbk.repository.RoleRepository;
 import com.dev.gbk.repository.UserRepository;
 import com.dev.gbk.security.JwtTokenProvider;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -41,14 +43,24 @@ public class AuthService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public String login(LoginRequest loginRequest) {
+    public Map<String, Object> login(LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginRequest.getUsernameOrEmail(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return jwtTokenProvider.generateToken(authentication);
+        String token = jwtTokenProvider.generateToken(authentication);
+
+        User user = userRepository
+                .findByUsernameOrEmail(loginRequest.getUsernameOrEmail(), loginRequest.getUsernameOrEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", token);
+        response.put("user", user);
+
+        return response;
     }
 
     public void register(UserRequest userRequest) {
