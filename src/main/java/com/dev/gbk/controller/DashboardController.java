@@ -31,12 +31,12 @@ public class DashboardController {
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
     public ResponseEntity<Object> occupancies() {
         List<OccupancyDTO> occupancyList = Arrays.asList(
-                new OccupancyDTO("Occ Fisik", "60.4"),
-                new OccupancyDTO("Occ PKBLU", "40.2"),
-                new OccupancyDTO("Occ Retail", "80.4"),
-                new OccupancyDTO("Occ Maintenance", "55.2"),
-                new OccupancyDTO("Occ Fisik vs Pendapatan", "80.4"),
-                new OccupancyDTO("Occ Timnas", "40.4"));
+                new OccupancyDTO("Occ Fisik", 60.4),
+                new OccupancyDTO("Occ PKBLU", 40.2),
+                new OccupancyDTO("Occ Retail", 80.4),
+                new OccupancyDTO("Occ Maintenance", 55.2),
+                new OccupancyDTO("Occ Fisik vs Pendapatan", 80.4),
+                new OccupancyDTO("Occ Timnas", 40.4));
 
         return ResponseHandler.generateResponse("Success get dashboard", HttpStatus.OK, occupancyList);
     }
@@ -45,45 +45,43 @@ public class DashboardController {
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
     public ResponseEntity<Object> events() {
         List<OccupancyDTO> events = Arrays.asList(
-                new OccupancyDTO("Keagamaan", "10.0"),
-                new OccupancyDTO("Pendidikan", "10.0"),
-                new OccupancyDTO("Sewa Lahan", "10.0"),
-                new OccupancyDTO("Kenegaraan", "10.0"),
-                new OccupancyDTO("Expo", "10.0"),
-                new OccupancyDTO("Exhibition", "10.0"),
-                new OccupancyDTO("Internal Company", "10.0"),
-                new OccupancyDTO("Lain-Lain", "10.0"),
-                new OccupancyDTO("Olahraga", "10.0"),
-                new OccupancyDTO("Konser", "10.0"));
+                new OccupancyDTO("Keagamaan", 10.0),
+                new OccupancyDTO("Pendidikan", 10.0),
+                new OccupancyDTO("Sewa Lahan", 10.0),
+                new OccupancyDTO("Kenegaraan", 10.0),
+                new OccupancyDTO("Expo", 10.0),
+                new OccupancyDTO("Exhibition", 10.0),
+                new OccupancyDTO("Internal Company", 10.0),
+                new OccupancyDTO("Lain-Lain", 10.0),
+                new OccupancyDTO("Olahraga", 10.0),
+                new OccupancyDTO("Konser", 10.0));
 
         return ResponseHandler.generateResponse("Success get dashboard", HttpStatus.OK, events);
     }
 
-    // @GetMapping("/usage-by-category")
-    // @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    // public ResponseEntity<Object> getUsageByCategory(
-    // @RequestParam String startDate,
-    // @RequestParam String endDate,
-    // @RequestParam String unit) {
+    @GetMapping("/usage-by-category")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
+    public ResponseEntity<Object> getUsageByCategory(
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            @RequestParam String unit) {
 
-    // List<OccupancyDTO> usageByCategory =
-    // dashboardService.getUsageByCategory(startDate, endDate, unit);
-    // return ResponseHandler.generateResponse("Success get usage by category",
-    // HttpStatus.OK, usageByCategory);
-    // }
+        List<OccupancyDTO> usageByCategory = dashboardService.getUsageByCategory(startDate, endDate, unit);
+        return ResponseHandler.generateResponse("Success get usage by category",
+                HttpStatus.OK, usageByCategory);
+    }
 
-    // @GetMapping("/usage-by-profile-event")
-    // @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    // public ResponseEntity<Object> getUsageByProfileEvent(
-    // @RequestParam String startDate,
-    // @RequestParam String endDate,
-    // @RequestParam String unit) {
+    @GetMapping("/usage-by-profile-event")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
+    public ResponseEntity<Object> getUsageByProfileEvent(
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            @RequestParam String unit) {
 
-    // List<OccupancyDTO> usageByProfileEvent =
-    // dashboardService.getUsageByProfileEvent(startDate, endDate, unit);
-    // return ResponseHandler.generateResponse("Success get usage by profile event",
-    // HttpStatus.OK,
-    // usageByProfileEvent);
-    // }
+        List<OccupancyDTO> usageByProfileEvent = dashboardService.getUsageByProfileEvent(startDate, endDate, unit);
+        return ResponseHandler.generateResponse("Success get usage by profile event",
+                HttpStatus.OK,
+                usageByProfileEvent);
+    }
 
 }

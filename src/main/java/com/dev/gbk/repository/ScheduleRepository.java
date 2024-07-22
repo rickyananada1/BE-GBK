@@ -29,24 +29,16 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
 
         boolean existsByBookingNumber(String bookingNumber);
 
-        // @Query("SELECT new com.dev.gbk.dto.OccupancyDTO(s.category as judul,(
-        // COUNT(s) * 100.0 / (SELECT COUNT(s2) FROM Schedule s2 WHERE s2.venue.unit =
-        // :unit AND s2.scheduleDate BETWEEN :startDate AND :endDate)) as occPercent) "
-        // +
-        // "FROM Schedule s WHERE s.venue.unit = :unit AND s.scheduleDate BETWEEN
-        // :startDate AND :endDate GROUP BY s.category")
-        // List<OccupancyDTO> findCategoryUsage(@Param("unit") String unit,
-        // @Param("startDate") LocalDate startDate,
-        // @Param("endDate") LocalDate endDate);
+        @Query("SELECT new com.dev.gbk.dto.OccupancyDTO(s.category, COUNT(s) * 100.0 / (SELECT COUNT(s2) FROM Schedule s2 WHERE s2.venue.unit = :unit AND s2.scheduleDate BETWEEN :startDate AND :endDate)) "
+                        +
+                        "FROM Schedule s WHERE s.venue.unit = :unit AND s.scheduleDate BETWEEN :startDate AND :endDate GROUP BY s.category")
+        List<OccupancyDTO> findCategoryUsage(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
 
-        // @Query("SELECT new com.dev.gbk.dto.OccupancyDTO(s.profileEvent as judul,
-        // (COUNT(s) * 100.0 / (SELECT COUNT(s2) FROM Schedule s2 WHERE s2.venue.unit =
-        // :unit AND s2.scheduleDate BETWEEN :startDate AND :endDate)) as occPercent) "
-        // +
-        // "FROM Schedule s WHERE s.venue.unit = :unit AND s.scheduleDate BETWEEN
-        // :startDate AND :endDate GROUP BY s.profileEvent")
-        // List<OccupancyDTO> findProfileEventUsage(@Param("unit") String unit,
-        // @Param("startDate") LocalDate startDate,
-        // @Param("endDate") LocalDate endDate);
+        @Query("SELECT new com.dev.gbk.dto.OccupancyDTO(s.profileEvent, COUNT(s) * 100.0 / (SELECT COUNT(s2) FROM Schedule s2 WHERE s2.venue.unit = :unit AND s2.scheduleDate BETWEEN :startDate AND :endDate)) "
+                        +
+                        "FROM Schedule s WHERE s.venue.unit = :unit AND s.scheduleDate BETWEEN :startDate AND :endDate GROUP BY s.profileEvent")
+        List<OccupancyDTO> findProfileEventUsage(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
 
 }

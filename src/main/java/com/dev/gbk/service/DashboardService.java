@@ -16,27 +16,25 @@ public class DashboardService {
         this.scheduleRepository = scheduleRepository;
     }
 
-    // public List<OccupancyDTO> getUsageByCategory(String startDate, String
-    // endDate, String unit) {
-    // LocalDate start = LocalDate.parse(startDate);
-    // LocalDate end = LocalDate.parse(endDate);
-    // if (end.isBefore(start)) {
-    // LocalDate temp = start;
-    // start = end;
-    // end = temp;
-    // }
-    // return scheduleRepository.findCategoryUsage(unit, start, end);
-    // }
+    public List<OccupancyDTO> getUsageByCategory(String startDate, String endDate, String unit) {
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        if (end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
+        return scheduleRepository.findCategoryUsage(unit, start, end);
+    }
 
-    // public List<OccupancyDTO> getUsageByProfileEvent(String startDate, String
-    // endDate, String unit) {
-    // LocalDate start = LocalDate.parse(startDate);
-    // LocalDate end = LocalDate.parse(endDate);
-    // if (end.isBefore(start)) {
-    // LocalDate temp = start;
-    // start = end;
-    // end = temp;
-    // }
-    // return scheduleRepository.findProfileEventUsage(unit, start, end);
-    // }
+    public List<OccupancyDTO> getUsageByProfileEvent(String startDate, String endDate, String unit) {
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        if (end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
+        return scheduleRepository.findProfileEventUsage(unit, start, end);
+    }
 }

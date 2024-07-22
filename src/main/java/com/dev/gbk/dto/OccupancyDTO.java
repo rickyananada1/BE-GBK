@@ -19,5 +19,5 @@ public class OccupancyDTO {
     private String judul;
 
     @JsonProperty("percent")
-    private String occPercent;
+    private Double occPercent;
 }
