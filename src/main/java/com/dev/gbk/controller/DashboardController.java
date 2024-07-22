@@ -59,27 +59,31 @@ public class DashboardController {
         return ResponseHandler.generateResponse("Success get dashboard", HttpStatus.OK, events);
     }
 
-    @GetMapping("/usage-by-category")
-    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    public ResponseEntity<Object> getUsageByCategory(
-            @RequestParam String startDate,
-            @RequestParam String endDate,
-            @RequestParam String unit) {
+    // @GetMapping("/usage-by-category")
+    // @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
+    // public ResponseEntity<Object> getUsageByCategory(
+    // @RequestParam String startDate,
+    // @RequestParam String endDate,
+    // @RequestParam String unit) {
 
-        List<OccupancyDTO> usageByCategory = dashboardService.getUsageByCategory(startDate, endDate, unit);
-        return ResponseHandler.generateResponse("Success get usage by category", HttpStatus.OK, usageByCategory);
-    }
+    // List<OccupancyDTO> usageByCategory =
+    // dashboardService.getUsageByCategory(startDate, endDate, unit);
+    // return ResponseHandler.generateResponse("Success get usage by category",
+    // HttpStatus.OK, usageByCategory);
+    // }
 
-    @GetMapping("/usage-by-profile-event")
-    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    public ResponseEntity<Object> getUsageByProfileEvent(
-            @RequestParam String startDate,
-            @RequestParam String endDate,
-            @RequestParam String unit) {
+    // @GetMapping("/usage-by-profile-event")
+    // @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
+    // public ResponseEntity<Object> getUsageByProfileEvent(
+    // @RequestParam String startDate,
+    // @RequestParam String endDate,
+    // @RequestParam String unit) {
 
-        List<OccupancyDTO> usageByProfileEvent = dashboardService.getUsageByProfileEvent(startDate, endDate, unit);
-        return ResponseHandler.generateResponse("Success get usage by profile event", HttpStatus.OK,
-                usageByProfileEvent);
-    }
+    // List<OccupancyDTO> usageByProfileEvent =
+    // dashboardService.getUsageByProfileEvent(startDate, endDate, unit);
+    // return ResponseHandler.generateResponse("Success get usage by profile event",
+    // HttpStatus.OK,
+    // usageByProfileEvent);
+    // }
 
 }
