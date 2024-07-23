@@ -1,6 +1,7 @@
 package com.dev.gbk.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,12 +109,12 @@ public class ScheduleService {
     }
 
     public List<Schedule> findPendingSchedulesCreatedBefore(Long venue) {
-        LocalDate currentDate = LocalDate.now();
+        LocalDateTime currentDateTime = LocalDateTime.now();
         if (venue == null) {
             return scheduleRepository.findByStatusAndVenueIdAndCreatedAtBefore("Soft Booking", venue,
-                    LocalDate.now().minusDays(3));
+                    currentDateTime.minusDays(3));
         } else {
-            return scheduleRepository.findByStatusAndCreatedAtBefore("Soft Booking", currentDate.minusDays(3));
+            return scheduleRepository.findByStatusAndCreatedAtBefore("Soft Booking", currentDateTime.minusDays(3));
         }
     }
 

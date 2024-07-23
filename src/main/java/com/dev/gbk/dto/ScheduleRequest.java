@@ -21,10 +21,13 @@ public class ScheduleRequest {
     @Nullable
     @JsonProperty("BookingNumber")
     private String bookingNumber;
+    @Nullable
     @JsonProperty("Type")
     private String type;
+    @Nullable
     @JsonProperty("ProfileEvent")
     private String profileEvent;
+    @Nullable
     @JsonProperty("DescriptionEvent")
     private String descriptionEvent;
     @Nullable
@@ -33,7 +36,7 @@ public class ScheduleRequest {
     @Nullable
     @JsonProperty("Category")
     private String category;
-@Nullable
+    @Nullable
     @JsonProperty("ScheduleDate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private String scheduleDate;
@@ -53,6 +56,7 @@ public class ScheduleRequest {
     @JsonProperty("ScheduleTimeTo")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private String scheduleTimeTo;
+    @Nullable
     @JsonProperty("Session")
     private String session;
     @JsonProperty("Status")

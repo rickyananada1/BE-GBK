@@ -1,5 +1,6 @@
 package com.dev.gbk.controller;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dev.gbk.dto.IncomeDTO;
 import com.dev.gbk.dto.OccupancyDTO;
 import com.dev.gbk.service.DashboardService;
 import com.dev.gbk.utils.ResponseHandler;
@@ -62,9 +64,9 @@ public class DashboardController {
     @GetMapping("/usage-by-category")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
     public ResponseEntity<Object> getUsageByCategory(
-            @RequestParam String startDate,
-            @RequestParam String endDate,
-            @RequestParam String unit) {
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "unit", required = false) String unit) {
 
         List<OccupancyDTO> usageByCategory = dashboardService.getUsageByCategory(startDate, endDate, unit);
         return ResponseHandler.generateResponse("Success get usage by category",
@@ -74,9 +76,9 @@ public class DashboardController {
     @GetMapping("/usage-by-profile-event")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
     public ResponseEntity<Object> getUsageByProfileEvent(
-            @RequestParam String startDate,
-            @RequestParam String endDate,
-            @RequestParam String unit) {
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "unit", required = false) String unit) {
 
         List<OccupancyDTO> usageByProfileEvent = dashboardService.getUsageByProfileEvent(startDate, endDate, unit);
         return ResponseHandler.generateResponse("Success get usage by profile event",
@@ -84,4 +86,22 @@ public class DashboardController {
                 usageByProfileEvent);
     }
 
+    @GetMapping("/income")
+    public IncomeDTO getIncome(@RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate) {
+        // get current year
+        LocalDate now = LocalDate.now();
+        if (startDate == null) {
+            startDate = now.getYear() + "-01-01";
+        }
+        if (endDate == null) {
+            // if month is < 10, add 0 to the beginning
+            if (now.getMonthValue() < 10) {
+                endDate = now.getYear() + "-0" + now.getMonthValue() + "-01";
+            } else {
+                endDate = now.getYear() + "-" + now.getMonthValue() + "-01";
+            }
+        }
+        return dashboardService.getTotalIncome(startDate, endDate);
+    }
 }

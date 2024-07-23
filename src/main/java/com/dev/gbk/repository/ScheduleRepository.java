@@ -4,6 +4,7 @@ import com.dev.gbk.dto.OccupancyDTO;
 import com.dev.gbk.model.Schedule;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
@@ -20,25 +21,35 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
 
         List<Schedule> findByScheduleDate(Date dateStart);
 
-        List<Schedule> findByStatusAndCreatedAtBefore(String status, LocalDate date);
+        List<Schedule> findByStatusAndCreatedAtBefore(String status, LocalDateTime dateTime);
 
-        List<Schedule> findByStatusAndVenueIdAndCreatedAtBefore(String status, Long venueId, LocalDate date);
+        List<Schedule> findByStatusAndVenueIdAndCreatedAtBefore(String status, Long venueId, LocalDateTime dateTime);
 
         boolean existsByScheduleDateAndScheduleTimeFromAndScheduleTimeTo(LocalDate date, LocalTime timeFrom,
                         LocalTime timeTo);
 
         boolean existsByBookingNumber(String bookingNumber);
 
-        @Query("SELECT new com.dev.gbk.dto.OccupancyDTO(s.category, COUNT(s) * 100.0 / (SELECT COUNT(s2) FROM Schedule s2 WHERE s2.venue.unit = :unit AND s2.scheduleDate BETWEEN :startDate AND :endDate)) "
-                        +
-                        "FROM Schedule s WHERE s.venue.unit = :unit AND s.scheduleDate BETWEEN :startDate AND :endDate GROUP BY s.category")
+        @Query("SELECT new com.dev.gbk.dto.OccupancyDTO(s.category, COUNT(s) * 100.0 / (SELECT COUNT(s2) FROM Schedule s2 WHERE (:unit IS NULL OR s2.venue.unit = :unit) AND (:startDate IS NULL OR s2.scheduleDate >= :startDate) AND (:endDate IS NULL OR s2.scheduleDate <= :endDate))) "
+                        + "FROM Schedule s WHERE (:unit IS NULL OR s.venue.unit = :unit) AND (:startDate IS NULL OR s.scheduleDate >= :startDate) AND (:endDate IS NULL OR s.scheduleDate <= :endDate) GROUP BY s.category")
         List<OccupancyDTO> findCategoryUsage(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
-        @Query("SELECT new com.dev.gbk.dto.OccupancyDTO(s.profileEvent, COUNT(s) * 100.0 / (SELECT COUNT(s2) FROM Schedule s2 WHERE s2.venue.unit = :unit AND s2.scheduleDate BETWEEN :startDate AND :endDate)) "
-                        +
-                        "FROM Schedule s WHERE s.venue.unit = :unit AND s.scheduleDate BETWEEN :startDate AND :endDate GROUP BY s.profileEvent")
+        @Query("SELECT new com.dev.gbk.dto.OccupancyDTO(s.profileEvent, COUNT(s) * 100.0 / (SELECT COUNT(s2) FROM Schedule s2 WHERE (:unit IS NULL OR s2.venue.unit = :unit) AND (:startDate IS NULL OR s2.scheduleDate >= :startDate) AND (:endDate IS NULL OR s2.scheduleDate <= :endDate))) "
+                        + "FROM Schedule s WHERE (:unit IS NULL OR s.venue.unit = :unit) AND (:startDate IS NULL OR s.scheduleDate >= :startDate) AND (:endDate IS NULL OR s.scheduleDate <= :endDate) GROUP BY s.profileEvent")
         List<OccupancyDTO> findProfileEventUsage(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
+
+        @Query("SELECT SUM(s.total) FROM Schedule s WHERE s.category IN (:category1, :category2) AND s.scheduleDate BETWEEN :startDate AND :endDate")
+        double sumTotalByCategory(@Param("category1") String category1, @Param("category2") String category2,
+                        @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+        @Query("SELECT SUM(s.total) FROM Schedule s WHERE s.category = :category AND s.scheduleDate BETWEEN :startDate AND :endDate")
+        double sumTotalByCategory(@Param("category") String category, @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
+
+        @Query("SELECT SUM(s.total) FROM Schedule s WHERE s.type = :type AND s.scheduleDate BETWEEN :startDate AND :endDate")
+        double sumMaintenanceByType(@Param("type") String type, @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
 }
