@@ -132,11 +132,7 @@ public class DashboardController {
 
     @GetMapping("/retail-card")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    public ResponseEntity<Object> getRetailCardData(
-            @RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "unit", required = false) String unit) {
-
+    public ResponseEntity<Object> getRetailCardData() {
         List<CardRetailDTO> retailCardData = dashboardService.getRetailCardData();
         return ResponseHandler.generateResponse("Success get retail card data", HttpStatus.OK, retailCardData);
     }
