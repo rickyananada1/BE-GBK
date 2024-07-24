@@ -1,5 +1,7 @@
 package com.dev.gbk.repository;
 
+import com.dev.gbk.dto.CardEventDTO;
+import com.dev.gbk.dto.CardGamesDTO;
 import com.dev.gbk.dto.OccupancyDTO;
 import com.dev.gbk.model.Schedule;
 
@@ -52,4 +54,15 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
         double sumMaintenanceByType(@Param("type") String type, @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
+        @Query("SELECT new com.dev.gbk.dto.CardGamesDTO(s.venue.venue, s.scheduleDate, SUM(CASE WHEN s.status = 'TERPAKAI' THEN 1 ELSE 0 END), SUM(CASE WHEN s.status = 'MAINTENANCE' THEN 1 ELSE 0 END)) "
+                        + "FROM Schedule s WHERE s.scheduleDate BETWEEN :startDate AND :endDate AND s.venue.unit = :unit AND s.category IN ('Timnas', 'Umum') "
+                        + "GROUP BY s.venue.venue, s.scheduleDate")
+        List<CardGamesDTO> findGamesCardData(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
+
+        @Query("SELECT new com.dev.gbk.dto.CardEventDTO(s.venue.venue, s.scheduleDate, SUM(CASE WHEN s.status = 'TERPAKAI' THEN 1 ELSE 0 END), SUM(CASE WHEN s.status = 'MAINTENANCE' THEN 1 ELSE 0 END)) "
+                        + "FROM Schedule s WHERE s.scheduleDate BETWEEN :startDate AND :endDate AND s.venue.unit = :unit "
+                        + "GROUP BY s.venue.venue, s.scheduleDate, s.category")
+        List<CardEventDTO> findEventCardData(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
 }

@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.dev.gbk.dto.CardEventDTO;
+import com.dev.gbk.dto.CardGamesDTO;
+import com.dev.gbk.dto.CardRetailDTO;
 import com.dev.gbk.dto.IncomeDTO;
 import com.dev.gbk.dto.OccupancyDTO;
 import com.dev.gbk.repository.RetailRepository;
@@ -71,5 +74,23 @@ public class DashboardService {
 
         return new IncomeDTO(eventIncome, gamesIncome, retailIncome, retailOccupied, retailNonOccupied,
                 maintenanceLapangan, totalMaintenanceParkir);
+    }
+
+    public List<CardGamesDTO> getGamesCardData(String startDate, String endDate, String unit) {
+        LocalDate start = LocalDate.of(LocalDate.now().getYear(), 1, 1);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
+
+        return scheduleRepository.findGamesCardData(unit, start, end);
+    }
+
+    public List<CardEventDTO> getEventCardData(String startDate, String endDate, String unit) {
+        LocalDate start = LocalDate.of(LocalDate.now().getYear(), 1, 1);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
+
+        return scheduleRepository.findEventCardData(unit, start, end);
+    }
+
+    public List<CardRetailDTO> getRetailCardData() {
+        return retailRepository.findRetailCardData();
     }
 }

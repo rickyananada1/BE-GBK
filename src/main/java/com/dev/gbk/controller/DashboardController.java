@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dev.gbk.dto.CardEventDTO;
+import com.dev.gbk.dto.CardGamesDTO;
+import com.dev.gbk.dto.CardRetailDTO;
 import com.dev.gbk.dto.IncomeDTO;
 import com.dev.gbk.dto.OccupancyDTO;
 import com.dev.gbk.service.DashboardService;
@@ -103,5 +106,38 @@ public class DashboardController {
             }
         }
         return dashboardService.getTotalIncome(startDate, endDate);
+    }
+
+    @GetMapping("/games-card")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
+    public ResponseEntity<Object> getGamesCardData(
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "unit", required = false) String unit) {
+
+        List<CardGamesDTO> gamesCardData = dashboardService.getGamesCardData(startDate, endDate, unit);
+        return ResponseHandler.generateResponse("Success get games card data", HttpStatus.OK, gamesCardData);
+    }
+
+    @GetMapping("/event-card")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
+    public ResponseEntity<Object> getEventCardData(
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "unit", required = false) String unit) {
+
+        List<CardEventDTO> eventCardData = dashboardService.getEventCardData(startDate, endDate, unit);
+        return ResponseHandler.generateResponse("Success get event card data", HttpStatus.OK, eventCardData);
+    }
+
+    @GetMapping("/retail-card")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
+    public ResponseEntity<Object> getRetailCardData(
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "unit", required = false) String unit) {
+
+        List<CardRetailDTO> retailCardData = dashboardService.getRetailCardData();
+        return ResponseHandler.generateResponse("Success get retail card data", HttpStatus.OK, retailCardData);
     }
 }
