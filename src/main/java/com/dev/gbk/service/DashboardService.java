@@ -59,12 +59,19 @@ public class DashboardService {
             end = temp;
         }
 
-        double eventIncome = scheduleRepository.sumTotalByCategory("Olahraga", "Non Olahraga", start, end);
-        double gamesIncome = scheduleRepository.sumTotalByCategory("Games", "Umum", start, end);
-        double retailIncome = retailRepository.sumPriceByStatus("Sewa");
-        double retailOccupied = retailRepository.sumSizeByStatus("Sewa");
-        double retailNonOccupied = retailRepository.sumSizeByStatus("Belum Sewa");
-        double maintenanceLapangan = scheduleRepository.sumMaintenanceByType("venue", start, end);
+        Double eventIncomeResult = scheduleRepository.sumTotalByCategory("Olahraga", "Non Olahraga", start, end);
+        Double gamesIncomeResult = scheduleRepository.sumTotalByCategory("Games", "Umum", start, end);
+        Double retailIncomeResult = retailRepository.sumPriceByStatus("Sewa");
+        Double retailOccupiedResult = retailRepository.sumSizeByStatus("Sewa");
+        Double retailNonOccupiedResult = retailRepository.sumSizeByStatus("Belum Sewa");
+        Double maintenanceLapanganResult = scheduleRepository.sumMaintenanceByType("venue", start, end);
+
+        double eventIncome = (eventIncomeResult != null) ? eventIncomeResult : 0.0;
+        double gamesIncome = (gamesIncomeResult != null) ? gamesIncomeResult : 0.0;
+        double retailIncome = (retailIncomeResult != null) ? retailIncomeResult : 0.0;
+        double retailOccupied = (retailOccupiedResult != null) ? retailOccupiedResult : 0.0;
+        double retailNonOccupied = (retailNonOccupiedResult != null) ? retailNonOccupiedResult : 0.0;
+        double maintenanceLapangan = (maintenanceLapanganResult != null) ? maintenanceLapanganResult : 0.0;
         double maintenanceParkir = 1500000; // 1,5jt per bulan
 
         YearMonth startYM = YearMonth.from(start);

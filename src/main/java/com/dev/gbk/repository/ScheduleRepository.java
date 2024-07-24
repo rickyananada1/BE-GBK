@@ -43,15 +43,15 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
                         @Param("endDate") LocalDate endDate);
 
         @Query("SELECT SUM(s.total) FROM Schedule s WHERE s.category IN (:category1, :category2) AND s.scheduleDate BETWEEN :startDate AND :endDate")
-        double sumTotalByCategory(@Param("category1") String category1, @Param("category2") String category2,
+        Double sumTotalByCategory(@Param("category1") String category1, @Param("category2") String category2,
                         @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
         @Query("SELECT SUM(s.total) FROM Schedule s WHERE s.category = :category AND s.scheduleDate BETWEEN :startDate AND :endDate")
-        double sumTotalByCategory(@Param("category") String category, @Param("startDate") LocalDate startDate,
+        Double sumTotalByCategory(@Param("category") String category, @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
         @Query("SELECT SUM(s.total) FROM Schedule s WHERE s.type = :type AND s.scheduleDate BETWEEN :startDate AND :endDate")
-        double sumMaintenanceByType(@Param("type") String type, @Param("startDate") LocalDate startDate,
+        Double sumMaintenanceByType(@Param("type") String type, @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
         @Query("SELECT new com.dev.gbk.dto.CardGamesDTO(s.venue.venue, s.scheduleDate, SUM(CASE WHEN s.status = 'TERPAKAI' THEN 1 ELSE 0 END), SUM(CASE WHEN s.status = 'MAINTENANCE' THEN 1 ELSE 0 END)) "
