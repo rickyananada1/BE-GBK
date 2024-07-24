@@ -139,8 +139,8 @@ public class ScheduleService {
                 .venue(venue)
                 .build();
         if (scheduleRequest.getScheduleStartDate() != null && scheduleRequest.getScheduleEndDate() != null) {
-            schedule.setScheduleDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate()));
-            schedule.setScheduleDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndDate()));
+            schedule.setStartDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate()));
+            schedule.setEndDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndDate()));
         }
         if (scheduleRequest.getScheduleDate() != null) {
             schedule.setScheduleDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate()));
@@ -160,7 +160,13 @@ public class ScheduleService {
         schedule.setDescriptionEvent(scheduleRequest.getDescriptionEvent());
         schedule.setGames(scheduleRequest.getGames());
         schedule.setCategory(scheduleRequest.getCategory());
-        schedule.setScheduleDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleDate()));
+        if (scheduleRequest.getScheduleStartDate() != null && scheduleRequest.getScheduleEndDate() != null) {
+            schedule.setScheduleDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate()));
+            schedule.setScheduleDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndDate()));
+        }
+        if (scheduleRequest.getScheduleDate() != null) {
+            schedule.setScheduleDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleDate()));
+        }
         if (scheduleRequest.getScheduleTimeFrom() != null && scheduleRequest.getScheduleTimeTo() != null) {
             schedule.setScheduleTimeFrom(Utils.convertStringToLocalTime(scheduleRequest.getScheduleTimeFrom()));
             schedule.setScheduleTimeTo(Utils.convertStringToLocalTime(scheduleRequest.getScheduleTimeTo()));
