@@ -90,7 +90,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
                         + "OR (:startDate IS NOT NULL AND :endDate IS NOT NULL AND "
                         + "((s.scheduleStartDate IS NOT NULL AND s.scheduleEndDate IS NOT NULL AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate) "
                         + "OR (s.scheduleDate IS NOT NULL AND s.scheduleDate BETWEEN :startDate AND :endDate))))")
-        Double sumMaintenanceByType(@Param("type") String type, @Param("startDate") LocalDate startDate,
+        Double sumMaintenanceByType(String type, @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
         @Query("SELECT SUM(CASE WHEN s.status = 'Paid' THEN 1 ELSE 0 END) as totalPaid, "

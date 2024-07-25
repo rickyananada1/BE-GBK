@@ -116,6 +116,10 @@ public class DashboardController {
         Double total = dashboardService.getTotalByType(type, startDate, endDate);
 
         Map<String, Double> response = new HashMap<>();
+        // if type contain -, replace it with _ or remove and change to camel case
+        if (type.contains("-")) {
+            type = type.replace("-", "_");
+        }
         response.put(type, total);
 
         return ResponseEntity.ok(response);

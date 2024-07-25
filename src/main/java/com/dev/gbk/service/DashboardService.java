@@ -90,7 +90,7 @@ public class DashboardService {
         Double retailIncomeResult = retailRepository.sumPriceByStatus("Sewa");
         Double retailOccupiedResult = retailRepository.sumSizeByStatus("Sewa");
         Double retailNonOccupiedResult = retailRepository.sumSizeByStatus("Belum Sewa");
-        Double maintenanceLapanganResult = scheduleRepository.sumMaintenanceByType("venue", start, end);
+        Double maintenanceLapanganResult = scheduleRepository.sumMaintenanceByType(start, end);
 
         BigDecimal retailIncome = (retailIncomeResult != null) ? BigDecimal.valueOf(retailIncomeResult)
                 : BigDecimal.ZERO;
