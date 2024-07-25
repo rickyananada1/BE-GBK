@@ -1,6 +1,6 @@
 package com.dev.gbk.dto;
 
-import java.time.LocalDate;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
@@ -15,8 +15,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class CardGamesDTO {
-    private String venueName;
-    private LocalDate scheduleDate;
-    private long usedCount;
-    private long maintenanceCount;
+    private int totalPaid;
+    private int totalMaintenance;
+    private List<ScheduleDTO> paidSchedules;
+    private List<ScheduleDTO> maintenanceSchedules;
+
 }

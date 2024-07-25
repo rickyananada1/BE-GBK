@@ -139,7 +139,7 @@ public class DashboardController {
             @RequestParam(value = "endDate", required = false) String endDate,
             @RequestParam(value = "unit", required = false) String unit) {
 
-        List<CardGamesDTO> gamesCardData = dashboardService.getGamesCardData(startDate, endDate, unit);
+        CardGamesDTO gamesCardData = dashboardService.getGamesCardData(startDate, endDate, unit);
         return ResponseHandler.generateResponse("Success get games card data", HttpStatus.OK, gamesCardData);
     }
 
