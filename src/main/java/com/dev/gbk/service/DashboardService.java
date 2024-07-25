@@ -1,5 +1,6 @@
 package com.dev.gbk.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
@@ -66,18 +67,23 @@ public class DashboardService {
         Double retailNonOccupiedResult = retailRepository.sumSizeByStatus("Belum Sewa");
         Double maintenanceLapanganResult = scheduleRepository.sumMaintenanceByType("venue", start, end);
 
-        double eventIncome = (eventIncomeResult != null) ? eventIncomeResult : 0.0;
-        double gamesIncome = (gamesIncomeResult != null) ? gamesIncomeResult : 0.0;
-        double retailIncome = (retailIncomeResult != null) ? retailIncomeResult : 0.0;
-        double retailOccupied = (retailOccupiedResult != null) ? retailOccupiedResult : 0.0;
-        double retailNonOccupied = (retailNonOccupiedResult != null) ? retailNonOccupiedResult : 0.0;
-        double maintenanceLapangan = (maintenanceLapanganResult != null) ? maintenanceLapanganResult : 0.0;
-        double maintenanceParkir = 1500000; // 1,5jt per bulan
+        BigDecimal eventIncome = (eventIncomeResult != null) ? BigDecimal.valueOf(eventIncomeResult) : BigDecimal.ZERO;
+        BigDecimal gamesIncome = (gamesIncomeResult != null) ? BigDecimal.valueOf(gamesIncomeResult) : BigDecimal.ZERO;
+        BigDecimal retailIncome = (retailIncomeResult != null) ? BigDecimal.valueOf(retailIncomeResult)
+                : BigDecimal.ZERO;
+        BigDecimal retailOccupied = (retailOccupiedResult != null) ? BigDecimal.valueOf(retailOccupiedResult)
+                : BigDecimal.ZERO;
+        BigDecimal retailNonOccupied = (retailNonOccupiedResult != null) ? BigDecimal.valueOf(retailNonOccupiedResult)
+                : BigDecimal.ZERO;
+        BigDecimal maintenanceLapangan = (maintenanceLapanganResult != null)
+                ? BigDecimal.valueOf(maintenanceLapanganResult)
+                : BigDecimal.ZERO;
+        BigDecimal maintenanceParkir = BigDecimal.valueOf(1500000); // 1,5jt per bulan
 
         YearMonth startYM = YearMonth.from(start);
         YearMonth endYM = YearMonth.from(end);
         long monthsBetween = startYM.until(endYM, java.time.temporal.ChronoUnit.MONTHS) + 1;
-        double totalMaintenanceParkir = maintenanceParkir * monthsBetween;
+        BigDecimal totalMaintenanceParkir = maintenanceParkir.multiply(BigDecimal.valueOf(monthsBetween));
 
         return new IncomeDTO(eventIncome, gamesIncome, retailIncome, retailOccupied, retailNonOccupied,
                 maintenanceLapangan, totalMaintenanceParkir);

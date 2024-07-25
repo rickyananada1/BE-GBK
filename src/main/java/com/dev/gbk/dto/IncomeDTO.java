@@ -1,5 +1,7 @@
 package com.dev.gbk.dto;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,25 +16,24 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class IncomeDTO {
-
     @JsonProperty("eventIncome")
-    private double eventIncome;
+    private BigDecimal eventIncome;
 
     @JsonProperty("gamesIncome")
-    private double gamesIncome;
+    private BigDecimal gamesIncome;
 
     @JsonProperty("retailIncome")
-    private double retailIncome;
+    private BigDecimal retailIncome;
 
     @JsonProperty("retailOccupied")
-    private double retailOccupied;
+    private BigDecimal retailOccupied;
 
     @JsonProperty("retailNonOccupied")
-    private double retailNonOccupied;
+    private BigDecimal retailNonOccupied;
 
     @JsonProperty("maintenanceLapangan")
-    private double maintenanceLapangan;
+    private BigDecimal maintenanceLapangan;
 
     @JsonProperty("maintenanceParkir")
-    private double maintenanceParkir;
+    private BigDecimal totalMaintenanceParkir;
 }
