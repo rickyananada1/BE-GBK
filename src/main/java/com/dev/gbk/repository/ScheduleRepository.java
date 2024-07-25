@@ -1,8 +1,6 @@
 package com.dev.gbk.repository;
 
-import com.dev.gbk.dto.CardEventDTO;
-import com.dev.gbk.dto.CardGamesDTO;
-import com.dev.gbk.dto.OccupancyDTO;
+import com.dev.gbk.dto.*;
 import com.dev.gbk.model.Schedule;
 
 import java.time.LocalDate;
@@ -32,25 +30,65 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
 
         boolean existsByBookingNumber(String bookingNumber);
 
-        @Query("SELECT new com.dev.gbk.dto.OccupancyDTO(s.category, COUNT(s) * 100.0 / (SELECT COUNT(s2) FROM Schedule s2 WHERE (:unit IS NULL OR s2.venue.unit = :unit) AND (:startDate IS NULL OR s2.scheduleDate >= :startDate) AND (:endDate IS NULL OR s2.scheduleDate <= :endDate))) "
-                        + "FROM Schedule s WHERE (:unit IS NULL OR s.venue.unit = :unit) AND (:startDate IS NULL OR s.scheduleDate >= :startDate) AND (:endDate IS NULL OR s.scheduleDate <= :endDate) GROUP BY s.category")
+        @Query("SELECT new com.dev.gbk.dto.OccupancyDTO(s.category, COUNT(s) * 100.0 / "
+                        + "(SELECT COUNT(s2) FROM Schedule s2 WHERE "
+                        + "(:unit IS NULL OR s2.venue.unit = :unit) "
+                        + "AND ("
+                        + "(:startDate IS NOT NULL AND :endDate IS NOT NULL AND (s2.scheduleStartDate IS NOT NULL AND s2.scheduleEndDate IS NOT NULL AND s2.scheduleStartDate >= :startDate AND s2.scheduleEndDate <= :endDate)) "
+                        + "OR (:startDate IS NULL AND :endDate IS NULL AND s2.scheduleDate IS NOT NULL) "
+                        + "))) "
+                        + "FROM Schedule s WHERE "
+                        + "(:unit IS NULL OR s.venue.unit = :unit) "
+                        + "AND ("
+                        + "(:startDate IS NOT NULL AND :endDate IS NOT NULL AND (s.scheduleStartDate IS NOT NULL AND s.scheduleEndDate IS NOT NULL AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate)) "
+                        + "OR (:startDate IS NULL AND :endDate IS NULL AND s.scheduleDate IS NOT NULL)"
+                        + ") GROUP BY s.category")
         List<OccupancyDTO> findCategoryUsage(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
-        @Query("SELECT new com.dev.gbk.dto.OccupancyDTO(s.profileEvent, COUNT(s) * 100.0 / (SELECT COUNT(s2) FROM Schedule s2 WHERE (:unit IS NULL OR s2.venue.unit = :unit) AND (:startDate IS NULL OR s2.scheduleDate >= :startDate) AND (:endDate IS NULL OR s2.scheduleDate <= :endDate))) "
-                        + "FROM Schedule s WHERE (:unit IS NULL OR s.venue.unit = :unit) AND (:startDate IS NULL OR s.scheduleDate >= :startDate) AND (:endDate IS NULL OR s.scheduleDate <= :endDate) GROUP BY s.profileEvent")
+        @Query("SELECT new com.dev.gbk.dto.OccupancyDTO(s.profileEvent, COUNT(s) * 100.0 / "
+                        + "(SELECT COUNT(s2) FROM Schedule s2 WHERE "
+                        + "(:unit IS NULL OR s2.venue.unit = :unit) "
+                        + "AND ("
+                        + "(:startDate IS NOT NULL AND :endDate IS NOT NULL AND (s2.scheduleStartDate IS NOT NULL AND s2.scheduleEndDate IS NOT NULL AND s2.scheduleStartDate >= :startDate AND s2.scheduleEndDate <= :endDate)) "
+                        + "OR (:startDate IS NULL AND :endDate IS NULL AND s2.scheduleDate IS NOT NULL) "
+                        + "))) "
+                        + "FROM Schedule s WHERE "
+                        + "(:unit IS NULL OR s.venue.unit = :unit) "
+                        + "AND ("
+                        + "(:startDate IS NOT NULL AND :endDate IS NOT NULL AND (s.scheduleStartDate IS NOT NULL AND s.scheduleEndDate IS NOT NULL AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate)) "
+                        + "OR (:startDate IS NULL AND :endDate IS NULL AND s.scheduleDate IS NOT NULL)"
+                        + ") GROUP BY s.profileEvent")
         List<OccupancyDTO> findProfileEventUsage(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
-        @Query("SELECT SUM(s.total) FROM Schedule s WHERE s.category IN (:category1, :category2) AND s.scheduleDate BETWEEN :startDate AND :endDate")
-        Double sumTotalByCategory(@Param("category1") String category1, @Param("category2") String category2,
-                        @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
-
-        @Query("SELECT SUM(s.total) FROM Schedule s WHERE s.category = :category AND s.scheduleDate BETWEEN :startDate AND :endDate")
-        Double sumTotalByCategory(@Param("category") String category, @Param("startDate") LocalDate startDate,
+        @Query("SELECT SUM(s.total) "
+                        + "FROM Schedule s "
+                        + "WHERE s.type = :type "
+                        + "AND ((:startDate IS NULL AND :endDate IS NULL AND s.scheduleDate IS NOT NULL) "
+                        + "OR (:startDate IS NOT NULL AND :endDate IS NOT NULL AND "
+                        + "((s.scheduleStartDate IS NOT NULL AND s.scheduleEndDate IS NOT NULL AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate) "
+                        + "OR (s.scheduleDate IS NOT NULL AND s.scheduleDate BETWEEN :startDate AND :endDate))))")
+        Double sumTotalByType(@Param("type") String type, @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
-        @Query("SELECT SUM(s.total) FROM Schedule s WHERE s.type = :type AND s.scheduleDate BETWEEN :startDate AND :endDate")
+        @Query("SELECT SUM(s.total) "
+                        + "FROM Schedule s "
+                        + "WHERE s.games = :game "
+                        + "AND ((:startDate IS NULL AND :endDate IS NULL AND s.scheduleDate IS NOT NULL) "
+                        + "OR (:startDate IS NOT NULL AND :endDate IS NOT NULL AND "
+                        + "((s.scheduleStartDate IS NOT NULL AND s.scheduleEndDate IS NOT NULL AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate) "
+                        + "OR (s.scheduleDate IS NOT NULL AND s.scheduleDate BETWEEN :startDate AND :endDate))))")
+        Double sumTotalByGame(@Param("game") String game, @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
+
+        @Query("SELECT SUM(s.total) FROM Schedule s WHERE s.type = :type "
+                        + "AND ((:startDate IS NULL AND :endDate IS NULL AND s.scheduleDate IS NOT NULL) "
+                        + "OR (:startDate IS NOT NULL AND :endDate IS NOT NULL AND "
+                        + "((s.scheduleStartDate IS NOT NULL AND s.scheduleEndDate IS NOT NULL AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate) "
+                        + "OR (s.scheduleDate IS NOT NULL AND s.scheduleDate BETWEEN :startDate AND :endDate))))") // Removed
+                                                                                                                   // extra
+                                                                                                                   // parenthesis
         Double sumMaintenanceByType(@Param("type") String type, @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
@@ -65,4 +103,5 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
                         + "GROUP BY s.venue.venue, s.scheduleDate, s.category")
         List<CardEventDTO> findEventCardData(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
+
 }

@@ -63,11 +63,11 @@ public class Schedule implements Serializable {
 
     @Column(name = "start_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate startDate;
+    private LocalDate scheduleStartDate;
 
     @Column(name = "end_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate endDate;
+    private LocalDate scheduleEndDate;
 
     @Column(name = "date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

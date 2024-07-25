@@ -2,7 +2,9 @@ package com.dev.gbk.controller;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -106,6 +108,28 @@ public class DashboardController {
             }
         }
         return dashboardService.getTotalIncome(startDate, endDate);
+    }
+
+    @GetMapping("/type-total")
+    public ResponseEntity<Map<String, Double>> getTotalByType(@RequestParam String type, @RequestParam String startDate,
+            @RequestParam String endDate) {
+        Double total = dashboardService.getTotalByType(type, startDate, endDate);
+
+        Map<String, Double> response = new HashMap<>();
+        response.put(type, total);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/game-total")
+    public ResponseEntity<Map<String, Double>> getTotalByGame(@RequestParam String game, @RequestParam String startDate,
+            @RequestParam String endDate) {
+        Double total = dashboardService.getTotalByGame(game, startDate, endDate);
+
+        Map<String, Double> response = new HashMap<>();
+        response.put(game, total);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/games-card")

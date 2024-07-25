@@ -104,13 +104,13 @@ public class ScheduleService {
 
     public List<Schedule> findAll(String search) {
         Optional<Specification<Schedule>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.map(scheduleSpecification -> scheduleRepository.findAll(scheduleSpecification))
-                .orElseGet(() -> scheduleRepository.findAll());
+        return specification.map(scheduleRepository::findAll)
+                .orElseGet(scheduleRepository::findAll);
     }
 
     public List<Schedule> findPendingSchedulesCreatedBefore(Long venue) {
         LocalDateTime currentDateTime = LocalDateTime.now();
-        if (venue == null) {
+        if (venue != null) {
             return scheduleRepository.findByStatusAndVenueIdAndCreatedAtBefore("Soft Booking", venue,
                     currentDateTime.minusDays(3));
         } else {
@@ -139,8 +139,8 @@ public class ScheduleService {
                 .venue(venue)
                 .build();
         if (scheduleRequest.getScheduleStartDate() != null && scheduleRequest.getScheduleEndDate() != null) {
-            schedule.setStartDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate()));
-            schedule.setEndDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndDate()));
+            schedule.setScheduleStartDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate()));
+            schedule.setScheduleEndDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndDate()));
         }
         if (scheduleRequest.getScheduleDate() != null) {
             schedule.setScheduleDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate()));
@@ -161,8 +161,8 @@ public class ScheduleService {
         schedule.setGames(scheduleRequest.getGames());
         schedule.setCategory(scheduleRequest.getCategory());
         if (scheduleRequest.getScheduleStartDate() != null && scheduleRequest.getScheduleEndDate() != null) {
-            schedule.setScheduleDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate()));
-            schedule.setScheduleDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndDate()));
+            schedule.setScheduleStartDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate()));
+            schedule.setScheduleEndDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndDate()));
         }
         if (scheduleRequest.getScheduleDate() != null) {
             schedule.setScheduleDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleDate()));

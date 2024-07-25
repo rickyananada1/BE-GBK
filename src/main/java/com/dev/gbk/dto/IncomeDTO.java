@@ -16,12 +16,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class IncomeDTO {
-    @JsonProperty("eventIncome")
-    private BigDecimal eventIncome;
-
-    @JsonProperty("gamesIncome")
-    private BigDecimal gamesIncome;
-
     @JsonProperty("retailIncome")
     private BigDecimal retailIncome;
 

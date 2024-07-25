@@ -5,13 +5,9 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
+import com.dev.gbk.dto.*;
 import org.springframework.stereotype.Service;
 
-import com.dev.gbk.dto.CardEventDTO;
-import com.dev.gbk.dto.CardGamesDTO;
-import com.dev.gbk.dto.CardRetailDTO;
-import com.dev.gbk.dto.IncomeDTO;
-import com.dev.gbk.dto.OccupancyDTO;
 import com.dev.gbk.repository.RetailRepository;
 import com.dev.gbk.repository.ScheduleRepository;
 
@@ -51,6 +47,31 @@ public class DashboardService {
         return scheduleRepository.findProfileEventUsage(unit, start, end);
     }
 
+    public Double getTotalByGame(String game, String startDate, String endDate) {
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        if (end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
+
+        // Mengambil total berdasarkan game ("Timnas" atau "Umum")
+        return scheduleRepository.sumTotalByGame(game, start, end);
+    }
+
+    public Double getTotalByType(String type, String startDate, String endDate) {
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        if (end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
+
+        return scheduleRepository.sumTotalByType(type, start, end);
+    }
+
     public IncomeDTO getTotalIncome(String startDate, String endDate) {
         LocalDate start = LocalDate.parse(startDate);
         LocalDate end = LocalDate.parse(endDate);
@@ -60,15 +81,11 @@ public class DashboardService {
             end = temp;
         }
 
-        Double eventIncomeResult = scheduleRepository.sumTotalByCategory("Olahraga", "Non Olahraga", start, end);
-        Double gamesIncomeResult = scheduleRepository.sumTotalByCategory("Games", "Umum", start, end);
         Double retailIncomeResult = retailRepository.sumPriceByStatus("Sewa");
         Double retailOccupiedResult = retailRepository.sumSizeByStatus("Sewa");
         Double retailNonOccupiedResult = retailRepository.sumSizeByStatus("Belum Sewa");
         Double maintenanceLapanganResult = scheduleRepository.sumMaintenanceByType("venue", start, end);
 
-        BigDecimal eventIncome = (eventIncomeResult != null) ? BigDecimal.valueOf(eventIncomeResult) : BigDecimal.ZERO;
-        BigDecimal gamesIncome = (gamesIncomeResult != null) ? BigDecimal.valueOf(gamesIncomeResult) : BigDecimal.ZERO;
         BigDecimal retailIncome = (retailIncomeResult != null) ? BigDecimal.valueOf(retailIncomeResult)
                 : BigDecimal.ZERO;
         BigDecimal retailOccupied = (retailOccupiedResult != null) ? BigDecimal.valueOf(retailOccupiedResult)
@@ -85,21 +102,33 @@ public class DashboardService {
         long monthsBetween = startYM.until(endYM, java.time.temporal.ChronoUnit.MONTHS) + 1;
         BigDecimal totalMaintenanceParkir = maintenanceParkir.multiply(BigDecimal.valueOf(monthsBetween));
 
-        return new IncomeDTO(eventIncome, gamesIncome, retailIncome, retailOccupied, retailNonOccupied,
+        return new IncomeDTO(retailIncome, retailOccupied,
+                retailNonOccupied,
                 maintenanceLapangan, totalMaintenanceParkir);
     }
 
     public List<CardGamesDTO> getGamesCardData(String startDate, String endDate, String unit) {
-        LocalDate start = LocalDate.of(LocalDate.now().getYear(), 1, 1);
+        LocalDate start = startDate != null ? LocalDate.parse(startDate)
+                : LocalDate.of(LocalDate.now().getYear(), 1, 1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
+        if (end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
 
         return scheduleRepository.findGamesCardData(unit, start, end);
     }
 
     public List<CardEventDTO> getEventCardData(String startDate, String endDate, String unit) {
-        LocalDate start = LocalDate.of(LocalDate.now().getYear(), 1, 1);
+        LocalDate start = startDate != null ? LocalDate.parse(startDate)
+                : LocalDate.of(LocalDate.now().getYear(), 1, 1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
-
+        if (end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
         return scheduleRepository.findEventCardData(unit, start, end);
     }
 
