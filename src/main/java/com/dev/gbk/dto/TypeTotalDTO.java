@@ -13,5 +13,5 @@ import lombok.Setter;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class TypeTotalDTO {
     private String type;
-    private Double total;
+    private BigDecimal total;
 }
