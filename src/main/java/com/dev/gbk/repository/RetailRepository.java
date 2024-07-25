@@ -27,8 +27,8 @@ public interface RetailRepository extends JpaRepository<Retail, Long>, JpaSpecif
     @Query("SELECT SUM(r.size) FROM Retail r WHERE r.status = :status")
     Double sumSizeByStatus(@Param("status") String status);
 
-    @Query("SELECT new com.dev.gbk.dto.CardRetailDTO(r.tenant_name, (SUM(CASE WHEN r.status = 'SEWA' THEN r.price ELSE 0 END) / SUM(r.price)) * 100) "
-            + "FROM Retail r WHERE r.status = 'SEWA'"
+    @Query("SELECT new com.dev.gbk.dto.CardRetailDTO(r.tenant_name, (SUM(CASE WHEN r.status = 'Sewa' THEN r.price ELSE 0 END) / SUM(r.price)) * 100) "
+            + "FROM Retail r WHERE r.status = 'Sewa' "
             + "GROUP BY r.tenant_name")
     List<CardRetailDTO> findRetailCardData();
 }
