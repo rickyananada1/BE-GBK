@@ -84,7 +84,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
         Double sumTotalByGame(@Param("game") String game, @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
-        @Query("SELECT SUM(s.total) FROM Schedule s WHERE s.status = 'Paid' "
+        @Query("SELECT SUM(s.total) FROM Schedule s WHERE s.status = 'Maintenance' "
                         + "AND ((:startDate IS NULL AND :endDate IS NULL AND s.scheduleDate IS NOT NULL) "
                         + "OR (:startDate IS NOT NULL AND :endDate IS NOT NULL AND "
                         + "((s.scheduleStartDate IS NOT NULL AND s.scheduleEndDate IS NOT NULL AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate) "

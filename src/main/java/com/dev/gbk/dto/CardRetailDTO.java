@@ -14,5 +14,6 @@ import lombok.Setter;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class CardRetailDTO {
     private String tenant_name;
+    private String area;
     private double usagePercentage;
 }
