@@ -16,24 +16,17 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public class RetailRequest {
-    @NotEmpty
-    @JsonProperty("size")
-    private String size;
+public class MasterRetailRequest {
 
     @NotEmpty
-    @JsonProperty("price")
-    private Double price;
+    @JsonProperty("tenant_number")
+    private String tenant_number;
 
     @NotEmpty
-    @JsonProperty("month")
-    private String month;
+    @JsonProperty("tenant_name")
+    private String tenant_name;
 
     @NotEmpty
-    @JsonProperty("status")
-    private String status;
-
-    @NotEmpty
-    @JsonProperty("master_retail_id")
-    private Long master_retail_id;
+    @JsonProperty("area")
+    private String area;
 }

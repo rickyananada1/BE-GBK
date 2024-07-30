@@ -3,34 +3,39 @@ package com.dev.gbk.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.dev.gbk.exception.GBKAPIException;
 import com.dev.gbk.exception.ResourceNotFoundException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.dev.gbk.dto.RetailRequest;
+import com.dev.gbk.model.MasterRetail;
 import com.dev.gbk.model.Retail;
+import com.dev.gbk.repository.MasterRetailRepository;
 import com.dev.gbk.repository.RetailRepository;
 import com.dev.gbk.spesification.SpecificationBuilderImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class RetailService {
+    private final MasterRetailRepository masterRetailRepository;
     private final RetailRepository retailRepository;
 
     private final SpecificationBuilderImpl<Retail> specificationBuilder = new SpecificationBuilderImpl<>(
             new ObjectMapper(), Retail.class);
 
-    public RetailService(RetailRepository retailRepository) {
+    public RetailService(MasterRetailRepository masterRetailRepository, RetailRepository retailRepository) {
+        this.masterRetailRepository = masterRetailRepository;
         this.retailRepository = retailRepository;
     }
 
     public Page<Retail> findAll(String search, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, size, sort);
         Optional<Specification<Retail>> specification = specificationBuilder.parseAndBuild(search);
         return specification.map(retailSpecification -> retailRepository.findAll(retailSpecification, pageable))
                 .orElseGet(() -> retailRepository.findAll(pageable));
@@ -46,30 +51,31 @@ public class RetailService {
     }
 
     public Retail save(RetailRequest retailRequest) {
-        if (retailRepository.findByTenantNumber(retailRequest.getTenant_number()).isPresent()) {
-            throw new GBKAPIException("Tenant number already exists");
+        MasterRetail masterRetail = masterRetailRepository.findById(retailRequest.getMaster_retail_id()).get();
+
+        if (masterRetail == null) {
+            throw new ResourceNotFoundException("Master Retail not found");
         }
-        Retail retail = Retail.builder().tenant_name(retailRequest.getTenant_name())
-                .tenant_number(retailRequest.getTenant_number()).area(retailRequest.getArea())
-                .size(retailRequest.getSize()).price(retailRequest.getPrice()).year(retailRequest.getYear())
+
+        Retail retail = Retail.builder().masterRetail(masterRetail)
+                .size(retailRequest.getSize()).price(retailRequest.getPrice()).month(retailRequest.getMonth())
                 .status(retailRequest.getStatus()).build();
         return retailRepository.save(retail);
     }
 
     public Retail update(Long id, RetailRequest retailRequest) {
-        Optional<Retail> existingRetail = retailRepository.findByTenantNumber(retailRequest.getTenant_number());
-
-        if (existingRetail.isPresent() && !existingRetail.get().getId().equals(id)) {
-            throw new GBKAPIException("Tenant number already exists");
+        // check if master retail exists
+        MasterRetail masterRetail = masterRetailRepository.findById(retailRequest.getMaster_retail_id()).get();
+        if (masterRetail == null) {
+            throw new ResourceNotFoundException("Master Retail not found");
         }
 
+        // check if retail exists
         Retail retail = this.findById(id);
-        retail.setTenant_name(retailRequest.getTenant_name());
-        retail.setTenant_number(retailRequest.getTenant_number());
-        retail.setArea(retailRequest.getArea());
+        retail.setMasterRetail(masterRetail);
         retail.setSize(retailRequest.getSize());
         retail.setPrice(retailRequest.getPrice());
-        retail.setYear(retailRequest.getYear());
+        retail.setMonth(retailRequest.getMonth());
         retail.setStatus(retailRequest.getStatus());
         return retailRepository.save(retail);
     }

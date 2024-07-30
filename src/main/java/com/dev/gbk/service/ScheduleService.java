@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -103,9 +104,10 @@ public class ScheduleService {
     }
 
     public List<Schedule> findAll(String search) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
         Optional<Specification<Schedule>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.map(scheduleRepository::findAll)
-                .orElseGet(scheduleRepository::findAll);
+        return specification.map(scheduleSpecification -> scheduleRepository.findAll(scheduleSpecification, sort))
+                .orElseGet(() -> scheduleRepository.findAll(sort));
     }
 
     public List<Schedule> findPendingSchedulesCreatedBefore(Long venue) {

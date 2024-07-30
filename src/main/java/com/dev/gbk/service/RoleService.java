@@ -12,6 +12,7 @@ import com.dev.gbk.repository.PermissionRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +40,8 @@ public class RoleService {
     }
 
     public Page<Role> findAll(String search, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, size, sort);
         Optional<Specification<Role>> specification = specificationBuilder.parseAndBuild(search);
         return specification.map(roleSpecification -> roleRepository.findAll(roleSpecification, pageable))
                 .orElseGet(() -> roleRepository.findAll(pageable));

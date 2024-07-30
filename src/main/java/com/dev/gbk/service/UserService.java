@@ -5,6 +5,7 @@ import com.dev.gbk.repository.RoleRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,7 +41,8 @@ public class UserService {
     }
 
     public Page<User> findAll(String search, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, size, sort);
         Optional<Specification<User>> specification = specificationBuilder.parseAndBuild(search);
         return specification.map(userSpecification -> userRepository.findAll(userSpecification, pageable))
                 .orElseGet(() -> userRepository.findAll(pageable));
