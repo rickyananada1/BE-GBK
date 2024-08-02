@@ -41,6 +41,8 @@ public class Retail implements Serializable {
     @Column(length = 60)
     private String statusPayment;
 
+    private String description;
+
     @OneToOne
     @JoinColumn(name = "master_retail_id")
     private MasterRetail masterRetail;

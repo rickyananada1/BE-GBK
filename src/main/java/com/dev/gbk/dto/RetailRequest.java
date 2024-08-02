@@ -37,6 +37,9 @@ public class RetailRequest {
     @JsonProperty("statusPayment")
     private String statusPayment;
 
+    @JsonProperty("description")
+    private String description;
+
     @NotEmpty
     @JsonProperty("master_retail_id")
     private Long master_retail_id;

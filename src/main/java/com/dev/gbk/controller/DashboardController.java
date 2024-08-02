@@ -164,10 +164,11 @@ public class DashboardController {
     // HttpStatus.OK, eventCardData);
     // }
 
-    @GetMapping("/retail-card")
-    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    public ResponseEntity<Object> getRetailCardData() {
-        List<CardRetailDTO> retailCardData = dashboardService.getRetailCardData();
-        return ResponseHandler.generateResponse("Success get retail card data", HttpStatus.OK, retailCardData);
-    }
+    // @GetMapping("/retail-card")
+    // @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
+    // public ResponseEntity<Object> getRetailCardData() {
+    // List<CardRetailDTO> retailCardData = dashboardService.getRetailCardData();
+    // return ResponseHandler.generateResponse("Success get retail card data",
+    // HttpStatus.OK, retailCardData);
+    // }
 }

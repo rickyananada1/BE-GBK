@@ -220,7 +220,7 @@ public class DashboardService {
     // return new ArrayList<>(eventMap.values());
     // }
 
-    public List<CardRetailDTO> getRetailCardData() {
-        return retailRepository.findRetailCardData();
-    }
+    // public List<CardRetailDTO> getRetailCardData() {
+    // return retailRepository.findRetailCardData();
+    // }
 }
