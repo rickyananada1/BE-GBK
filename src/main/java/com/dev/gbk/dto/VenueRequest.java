@@ -19,8 +19,8 @@ import lombok.Setter;
 public class VenueRequest {
 
     @NotEmpty
-    @JsonProperty("unit")
-    private String unit;
+    @JsonProperty("unitId")
+    private Long unitId;
 
     @NotEmpty
     @JsonProperty("venue")

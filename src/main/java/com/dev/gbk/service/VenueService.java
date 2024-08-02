@@ -1,23 +1,20 @@
 package com.dev.gbk.service;
 
+import com.dev.gbk.model.Unit;
 import com.dev.gbk.model.Venue;
-import com.dev.gbk.payloads.ListDataVenueInfoGbk;
-
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.dev.gbk.dto.VenueRequest;
 import com.dev.gbk.exception.GBKAPIException;
 import com.dev.gbk.exception.ResourceNotFoundException;
+import com.dev.gbk.repository.UnitRepository;
 import com.dev.gbk.repository.VenueRepository;
 import com.dev.gbk.spesification.SpecificationBuilder;
 import com.dev.gbk.spesification.SpecificationBuilderImpl;
@@ -27,21 +24,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class VenueService {
 
     private final VenueRepository venueRepository;
+    private final UnitRepository unitRepository;
     private final SpecificationBuilder<Venue> specificationBuilder = new SpecificationBuilderImpl<>(
             new ObjectMapper(), Venue.class);
-    private static final Logger logger = LoggerFactory.getLogger(VenueService.class);
 
-    public VenueService(VenueRepository venueRepository) {
+    public VenueService(VenueRepository venueRepository, UnitRepository unitRepository) {
         this.venueRepository = venueRepository;
-
+        this.unitRepository = unitRepository;
     }
 
     public Page<Venue> findAll(String search, int page, int size) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = PageRequest.of(page, size);
         Optional<Specification<Venue>> specification = specificationBuilder.parseAndBuild(search);
-        logger.info(search);
-        logger.info(specification.toString());
         return specification.map(venueSpecification -> venueRepository.findAll(venueSpecification, pageable))
                 .orElseGet(() -> venueRepository.findAll(pageable));
     }
@@ -59,8 +53,10 @@ public class VenueService {
         if (venueRepository.existsByVenue(venueRequest.getVenue())) {
             throw new GBKAPIException("Venue already exists");
         }
-        Venue v = Venue.builder().unit(venueRequest.getUnit())
-                .unit(venueRequest.getUnit()).capacity(venueRequest.getCapacity())
+
+        Unit unit = unitRepository.findById(venueRequest.getUnitId())
+                .orElseThrow(() -> new ResourceNotFoundException("Unit not found"));
+        Venue v = Venue.builder().unit(unit).capacity(venueRequest.getCapacity())
                 .size(venueRequest.getSize()).contact(venueRequest.getContact()).type(venueRequest.getType())
                 .status(venueRequest.getStatus()).weekend(venueRequest.getWeekend())
                 .total_orders(venueRequest.getTotal_orders())
@@ -77,8 +73,13 @@ public class VenueService {
         if (venueRepository.existsByVenueAndIdNot(venueRequest.getVenue(), id)) {
             throw new GBKAPIException("Venue already exists");
         }
+
+        // check if unit exists
+        Unit unit = unitRepository.findById(venueRequest.getUnitId())
+                .orElseThrow(() -> new ResourceNotFoundException("Unit not found"));
+        // check if venue exists
         Venue venue = findById(id);
-        venue.setUnit(venueRequest.getUnit());
+        venue.setUnit(unit);
         venue.setVenue(venueRequest.getVenue());
         venue.setCapacity(venueRequest.getCapacity());
         venue.setSize(venueRequest.getSize());
@@ -97,27 +98,4 @@ public class VenueService {
         findById(id);
         venueRepository.deleteById(id);
     }
-
-    public void synchronizeVenues(List<ListDataVenueInfoGbk> venues) {
-        for (ListDataVenueInfoGbk venue : venues) {
-            Optional<Venue> existingVenue = venueRepository.findByVenue(venue.getName());
-            if (existingVenue.isPresent()) {
-                Venue updatedVenue = existingVenue.get();
-                updatedVenue.setUnit(venue.getUnitName());
-                updatedVenue.setCapacity(venue.getCapacityVisitor());
-                updatedVenue.setSize(venue.getLarge());
-                updatedVenue.setContact(venue.getPhoneVenue());
-                venueRepository.save(updatedVenue);
-            } else {
-                Venue v = Venue.builder().unit(venue.getUnitName())
-                        .capacity(venue.getCapacityVisitor())
-                        .size(venue.getLarge())
-                        .contact(venue.getPhoneVenue())
-                        .venue(venue.getName())
-                        .build();
-                venueRepository.save(v);
-            }
-        }
-    }
-
 }

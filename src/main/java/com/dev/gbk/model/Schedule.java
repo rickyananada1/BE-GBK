@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
@@ -12,14 +14,16 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,9 +46,9 @@ public class Schedule implements Serializable {
     @Column(name = "booking_number")
     private String bookingNumber;
 
-    @ManyToOne
-    @JoinColumn(name = "venue_id")
-    private Venue venue;
+    @ManyToMany
+    @CollectionTable(name = "schedule_venues", joinColumns = @JoinColumn(name = "schedule_id"))
+    private List<Venue> venues;
 
     @Column(name = "type")
     private String type;
@@ -61,6 +65,14 @@ public class Schedule implements Serializable {
     @Column(name = "category")
     private String category;
 
+    @Column(name = "schedule_start_in_load")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate scheduleStartInLoad;
+
+    @Column(name = "schedule_end_in_load")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate scheduleEndInLoad;
+
     @Column(name = "start_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate scheduleStartDate;
@@ -69,27 +81,33 @@ public class Schedule implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate scheduleEndDate;
 
-    @Column(name = "date")
+    @Column(name = "schedule_start_out_load")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate scheduleDate;
+    private LocalDate scheduleStartOutLoad;
 
-    @Column(name = "start_time")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-    private LocalTime scheduleTimeFrom;
+    @Column(name = "schedule_end_out_load")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate scheduleEndOutLoad;
 
-    @Column(name = "end_time")
-    // convert LocalTime to String when return
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-    private LocalTime scheduleTimeTo;
+    @ElementCollection // To store multiple scheduleTimes
+    @CollectionTable(name = "schedule_times", joinColumns = @JoinColumn(name = "schedule_id"))
+    private List<LocalTime> scheduleTime;
 
-    @Column(name = "session")
-    private String session;
+    @ElementCollection
+    @CollectionTable(name = "schedule_sessions", joinColumns = @JoinColumn(name = "schedule_id"))
+    private List<String> session;
 
-    @Column(name = "status")
-    private String status;
+    @Column(name = "status_payment")
+    private String statusPayment; // Renamed for clarity
 
-    @Column(name = "total")
-    private Integer total;
+    @Column(name = "status_booking")
+    private String statusBooking;
+
+    @Column(name = "total_sf")
+    private Integer totalSF;
+
+    @Column(name = "total_paid")
+    private Integer totalPaid;
 
     @Column(name = "customer_name")
     private String customerName;

@@ -13,11 +13,6 @@ public interface GbkFeignClient {
         @PostMapping("/api/info/token")
         ResponseEntity<RespGbkToken> getTokenGbk(@RequestBody ReqGbkToken reqGbkToken);
 
-        @PostMapping("/api/info/venue")
-        ResponseEntity<RespVenueInfoGbk> getVenueInfoGbk(
-                        @RequestHeader(value = "Authorization") String authorizationHeader,
-                        @RequestBody ReqVenueInfoGbk reqVenueInfoGbk);
-
         @PostMapping("/api/info/schedule")
         ResponseEntity<RespScheduleGbk> getScheduleGbk(
                         @RequestHeader(value = "Authorization") String authorizationHeader,

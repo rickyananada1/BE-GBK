@@ -19,10 +19,4 @@ public class ListScheduleGbk {
     private String profileEvent;
     @JsonProperty("DescriptionEvent")
     private String DescriptionEvent;
-    @JsonProperty("ScheduleDate")
-    private String scheduleDate;
-    @JsonProperty("ScheduleTimeFrom")
-    private String ScheduleDateFrom;
-    @JsonProperty("ScheduleTimeTo")
-    private String ScheduleDateTo;
 }

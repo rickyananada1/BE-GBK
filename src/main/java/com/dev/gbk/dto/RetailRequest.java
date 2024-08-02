@@ -30,8 +30,12 @@ public class RetailRequest {
     private String month;
 
     @NotEmpty
-    @JsonProperty("status")
-    private String status;
+    @JsonProperty("statusBooking")
+    private String statusBooking;
+
+    @NotEmpty
+    @JsonProperty("statusPayment")
+    private String statusPayment;
 
     @NotEmpty
     @JsonProperty("master_retail_id")

@@ -59,7 +59,8 @@ public class RetailService {
 
         Retail retail = Retail.builder().masterRetail(masterRetail)
                 .size(retailRequest.getSize()).price(retailRequest.getPrice()).month(retailRequest.getMonth())
-                .status(retailRequest.getStatus()).build();
+                .statusBooking(retailRequest.getStatusBooking()).statusPayment(retailRequest.getStatusPayment())
+                .build();
         return retailRepository.save(retail);
     }
 
@@ -76,7 +77,9 @@ public class RetailService {
         retail.setSize(retailRequest.getSize());
         retail.setPrice(retailRequest.getPrice());
         retail.setMonth(retailRequest.getMonth());
-        retail.setStatus(retailRequest.getStatus());
+
+        retail.setStatusPayment(retailRequest.getStatusPayment());
+        retail.setStatusBooking(retailRequest.getStatusBooking());
         return retailRepository.save(retail);
     }
 

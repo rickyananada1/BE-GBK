@@ -66,94 +66,103 @@ public class DashboardController {
         return ResponseHandler.generateResponse("Success get dashboard", HttpStatus.OK, events);
     }
 
-    @GetMapping("/usage-by-category")
-    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    public ResponseEntity<Object> getUsageByCategory(
-            @RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "unit", required = false) String unit) {
+    // @GetMapping("/usage-by-category")
+    // @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
+    // public ResponseEntity<Object> getUsageByCategory(
+    // @RequestParam(value = "startDate", required = false) String startDate,
+    // @RequestParam(value = "endDate", required = false) String endDate,
+    // @RequestParam(value = "unit", required = false) String unit) {
 
-        List<OccupancyDTO> usageByCategory = dashboardService.getUsageByCategory(startDate, endDate, unit);
-        return ResponseHandler.generateResponse("Success get usage by category",
-                HttpStatus.OK, usageByCategory);
-    }
+    // List<OccupancyDTO> usageByCategory =
+    // dashboardService.getUsageByCategory(startDate, endDate, unit);
+    // return ResponseHandler.generateResponse("Success get usage by category",
+    // HttpStatus.OK, usageByCategory);
+    // }
 
-    @GetMapping("/usage-by-profile-event")
-    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    public ResponseEntity<Object> getUsageByProfileEvent(
-            @RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "unit", required = false) String unit) {
+    // @GetMapping("/usage-by-profile-event")
+    // @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
+    // public ResponseEntity<Object> getUsageByProfileEvent(
+    // @RequestParam(value = "startDate", required = false) String startDate,
+    // @RequestParam(value = "endDate", required = false) String endDate,
+    // @RequestParam(value = "unit", required = false) String unit) {
 
-        List<OccupancyDTO> usageByProfileEvent = dashboardService.getUsageByProfileEvent(startDate, endDate, unit);
-        return ResponseHandler.generateResponse("Success get usage by profile event",
-                HttpStatus.OK,
-                usageByProfileEvent);
-    }
+    // List<OccupancyDTO> usageByProfileEvent =
+    // dashboardService.getUsageByProfileEvent(startDate, endDate, unit);
+    // return ResponseHandler.generateResponse("Success get usage by profile event",
+    // HttpStatus.OK,
+    // usageByProfileEvent);
+    // }
 
-    @GetMapping("/income")
-    public IncomeDTO getIncome(@RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate) {
-        // get current year
-        LocalDate now = LocalDate.now();
-        if (startDate == null) {
-            startDate = now.getYear() + "-01-01";
-        }
-        if (endDate == null) {
-            // if month is < 10, add 0 to the beginning
-            if (now.getMonthValue() < 10) {
-                endDate = now.getYear() + "-0" + now.getMonthValue() + "-01";
-            } else {
-                endDate = now.getYear() + "-" + now.getMonthValue() + "-01";
-            }
-        }
-        return dashboardService.getTotalIncome(startDate, endDate);
-    }
+    // @GetMapping("/income")
+    // public IncomeDTO getIncome(@RequestParam(value = "startDate", required =
+    // false) String startDate,
+    // @RequestParam(value = "endDate", required = false) String endDate) {
+    // // get current year
+    // LocalDate now = LocalDate.now();
+    // if (startDate == null) {
+    // startDate = now.getYear() + "-01-01";
+    // }
+    // if (endDate == null) {
+    // // if month is < 10, add 0 to the beginning
+    // if (now.getMonthValue() < 10) {
+    // endDate = now.getYear() + "-0" + now.getMonthValue() + "-01";
+    // } else {
+    // endDate = now.getYear() + "-" + now.getMonthValue() + "-01";
+    // }
+    // }
+    // return dashboardService.getTotalIncome(startDate, endDate);
+    // }
 
-    @GetMapping("/type-total")
-    public ResponseEntity<Map<String, Double>> getTotalByType(@RequestParam String type, @RequestParam String startDate,
-            @RequestParam String endDate) {
-        Double total = dashboardService.getTotalByType(type, startDate, endDate);
+    // @GetMapping("/type-total")
+    // public ResponseEntity<Map<String, Double>> getTotalByType(@RequestParam
+    // String type, @RequestParam String startDate,
+    // @RequestParam String endDate) {
+    // Double total = dashboardService.getTotalByType(type, startDate, endDate);
 
-        Map<String, Double> response = new HashMap<>();
+    // Map<String, Double> response = new HashMap<>();
 
-        response.put("total", total);
+    // response.put("total", total);
 
-        return ResponseEntity.ok(response);
-    }
+    // return ResponseEntity.ok(response);
+    // }
 
-    @GetMapping("/game-total")
-    public ResponseEntity<Map<String, Double>> getTotalByGame(@RequestParam String game, @RequestParam String startDate,
-            @RequestParam String endDate) {
-        Double total = dashboardService.getTotalByGame(game, startDate, endDate);
+    // @GetMapping("/game-total")
+    // public ResponseEntity<Map<String, Double>> getTotalByGame(@RequestParam
+    // String game, @RequestParam String startDate,
+    // @RequestParam String endDate) {
+    // Double total = dashboardService.getTotalByGame(game, startDate, endDate);
 
-        Map<String, Double> response = new HashMap<>();
-        response.put(game, total);
+    // Map<String, Double> response = new HashMap<>();
+    // response.put(game, total);
 
-        return ResponseEntity.ok(response);
-    }
+    // return ResponseEntity.ok(response);
+    // }
 
-    @GetMapping("/games-card")
-    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    public ResponseEntity<Object> getGamesCardData(
-            @RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "unit", required = false) String unit) {
+    // @GetMapping("/games-card")
+    // @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
+    // public ResponseEntity<Object> getGamesCardData(
+    // @RequestParam(value = "startDate", required = false) String startDate,
+    // @RequestParam(value = "endDate", required = false) String endDate,
+    // @RequestParam(value = "unit", required = false) String unit) {
 
-        CardGamesDTO gamesCardData = dashboardService.getGamesCardData(startDate, endDate, unit);
-        return ResponseHandler.generateResponse("Success get games card data", HttpStatus.OK, gamesCardData);
-    }
+    // CardGamesDTO gamesCardData = dashboardService.getGamesCardData(startDate,
+    // endDate, unit);
+    // return ResponseHandler.generateResponse("Success get games card data",
+    // HttpStatus.OK, gamesCardData);
+    // }
 
-    @GetMapping("/event-card")
-    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    public ResponseEntity<Object> getEventCardData(
-            @RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "unit", required = false) String unit) {
+    // @GetMapping("/event-card")
+    // @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
+    // public ResponseEntity<Object> getEventCardData(
+    // @RequestParam(value = "startDate", required = false) String startDate,
+    // @RequestParam(value = "endDate", required = false) String endDate,
+    // @RequestParam(value = "unit", required = false) String unit) {
 
-        List<CardEventDTO> eventCardData = dashboardService.getEventCardData(startDate, endDate, unit);
-        return ResponseHandler.generateResponse("Success get event card data", HttpStatus.OK, eventCardData);
-    }
+    // List<CardEventDTO> eventCardData =
+    // dashboardService.getEventCardData(startDate, endDate, unit);
+    // return ResponseHandler.generateResponse("Success get event card data",
+    // HttpStatus.OK, eventCardData);
+    // }
 
     @GetMapping("/retail-card")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")

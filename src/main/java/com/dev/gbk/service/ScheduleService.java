@@ -1,8 +1,6 @@
 package com.dev.gbk.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,10 +18,10 @@ import org.springframework.stereotype.Service;
 
 import com.dev.gbk.exception.ResourceNotFoundException;
 import com.dev.gbk.model.Schedule;
-import com.dev.gbk.model.TimeSlot;
 import com.dev.gbk.model.Venue;
 import com.dev.gbk.payloads.ListScheduleGbk;
 import com.dev.gbk.repository.ScheduleRepository;
+import com.dev.gbk.repository.VenueRepository;
 import com.dev.gbk.spesification.SpecificationBuilderImpl;
 import com.dev.gbk.utils.Utils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -33,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+    private final VenueRepository venueRepository;
 
     // logger
     private final Logger log = LoggerFactory.getLogger(ScheduleService.class);
@@ -40,57 +39,60 @@ public class ScheduleService {
             new ObjectMapper(), Schedule.class);
 
     public ScheduleService(
-            ScheduleRepository scheduleRepository) {
+            ScheduleRepository scheduleRepository, VenueRepository venueRepository) {
         this.scheduleRepository = scheduleRepository;
+        this.venueRepository = venueRepository;
     }
 
-    public List<TimeSlot> getAvailableTimeSlots(LocalDate startDate, LocalDate endDate) {
-        // List to store time slots
-        List<TimeSlot> timeSlots = new ArrayList<>();
+    // public List<TimeSlot> getAvailableTimeSlots(LocalDate startDate, LocalDate
+    // endDate) {
+    // // List to store time slots
+    // List<TimeSlot> timeSlots = new ArrayList<>();
 
-        // Generate time slots for each day within the date range
-        LocalDate currentDate = startDate;
+    // // Generate time slots for each day within the date range
+    // LocalDate currentDate = startDate;
 
-        while (!currentDate.isAfter(endDate)) {
-            // Generate time slots from 6 AM to 10 PM
-            for (int hour = 6; hour < 22; hour += 2) {
-                try {
-                    LocalTime fromTime = LocalTime.of(hour, 0);
-                    LocalTime toTime = LocalTime.of(hour + 2, 0);
+    // while (!currentDate.isAfter(endDate)) {
+    // // Generate time slots from 6 AM to 10 PM
+    // for (int hour = 6; hour < 22; hour += 2) {
+    // try {
+    // LocalTime fromTime = LocalTime.of(hour, 0);
+    // LocalTime toTime = LocalTime.of(hour + 2, 0);
 
-                    // Create TimeSlot object
-                    TimeSlot slot = new TimeSlot(fromTime, toTime, "Available");
-                    timeSlots.add(slot);
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                }
-            }
+    // // Create TimeSlot object
+    // TimeSlot slot = new TimeSlot(fromTime, toTime, "Available");
+    // timeSlots.add(slot);
+    // } catch (Exception e) {
+    // log.error(e.getMessage());
+    // }
+    // }
 
-            // Add one day
-            currentDate = currentDate.plusDays(1);
-        }
+    // // Add one day
+    // currentDate = currentDate.plusDays(1);
+    // }
 
-        if (timeSlots.isEmpty()) {
-            return timeSlots;
-        }
+    // if (timeSlots.isEmpty()) {
+    // return timeSlots;
+    // }
 
-        // Get booked schedules within the date range
-        List<Schedule> bookedSchedules = scheduleRepository.findByScheduleDateBetween(startDate, endDate);
+    // // Get booked schedules within the date range
+    // List<Schedule> bookedSchedules =
+    // scheduleRepository.findByScheduleDateBetween(startDate, endDate);
 
-        // Check availability for each time slot
-        for (Schedule schedule : bookedSchedules) {
-            for (TimeSlot slot : timeSlots) {
-                if ((slot.getFromTime().equals(schedule.getScheduleTimeFrom()) ||
-                        slot.getFromTime().isAfter(schedule.getScheduleTimeFrom())) &&
-                        (slot.getToTime().equals(schedule.getScheduleTimeTo()) ||
-                                slot.getToTime().isBefore(schedule.getScheduleTimeTo()))) {
-                    slot.setStatus("Booked");
-                }
-            }
-        }
+    // // Check availability for each time slot
+    // for (Schedule schedule : bookedSchedules) {
+    // for (TimeSlot slot : timeSlots) {
+    // if ((slot.getFromTime().equals(schedule.getScheduleTimeFrom()) ||
+    // slot.getFromTime().isAfter(schedule.getScheduleTimeFrom())) &&
+    // (slot.getToTime().equals(schedule.getScheduleTimeTo()) ||
+    // slot.getToTime().isBefore(schedule.getScheduleTimeTo()))) {
+    // slot.setStatus("Booked");
+    // }
+    // }
+    // }
 
-        return timeSlots;
-    }
+    // return timeSlots;
+    // }
 
     public Page<Schedule> findAll(String search, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -113,10 +115,11 @@ public class ScheduleService {
     public List<Schedule> findPendingSchedulesCreatedBefore(Long venue) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         if (venue != null) {
-            return scheduleRepository.findByStatusAndVenueIdAndCreatedAtBefore("Soft Booking", venue,
+            return scheduleRepository.findByStatusBookingAndVenuesIdAndCreatedAtBefore("Soft Booking", venue,
                     currentDateTime.minusDays(3));
         } else {
-            return scheduleRepository.findByStatusAndCreatedAtBefore("Soft Booking", currentDateTime.minusDays(3));
+            return scheduleRepository.findByStatusBookingAndCreatedAtBefore("Soft Booking",
+                    currentDateTime.minusDays(3));
         }
     }
 
@@ -124,7 +127,15 @@ public class ScheduleService {
         return scheduleRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Schedule not found"));
     }
 
-    public Schedule store(ScheduleRequest scheduleRequest, Venue venue) {
+    public Schedule store(ScheduleRequest scheduleRequest) {
+        // get all venue in schedulerequest by venue id
+        List<Venue> venues = new ArrayList<>();
+        for (Long id : scheduleRequest.getVenueID()) {
+            Venue venue = venueRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Venue not found"));
+            venues.add(venue);
+        }
+
         Schedule schedule = Schedule.builder()
                 .bookingNumber(scheduleRequest.getBookingNumber())
                 .type(scheduleRequest.getType())
@@ -133,53 +144,70 @@ public class ScheduleService {
                 .games(scheduleRequest.getGames())
                 .category(scheduleRequest.getCategory())
                 .session(scheduleRequest.getSession())
-                .status(scheduleRequest.getStatus())
-                .total(scheduleRequest.getTotal())
+                .statusBooking(scheduleRequest.getStatusBooking())
+                .statusPayment(scheduleRequest.getStatusPayment())
+                .totalPaid(scheduleRequest.getTotalPaid())
+                .totalSF(scheduleRequest.getTotalSF())
                 .customerName(scheduleRequest.getCustomerName())
                 .customerEmail(scheduleRequest.getCustomerEmail())
                 .customerPhone(scheduleRequest.getCustomerPhone())
-                .venue(venue)
+                .venues(venues)
                 .build();
         if (scheduleRequest.getScheduleStartDate() != null && scheduleRequest.getScheduleEndDate() != null) {
             schedule.setScheduleStartDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate()));
             schedule.setScheduleEndDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndDate()));
         }
-        if (scheduleRequest.getScheduleDate() != null) {
-            schedule.setScheduleDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate()));
+
+        if (scheduleRequest.getScheduleStartInLoad() != null && scheduleRequest.getScheduleEndInLoad() != null) {
+            schedule.setScheduleStartInLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartInLoad()));
+            schedule.setScheduleEndInLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndInLoad()));
         }
-        if (scheduleRequest.getScheduleTimeFrom() != null && scheduleRequest.getScheduleTimeTo() != null) {
-            schedule.setScheduleTimeFrom(Utils.convertStringToLocalTime(scheduleRequest.getScheduleTimeFrom()));
-            schedule.setScheduleTimeTo(Utils.convertStringToLocalTime(scheduleRequest.getScheduleTimeTo()));
+
+        if (scheduleRequest.getScheduleStartInLoad() != null && scheduleRequest.getScheduleEndInLoad() != null) {
+            schedule.setScheduleStartInLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartInLoad()));
+            schedule.setScheduleEndInLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndInLoad()));
         }
+
         return scheduleRepository.save(schedule);
     }
 
-    public Schedule update(Long id, ScheduleRequest scheduleRequest, Venue venue) {
+    public Schedule update(Long id, ScheduleRequest scheduleRequest) {
         Schedule schedule = findById(id);
+
+        // get all venue in schedulerequest by venue id
+        List<Venue> venues = new ArrayList<>();
+        for (Long id2 : scheduleRequest.getVenueID()) {
+            Venue venue = venueRepository.findById(id2)
+                    .orElseThrow(() -> new ResourceNotFoundException("Venue not found"));
+            venues.add(venue);
+        }
+
         schedule.setBookingNumber(scheduleRequest.getBookingNumber());
         schedule.setType(scheduleRequest.getType());
         schedule.setProfileEvent(scheduleRequest.getProfileEvent());
         schedule.setDescriptionEvent(scheduleRequest.getDescriptionEvent());
         schedule.setGames(scheduleRequest.getGames());
         schedule.setCategory(scheduleRequest.getCategory());
+        schedule.setSession(scheduleRequest.getSession());
+        schedule.setStatusBooking(scheduleRequest.getStatusBooking());
+        schedule.setStatusPayment(scheduleRequest.getStatusPayment());
+        schedule.setTotalPaid(scheduleRequest.getTotalPaid());
+        schedule.setTotalSF(scheduleRequest.getTotalSF());
+        schedule.setCustomerName(scheduleRequest.getCustomerName());
+        schedule.setCustomerEmail(scheduleRequest.getCustomerEmail());
+        schedule.setCustomerPhone(scheduleRequest.getCustomerPhone());
+        schedule.setVenues(venues);
+
         if (scheduleRequest.getScheduleStartDate() != null && scheduleRequest.getScheduleEndDate() != null) {
             schedule.setScheduleStartDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate()));
             schedule.setScheduleEndDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndDate()));
         }
-        if (scheduleRequest.getScheduleDate() != null) {
-            schedule.setScheduleDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleDate()));
+
+        if (scheduleRequest.getScheduleStartInLoad() != null && scheduleRequest.getScheduleEndInLoad() != null) {
+            schedule.setScheduleStartInLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartInLoad()));
+            schedule.setScheduleEndInLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndInLoad()));
         }
-        if (scheduleRequest.getScheduleTimeFrom() != null && scheduleRequest.getScheduleTimeTo() != null) {
-            schedule.setScheduleTimeFrom(Utils.convertStringToLocalTime(scheduleRequest.getScheduleTimeFrom()));
-            schedule.setScheduleTimeTo(Utils.convertStringToLocalTime(scheduleRequest.getScheduleTimeTo()));
-        }
-        schedule.setSession(scheduleRequest.getSession());
-        schedule.setStatus(scheduleRequest.getStatus());
-        schedule.setTotal(scheduleRequest.getTotal());
-        schedule.setCustomerName(scheduleRequest.getCustomerName());
-        schedule.setCustomerEmail(scheduleRequest.getCustomerEmail());
-        schedule.setCustomerPhone(scheduleRequest.getCustomerPhone());
-        schedule.setVenue(venue);
+
         return scheduleRepository.save(schedule);
     }
 
@@ -194,13 +222,10 @@ public class ScheduleService {
         log.info("Synchronizing schedules");
         for (ListScheduleGbk schedule : schedules) {
             ScheduleRequest scheduleRequest = objectMapper.convertValue(schedule, ScheduleRequest.class);
-            if (scheduleRepository.existsByScheduleDateAndScheduleTimeFromAndScheduleTimeTo(
-                    Utils.convertStringToLocalDate(scheduleRequest.getScheduleDate()),
-                    Utils.convertStringToLocalTime(scheduleRequest.getScheduleTimeFrom()),
-                    Utils.convertStringToLocalTime(scheduleRequest.getScheduleTimeTo()))) {
-                continue;
-            }
-            store(scheduleRequest, venue);
+            List<Long> venues = new ArrayList<>();
+            venues.add(venue.getId());
+            scheduleRequest.setVenueID(venues);
+            store(scheduleRequest);
         }
     }
 
