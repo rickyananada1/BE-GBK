@@ -19,4 +19,8 @@ public class Utils {
     public static LocalTime convertStringToLocalTime(String time) {
         return LocalTime.parse(time);
     }
+
+    public static String generateBookingNumber() {
+        return String.valueOf(System.currentTimeMillis());
+    }
 }
