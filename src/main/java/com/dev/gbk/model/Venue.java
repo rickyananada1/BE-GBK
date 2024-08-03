@@ -41,9 +41,8 @@ public class Venue implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "unit_id")
-    @JsonBackReference
     private Unit unit;
 
     @Column(length = 60)

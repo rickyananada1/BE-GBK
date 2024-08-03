@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dev.gbk.dto.UnitRequest;
 import com.dev.gbk.service.UnitService;
 import com.dev.gbk.utils.ResponseHandler;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/api/units")
+@SecurityRequirement(name = "bearerAuth")
 public class UnitController {
     private final UnitService unitService;
 
