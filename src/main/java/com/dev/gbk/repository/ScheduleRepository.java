@@ -24,6 +24,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
 
         boolean existsByBookingNumber(String bookingNumber);
 
+        Schedule findTopByOrderByIdDesc();
+
         // @Query("SELECT new com.dev.gbk.dto.OccupancyDTO(s.category, COUNT(s) * 100.0
         // / "
         // + "(SELECT COUNT(s2) FROM Schedule s2 WHERE "

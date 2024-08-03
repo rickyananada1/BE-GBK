@@ -136,8 +136,11 @@ public class ScheduleService {
             venues.add(venue);
         }
 
+        // get last id from schedule
+        Long lastId = scheduleRepository.findTopByOrderByIdDesc().getId();
+
         Schedule schedule = Schedule.builder()
-                .bookingNumber(scheduleRequest.getBookingNumber())
+                .bookingNumber(Utils.generateBookingNumber(lastId, scheduleRequest.getStatusBooking()))
                 .type(scheduleRequest.getType())
                 .profileEvent(scheduleRequest.getProfileEvent())
                 .descriptionEvent(scheduleRequest.getDescriptionEvent())
