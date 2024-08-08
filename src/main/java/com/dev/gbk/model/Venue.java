@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,10 +42,6 @@ public class Venue implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "unit_id")
-    private Unit unit;
-
     @Column(length = 60)
     private String venue;
 
@@ -73,7 +70,7 @@ public class Venue implements Serializable {
     private String morning_weekdays;
 
     @Column(length = 60)
-    private String afternoof_weekdays;
+    private String afternoon_weekdays;
 
     @Column(length = 60)
     private String evening_weekdays;
@@ -92,4 +89,9 @@ public class Venue implements Serializable {
     @JoinTable(name = "venue_schedules", joinColumns = @JoinColumn(name = "venue_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "schedule_id", referencedColumnName = "id"))
     @JsonBackReference
     private Collection<Schedule> schedules;
+
+    @ManyToOne
+    @JoinColumn(name = "unit_id")
+    @JsonManagedReference
+    private Unit unit;
 }
