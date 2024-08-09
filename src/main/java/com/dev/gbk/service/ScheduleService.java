@@ -137,7 +137,8 @@ public class ScheduleService {
         }
 
         // get last id from schedule
-        Long lastId = scheduleRepository.findTopByOrderByIdDesc().getId();
+        Schedule latestSchedule = scheduleRepository.findTopByOrderByIdDesc();
+        Long lastId = latestSchedule == null ? 0L : latestSchedule.getId();
 
         Schedule schedule = Schedule.builder()
                 .bookingNumber(Utils.generateBookingNumber(lastId, scheduleRequest.getStatusBooking()))
