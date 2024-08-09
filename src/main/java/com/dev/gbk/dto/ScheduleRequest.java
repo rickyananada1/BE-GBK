@@ -79,10 +79,10 @@ public class ScheduleRequest {
     private String statusBooking;
 
     @JsonProperty("TotalSF")
-    private Integer totalSF;
+    private String totalSF;
 
     @JsonProperty("TotalPaid")
-    private Integer totalPaid;
+    private String totalPaid;
 
     @JsonProperty("CustomerName")
     private String customerName;
