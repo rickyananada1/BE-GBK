@@ -155,6 +155,7 @@ public class ScheduleService {
                 .customerName(scheduleRequest.getCustomerName())
                 .customerEmail(scheduleRequest.getCustomerEmail())
                 .customerPhone(scheduleRequest.getCustomerPhone())
+                .scheduleTime(scheduleRequest.getScheduleTime())
                 .venues(venues)
                 .build();
         if (scheduleRequest.getScheduleStartDate() != null && scheduleRequest.getScheduleEndDate() != null) {
@@ -167,9 +168,9 @@ public class ScheduleService {
             schedule.setScheduleEndInLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndInLoad()));
         }
 
-        if (scheduleRequest.getScheduleStartInLoad() != null && scheduleRequest.getScheduleEndInLoad() != null) {
-            schedule.setScheduleStartInLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartInLoad()));
-            schedule.setScheduleEndInLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndInLoad()));
+        if (scheduleRequest.getScheduleStartOutLoad() != null && scheduleRequest.getScheduleEndOutLoad() != null) {
+            schedule.setScheduleStartOutLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartOutLoad()));
+            schedule.setScheduleEndOutLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndOutLoad()));
         }
 
         return scheduleRepository.save(schedule);
@@ -197,6 +198,7 @@ public class ScheduleService {
         schedule.setStatusPayment(scheduleRequest.getStatusPayment());
         schedule.setTotalPaid(Utils.convertStringToInteger(scheduleRequest.getTotalPaid()));
         schedule.setTotalSF(Utils.convertStringToInteger(scheduleRequest.getTotalSF()));
+        schedule.setScheduleTime(scheduleRequest.getScheduleTime());
         schedule.setCustomerName(scheduleRequest.getCustomerName());
         schedule.setCustomerEmail(scheduleRequest.getCustomerEmail());
         schedule.setCustomerPhone(scheduleRequest.getCustomerPhone());
@@ -210,6 +212,11 @@ public class ScheduleService {
         if (scheduleRequest.getScheduleStartInLoad() != null && scheduleRequest.getScheduleEndInLoad() != null) {
             schedule.setScheduleStartInLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartInLoad()));
             schedule.setScheduleEndInLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndInLoad()));
+        }
+
+        if (scheduleRequest.getScheduleStartOutLoad() != null && scheduleRequest.getScheduleEndOutLoad() != null) {
+            schedule.setScheduleStartOutLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartOutLoad()));
+            schedule.setScheduleEndOutLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndOutLoad()));
         }
 
         return scheduleRepository.save(schedule);

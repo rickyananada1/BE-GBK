@@ -91,7 +91,7 @@ public class Schedule implements Serializable {
 
     @ElementCollection // To store multiple scheduleTimes
     @CollectionTable(name = "schedule_times", joinColumns = @JoinColumn(name = "schedule_id"))
-    private List<LocalTime> scheduleTime;
+    private List<String> scheduleTime;
 
     @ElementCollection
     @CollectionTable(name = "schedule_sessions", joinColumns = @JoinColumn(name = "schedule_id"))
