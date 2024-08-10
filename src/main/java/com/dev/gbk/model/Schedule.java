@@ -3,7 +3,6 @@ package com.dev.gbk.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;

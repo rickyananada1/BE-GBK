@@ -2,13 +2,15 @@ package com.dev.gbk.utils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utils
  */
 public class Utils {
+    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
     // convert string to local date
     public static LocalDate convertStringToLocalDate(String date) {
@@ -23,12 +25,16 @@ public class Utils {
     }
 
     public static String generateBookingNumber(Long lastId, String statusBooking) {
+        logger.info("Generate booking number: {} {}", lastId, statusBooking);
         String code = "";
-        if (statusBooking == "Maintenance") {
-            code = "MB";
+        if (statusBooking.equals("Maintenance")) {
+            code = "ME";
+        } else if (statusBooking.equals("Soft Booking")) {
+            code = "SF";
         } else {
             code = "BO";
         }
+        
         // tanggal bulan dan 2 digit di akhir tahun
         String year = String.valueOf(LocalDate.now().getYear()).substring(2, 4);
         String month = String.valueOf(LocalDate.now().getMonthValue());
@@ -39,7 +45,7 @@ public class Utils {
         if (day.length() == 1) {
             day = "0" + day;
         }
-        return code + "-" + year + month + day + "-" + (lastId + 1) + "-" + statusBooking;
+        return code + year + month + day + (lastId + 1);
     }
 
     // convert string to Integer by dot, example: 100.000.000 => 100000000
