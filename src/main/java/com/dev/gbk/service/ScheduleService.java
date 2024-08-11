@@ -95,7 +95,8 @@ public class ScheduleService {
     // }
 
     public Page<Schedule> findAll(String search, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, size, sort);
         Optional<Specification<Schedule>> specification = specificationBuilder.parseAndBuild(search);
         return specification.map(scheduleSpecification -> scheduleRepository.findAll(scheduleSpecification, pageable))
                 .orElseGet(() -> scheduleRepository.findAll(pageable));
