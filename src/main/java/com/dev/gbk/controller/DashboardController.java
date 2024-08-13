@@ -1,9 +1,7 @@
 package com.dev.gbk.controller;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -14,11 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dev.gbk.dto.CardEventDTO;
-import com.dev.gbk.dto.CardGamesDTO;
-import com.dev.gbk.dto.CardRetailDTO;
-import com.dev.gbk.dto.IncomeDTO;
-import com.dev.gbk.dto.OccupancyDTO;
 import com.dev.gbk.service.DashboardService;
 import com.dev.gbk.utils.ResponseHandler;
 
@@ -34,64 +27,71 @@ public class DashboardController {
         this.dashboardService = dashboardService;
     }
 
-    @GetMapping("/occupancies")
+    @GetMapping("/usage-by-category")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    public ResponseEntity<Object> occupancies() {
-        List<OccupancyDTO> occupancyList = Arrays.asList(
-                new OccupancyDTO("Occ Fisik", 60.4),
-                new OccupancyDTO("Occ PKBLU", 40.2),
-                new OccupancyDTO("Occ Retail", 80.4),
-                new OccupancyDTO("Occ Maintenance", 55.2),
-                new OccupancyDTO("Occ Fisik vs Pendapatan", 80.4),
-                new OccupancyDTO("Occ Timnas", 40.4));
+    public ResponseEntity<Object> getUsageByCategory(
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "unit", required = false) String unit) {
 
-        return ResponseHandler.generateResponse("Success get dashboard", HttpStatus.OK, occupancyList);
+        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
+
+        if (start != null && end != null && end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
+
+        Map<String, BigDecimal> result = dashboardService.getUsageByCategory(start, end, unit);
+        return ResponseHandler.generateResponse("Success get usage by category",
+                HttpStatus.OK, result);
     }
 
-    @GetMapping("/events")
+    @GetMapping("/usage-by-profile-event")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    public ResponseEntity<Object> events() {
-        List<OccupancyDTO> events = Arrays.asList(
-                new OccupancyDTO("Keagamaan", 10.0),
-                new OccupancyDTO("Pendidikan", 10.0),
-                new OccupancyDTO("Sewa Lahan", 10.0),
-                new OccupancyDTO("Kenegaraan", 10.0),
-                new OccupancyDTO("Expo", 10.0),
-                new OccupancyDTO("Exhibition", 10.0),
-                new OccupancyDTO("Internal Company", 10.0),
-                new OccupancyDTO("Lain-Lain", 10.0),
-                new OccupancyDTO("Olahraga", 10.0),
-                new OccupancyDTO("Konser", 10.0));
+    public ResponseEntity<Object> getUsageByProfileEvent(
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "unit", required = false) String unit) {
 
-        return ResponseHandler.generateResponse("Success get dashboard", HttpStatus.OK, events);
+        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
+
+        if (start != null && end != null && end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
+
+        Map<String, BigDecimal> result = dashboardService.getUsageByProfileEvent(start, end, unit);
+        return ResponseHandler.generateResponse("Success get usage by profile event",
+                HttpStatus.OK, result);
     }
 
-    // @GetMapping("/usage-by-category")
-    // @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    // public ResponseEntity<Object> getUsageByCategory(
-    // @RequestParam(value = "startDate", required = false) String startDate,
-    // @RequestParam(value = "endDate", required = false) String endDate,
-    // @RequestParam(value = "unit", required = false) String unit) {
+    @GetMapping("/total-paid-profile-event")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<Object> getTotalPaidForProfileEvent(
+            @RequestParam("startDate") LocalDate startDate,
+            @RequestParam("endDate") LocalDate endDate,
+            @RequestParam(value = "unitName", required = false) String unitName) {
 
-    // List<OccupancyDTO> usageByCategory =
-    // dashboardService.getUsageByCategory(startDate, endDate, unit);
-    // return ResponseHandler.generateResponse("Success get usage by category",
-    // HttpStatus.OK, usageByCategory);
-    // }
+        Map<String, Integer> totalPaidByProfileEvent = dashboardService.getTotalPaidGroupedByProfileEvent(startDate,
+                endDate, unitName);
+        return ResponseHandler.generateResponse("Data fetched successfully", HttpStatus.OK, totalPaidByProfileEvent);
+    }
 
-    // @GetMapping("/usage-by-profile-event")
-    // @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    // public ResponseEntity<Object> getUsageByProfileEvent(
-    // @RequestParam(value = "startDate", required = false) String startDate,
-    // @RequestParam(value = "endDate", required = false) String endDate,
-    // @RequestParam(value = "unit", required = false) String unit) {
+    @GetMapping("/total-paid-games")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<Object> getTotalPaidForGames(
+            @RequestParam("startDate") LocalDate startDate,
+            @RequestParam("endDate") LocalDate endDate,
+            @RequestParam(value = "unitName", required = false) String unitName) {
 
-    // List<OccupancyDTO> usageByProfileEvent =
-    // dashboardService.getUsageByProfileEvent(startDate, endDate, unit);
-    // return ResponseHandler.generateResponse("Success get usage by profile event",
-    // HttpStatus.OK,
-    // usageByProfileEvent);
-    // }
+        Map<String, Integer> totalPaidByGames = dashboardService.getTotalPaidGroupedByGames(startDate, endDate,
+                unitName);
+        return ResponseHandler.generateResponse("Data fetched successfully", HttpStatus.OK, totalPaidByGames);
+    }
 
     // @GetMapping("/income")
     // public IncomeDTO getIncome(@RequestParam(value = "startDate", required =

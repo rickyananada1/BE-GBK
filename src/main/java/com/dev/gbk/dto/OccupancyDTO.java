@@ -1,5 +1,7 @@
 package com.dev.gbk.dto;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -19,5 +21,5 @@ public class OccupancyDTO {
     private String judul;
 
     @JsonProperty("percent")
-    private Double occPercent;
+    private BigDecimal occPercent;
 }

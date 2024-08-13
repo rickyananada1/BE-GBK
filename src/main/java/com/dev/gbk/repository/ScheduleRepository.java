@@ -1,12 +1,9 @@
 package com.dev.gbk.repository;
 
-import com.dev.gbk.dto.*;
 import com.dev.gbk.model.Schedule;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,70 +21,39 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
 
         boolean existsByBookingNumber(String bookingNumber);
 
+        @Query("SELECT s FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE u.name = :unitName AND s.statusPayment = 'Paid' AND s.createdAt <= :createdAt")
+        List<Schedule> findByUnitNameAndStatusPaymentAndCreatedAtBefore(String unitName, LocalDateTime createdAt);
+
+        @Query("SELECT s FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE u.name = :unitName AND s.statusPayment = 'Paid'")
+        List<Schedule> findByUnitNameAndStatusPayment(String unitName);
+
+        List<Schedule> findByStatusPaymentAndCreatedAtBefore(String statusPayment, LocalDateTime createdAt);
+
         Schedule findTopByOrderByIdDesc();
 
-        // @Query("SELECT new com.dev.gbk.dto.OccupancyDTO(s.category, COUNT(s) * 100.0
-        // / "
-        // + "(SELECT COUNT(s2) FROM Schedule s2 WHERE "
-        // + "(:unit IS NULL OR s2.venue.unit = :unit) "
-        // + "AND ("
-        // + "(:startDate IS NOT NULL AND :endDate IS NOT NULL AND (s2.scheduleStartDate
-        // IS NOT NULL AND s2.scheduleEndDate IS NOT NULL AND s2.scheduleStartDate >=
-        // :startDate AND s2.scheduleEndDate <= :endDate)) "
-        // + "OR (:startDate IS NULL AND :endDate IS NULL AND s2.scheduleDate IS NOT
-        // NULL) "
-        // + ") AND s2.status = 'Paid')) "
-        // + "FROM Schedule s WHERE "
-        // + "(:unit IS NULL OR s.venue.unit = :unit) "
-        // + "AND ("
-        // + "(:startDate IS NOT NULL AND :endDate IS NOT NULL AND (s.scheduleStartDate
-        // IS NOT NULL AND s.scheduleEndDate IS NOT NULL AND s.scheduleStartDate >=
-        // :startDate AND s.scheduleEndDate <= :endDate)) "
-        // + "OR (:startDate IS NULL AND :endDate IS NULL AND s.scheduleDate IS NOT
-        // NULL)"
-        // + ") AND s.status = 'Paid' GROUP BY s.category")
-        // List<OccupancyDTO> findCategoryUsage(@Param("unit") String unit,
-        // @Param("startDate") LocalDate startDate,
-        // @Param("endDate") LocalDate endDate);
+        @Query("SELECT s.profileEvent, SUM(s.totalPaid) FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE u.name = :unitName AND s.statusPayment = 'Paid' AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate GROUP BY s.profileEvent")
+        List<Object[]> sumTotalPaidGroupedByProfileEventAndUnitAndDates(String unitName, LocalDateTime startDate,
+                        LocalDateTime endDate);
 
-        // @Query("SELECT new com.dev.gbk.dto.OccupancyDTO(s.profileEvent, COUNT(s) *
-        // 100.0 / "
-        // + "(SELECT COUNT(s2) FROM Schedule s2 WHERE "
-        // + "(:unit IS NULL OR s2.venue.unit = :unit) "
-        // + "AND ("
-        // + "(:startDate IS NOT NULL AND :endDate IS NOT NULL AND (s2.scheduleStartDate
-        // IS NOT NULL AND s2.scheduleEndDate IS NOT NULL AND s2.scheduleStartDate >=
-        // :startDate AND s2.scheduleEndDate <= :endDate)) "
-        // + "OR (:startDate IS NULL AND :endDate IS NULL AND s2.scheduleDate IS NOT
-        // NULL) "
-        // + ") AND s2.status = 'Paid')) "
-        // + "FROM Schedule s WHERE "
-        // + "(:unit IS NULL OR s.venue.unit = :unit) "
-        // + "AND ("
-        // + "(:startDate IS NOT NULL AND :endDate IS NOT NULL AND (s.scheduleStartDate
-        // IS NOT NULL AND s.scheduleEndDate IS NOT NULL AND s.scheduleStartDate >=
-        // :startDate AND s.scheduleEndDate <= :endDate)) "
-        // + "OR (:startDate IS NULL AND :endDate IS NULL AND s.scheduleDate IS NOT
-        // NULL)"
-        // + ") AND s.status = 'Paid' GROUP BY s.profileEvent")
-        // List<OccupancyDTO> findProfileEventUsage(@Param("unit") String unit,
-        // @Param("startDate") LocalDate startDate,
-        // @Param("endDate") LocalDate endDate);
+        @Query("SELECT s.category, SUM(s.totalPaid) FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE u.name = :unitName AND s.statusPayment = 'Paid' AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate GROUP BY s.category")
+        List<Object[]> sumTotalPaidGroupedByCategoryAndUnitAndDates(String unitName, LocalDateTime startDate,
+                        LocalDateTime endDate);
 
-        // @Query("SELECT SUM(s.total) "
-        // + "FROM Schedule s "
-        // + "WHERE s.type = :type "
-        // + "AND s.status = 'Paid' "
-        // + "AND ((:startDate IS NULL AND :endDate IS NULL AND s.scheduleDate IS NOT
-        // NULL) "
-        // + "OR (:startDate IS NOT NULL AND :endDate IS NOT NULL AND "
-        // + "((s.scheduleStartDate IS NOT NULL AND s.scheduleEndDate IS NOT NULL AND
-        // s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate) "
-        // + "OR (s.scheduleDate IS NOT NULL AND s.scheduleDate BETWEEN :startDate AND
-        // :endDate))))")
-        // Double sumTotalByType(@Param("type") String type, @Param("startDate")
-        // LocalDate startDate,
-        // @Param("endDate") LocalDate endDate);
+        @Query("SELECT s.profileEvent, SUM(s.totalPaid) FROM Schedule s WHERE s.statusPayment = 'Paid' AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate GROUP BY s.profileEvent")
+        List<Object[]> sumTotalPaidGroupedByProfileEventAndDates(LocalDateTime startDate, LocalDateTime endDate);
+
+        @Query("SELECT s.category, SUM(s.totalPaid) FROM Schedule s WHERE s.statusPayment = 'Paid' AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate GROUP BY s.category")
+        List<Object[]> sumTotalPaidGroupedByCategoryAndDates(LocalDateTime startDate, LocalDateTime endDate);
+
+        @Query("SELECT s.scheduleStartDate, SUM(s.totalPaid) FROM Schedule s WHERE s.statusPayment = 'Maintenance' AND s.scheduleStartDate BETWEEN :startDate AND :endDate GROUP BY s.scheduleStartDate")
+        List<Object[]> sumMaintenanceByDay(@Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
+
+        @Query("SELECT SUM(s.totalPaid) FROM Schedule s WHERE s.statusPayment = 'Maintenance' "
+                        + "AND ((:startDate IS NULL AND :endDate IS NULL AND s.scheduleStartDate IS NOT NULL) "
+                        + "OR (:startDate IS NOT NULL AND :endDate IS NOT NULL AND "
+                        + "(s.scheduleStartDate IS NOT NULL AND s.scheduleEndDate IS NOT NULL AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate)))")
+        Double sumMaintenanceByType(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
         // @Query("SELECT SUM(s.total) "
         // + "FROM Schedule s "
