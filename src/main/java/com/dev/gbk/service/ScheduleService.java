@@ -142,7 +142,7 @@ public class ScheduleService {
         Long lastId = latestSchedule == null ? 0L : latestSchedule.getId();
 
         Schedule schedule = Schedule.builder()
-                .bookingNumber(Utils.generateBookingNumber(lastId, scheduleRequest.getStatusBooking()))
+                .bookingNumber(Utils.generateBookingNumber(lastId, scheduleRequest.getStatusPayment()))
                 .type(scheduleRequest.getType())
                 .profileEvent(scheduleRequest.getProfileEvent())
                 .descriptionEvent(scheduleRequest.getDescriptionEvent())
