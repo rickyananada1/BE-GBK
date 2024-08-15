@@ -2,6 +2,7 @@ package com.dev.gbk.controller;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dev.gbk.dto.CardEventDTO;
+import com.dev.gbk.dto.CardGamesDTO;
+import com.dev.gbk.dto.CardRetailDTO;
+import com.dev.gbk.dto.IncomeDTO;
 import com.dev.gbk.service.DashboardService;
 import com.dev.gbk.utils.ResponseHandler;
 
@@ -72,103 +77,128 @@ public class DashboardController {
     @GetMapping("/total-paid-profile-event")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<Object> getTotalPaidForProfileEvent(
-            @RequestParam("startDate") LocalDate startDate,
-            @RequestParam("endDate") LocalDate endDate,
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate,
             @RequestParam(value = "unitName", required = false) String unitName) {
 
-        Map<String, Integer> totalPaidByProfileEvent = dashboardService.getTotalPaidGroupedByProfileEvent(startDate,
-                endDate, unitName);
+        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
+
+        if (start != null && end != null && end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
+        Map<String, Integer> totalPaidByProfileEvent = dashboardService.getTotalPaidGroupedByProfileEvent(start, end,
+                unitName);
         return ResponseHandler.generateResponse("Data fetched successfully", HttpStatus.OK, totalPaidByProfileEvent);
     }
 
     @GetMapping("/total-paid-games")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<Object> getTotalPaidForGames(
-            @RequestParam("startDate") LocalDate startDate,
-            @RequestParam("endDate") LocalDate endDate,
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate,
             @RequestParam(value = "unitName", required = false) String unitName) {
 
-        Map<String, Integer> totalPaidByGames = dashboardService.getTotalPaidGroupedByGames(startDate, endDate,
+        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
+
+        if (start != null && end != null && end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
+        Map<String, Integer> totalPaidByGames = dashboardService.getTotalPaidGroupedByGames(start, end,
                 unitName);
         return ResponseHandler.generateResponse("Data fetched successfully", HttpStatus.OK, totalPaidByGames);
     }
 
-    // @GetMapping("/income")
-    // public IncomeDTO getIncome(@RequestParam(value = "startDate", required =
-    // false) String startDate,
-    // @RequestParam(value = "endDate", required = false) String endDate) {
-    // // get current year
-    // LocalDate now = LocalDate.now();
-    // if (startDate == null) {
-    // startDate = now.getYear() + "-01-01";
-    // }
-    // if (endDate == null) {
-    // // if month is < 10, add 0 to the beginning
-    // if (now.getMonthValue() < 10) {
-    // endDate = now.getYear() + "-0" + now.getMonthValue() + "-01";
-    // } else {
-    // endDate = now.getYear() + "-" + now.getMonthValue() + "-01";
-    // }
-    // }
-    // return dashboardService.getTotalIncome(startDate, endDate);
-    // }
+    @GetMapping("/income")
+    public IncomeDTO getIncome(@RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate) {
 
-    // @GetMapping("/type-total")
-    // public ResponseEntity<Map<String, Double>> getTotalByType(@RequestParam
-    // String type, @RequestParam String startDate,
-    // @RequestParam String endDate) {
-    // Double total = dashboardService.getTotalByType(type, startDate, endDate);
+        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
 
-    // Map<String, Double> response = new HashMap<>();
+        if (start != null && end != null && end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
 
-    // response.put("total", total);
+        return dashboardService.getTotalIncome(start, end);
+    }
 
-    // return ResponseEntity.ok(response);
-    // }
+    @GetMapping("/type-total")
+    public ResponseEntity<Object> getTotalByType(
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "unitName", required = false) String unitName) {
 
-    // @GetMapping("/game-total")
-    // public ResponseEntity<Map<String, Double>> getTotalByGame(@RequestParam
-    // String game, @RequestParam String startDate,
-    // @RequestParam String endDate) {
-    // Double total = dashboardService.getTotalByGame(game, startDate, endDate);
+        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
 
-    // Map<String, Double> response = new HashMap<>();
-    // response.put(game, total);
+        if (start != null && end != null && end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
+        Map<String, Integer> total = dashboardService.getTotalPaidGroupedByProfileEvent(start, end, unitName);
 
-    // return ResponseEntity.ok(response);
-    // }
+        return ResponseEntity.ok(total);
+    }
 
-    // @GetMapping("/games-card")
-    // @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    // public ResponseEntity<Object> getGamesCardData(
-    // @RequestParam(value = "startDate", required = false) String startDate,
-    // @RequestParam(value = "endDate", required = false) String endDate,
-    // @RequestParam(value = "unit", required = false) String unit) {
+    @GetMapping("/game-total")
+    public ResponseEntity<Object> getTotalByGame(
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "unitName", required = false) String unitName) {
 
-    // CardGamesDTO gamesCardData = dashboardService.getGamesCardData(startDate,
-    // endDate, unit);
-    // return ResponseHandler.generateResponse("Success get games card data",
-    // HttpStatus.OK, gamesCardData);
-    // }
+        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
 
-    // @GetMapping("/event-card")
-    // @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    // public ResponseEntity<Object> getEventCardData(
-    // @RequestParam(value = "startDate", required = false) String startDate,
-    // @RequestParam(value = "endDate", required = false) String endDate,
-    // @RequestParam(value = "unit", required = false) String unit) {
+        if (start != null && end != null && end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
 
-    // List<CardEventDTO> eventCardData =
-    // dashboardService.getEventCardData(startDate, endDate, unit);
-    // return ResponseHandler.generateResponse("Success get event card data",
-    // HttpStatus.OK, eventCardData);
-    // }
+        Map<String, Integer> total = dashboardService.getTotalPaidGroupedByGames(start, end, unitName);
 
-    // @GetMapping("/retail-card")
-    // @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    // public ResponseEntity<Object> getRetailCardData() {
-    // List<CardRetailDTO> retailCardData = dashboardService.getRetailCardData();
-    // return ResponseHandler.generateResponse("Success get retail card data",
-    // HttpStatus.OK, retailCardData);
-    // }
+        return ResponseEntity.ok(total);
+    }
+
+    @GetMapping("/games-card")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
+    public ResponseEntity<Object> getGamesCardData(
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "unit", required = false) String unit) {
+
+        CardGamesDTO gamesCardData = dashboardService.getGamesCardData(startDate,
+                endDate, unit);
+        return ResponseHandler.generateResponse("Success get games card data",
+                HttpStatus.OK, gamesCardData);
+    }
+
+    @GetMapping("/event-card")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
+    public ResponseEntity<Object> getEventCardData(
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "unit", required = false) String unit) {
+
+        List<CardEventDTO> eventCardData = dashboardService.getEventCardData(startDate, endDate, unit);
+        return ResponseHandler.generateResponse("Success get event card data",
+                HttpStatus.OK, eventCardData);
+    }
+
+    @GetMapping("/retail-card")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
+    public ResponseEntity<Object> getRetailCardData() {
+        List<CardRetailDTO> retailCardData = dashboardService.getRetailCardData();
+        return ResponseHandler.generateResponse("Success get retail card data",
+                HttpStatus.OK, retailCardData);
+    }
 }

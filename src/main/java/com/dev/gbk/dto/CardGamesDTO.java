@@ -19,5 +19,4 @@ public class CardGamesDTO {
     private int totalMaintenance;
     private List<ScheduleDTO> paidSchedules;
     private List<ScheduleDTO> maintenanceSchedules;
-
 }
