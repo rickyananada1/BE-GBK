@@ -45,6 +45,14 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
         @Query("SELECT s.category, SUM(s.totalPaid) FROM Schedule s WHERE s.statusPayment = 'Paid' AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate GROUP BY s.category")
         List<Object[]> sumTotalPaidGroupedByCategoryAndDates(LocalDate startDate, LocalDate endDate);
 
+        @Query("SELECT s.profileEvent, SUM(s.totalPaid) FROM Schedule s WHERE s.statusBooking = 'Soft Booking' AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate GROUP BY s.profileEvent")
+        List<Object[]> sumSoftBookingTotalPaidGroupedByProfileEventAndDates(@Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
+
+        @Query("SELECT s.category, SUM(s.totalPaid) FROM Schedule s WHERE s.statusBooking = 'Soft Booking' AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate GROUP BY s.category")
+        List<Object[]> sumSoftBookingTotalPaidGroupedByCategoryAndDates(@Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
+
         @Query("SELECT s.scheduleStartDate, SUM(s.totalPaid) FROM Schedule s WHERE s.statusPayment = 'Maintenance' AND s.scheduleStartDate BETWEEN :startDate AND :endDate GROUP BY s.scheduleStartDate")
         List<Object[]> sumMaintenanceByDay(@Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);

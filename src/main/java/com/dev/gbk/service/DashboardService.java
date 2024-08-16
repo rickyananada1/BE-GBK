@@ -119,6 +119,25 @@ public class DashboardService {
                                 totalParkingFee);
         }
 
+        public Map<String, Integer> getProjectionTotalPaidGroupedByProfileEvent(LocalDate startDate,
+                        LocalDate endDate) {
+                List<Object[]> results = scheduleRepository
+                                .sumSoftBookingTotalPaidGroupedByProfileEventAndDates(startDate, endDate);
+                return results.stream()
+                                .collect(Collectors.toMap(
+                                                result -> (String) result[0],
+                                                result -> ((Number) result[1]).intValue()));
+        }
+
+        public Map<String, Integer> getProjectionTotalPaidGroupedByGames(LocalDate startDate, LocalDate endDate) {
+                List<Object[]> results = scheduleRepository.sumSoftBookingTotalPaidGroupedByCategoryAndDates(startDate,
+                                endDate);
+                return results.stream()
+                                .collect(Collectors.toMap(
+                                                result -> (String) result[0],
+                                                result -> ((Number) result[1]).intValue()));
+        }
+
         public CardGamesDTO getGamesCardData(String startDateStr, String endDateStr, String unit) {
                 LocalDate start = parseDateOrDefault(startDateStr, LocalDate.of(LocalDate.now().getYear(), 1, 1));
                 LocalDate end = parseDateOrDefault(endDateStr, LocalDate.now());

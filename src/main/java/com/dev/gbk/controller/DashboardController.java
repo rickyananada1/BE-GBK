@@ -130,6 +130,29 @@ public class DashboardController {
         return dashboardService.getTotalIncome(start, end);
     }
 
+    @GetMapping("/projection/income")
+    public Map<String, Integer> getProjectionIncome(
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "type", required = true) String type) {
+        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
+
+        if (end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
+
+        if ("profileEvent".equalsIgnoreCase(type)) {
+            return dashboardService.getProjectionTotalPaidGroupedByProfileEvent(start, end);
+        } else if ("games".equalsIgnoreCase(type)) {
+            return dashboardService.getProjectionTotalPaidGroupedByGames(start, end);
+        } else {
+            throw new IllegalArgumentException("Invalid type parameter. Use 'profileEvent' or 'games'.");
+        }
+    }
+
     @GetMapping("/type-total")
     public ResponseEntity<Object> getTotalByType(
             @RequestParam(value = "startDate", required = false) String startDate,
