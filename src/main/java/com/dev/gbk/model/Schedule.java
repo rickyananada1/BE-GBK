@@ -1,6 +1,7 @@
 package com.dev.gbk.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.util.List;
@@ -103,10 +104,10 @@ public class Schedule implements Serializable {
     private String statusBooking;
 
     @Column(name = "total_sf")
-    private Integer totalSF;
+    private BigDecimal totalSF;
 
     @Column(name = "total_paid")
-    private Integer totalPaid;
+    private BigDecimal totalPaid;
 
     @Column(name = "customer_name")
     private String customerName;

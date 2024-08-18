@@ -1,7 +1,12 @@
 package com.dev.gbk.utils;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +39,7 @@ public class Utils {
         } else {
             code = "BO";
         }
-        
+
         // tanggal bulan dan 2 digit di akhir tahun
         String year = String.valueOf(LocalDate.now().getYear()).substring(2, 4);
         String month = String.valueOf(LocalDate.now().getMonthValue());
@@ -48,27 +53,29 @@ public class Utils {
         return code + year + month + day + (lastId + 1);
     }
 
-    // convert string to Integer by dot, example: 100.000.000 => 100000000
-    public static Integer convertStringToInteger(String number) {
+    public static BigDecimal convertStringToBigDecimal(String number) {
         if (number == null || number.isEmpty()) {
-            return 0;
-        }
-        // Remove all non-digit characters except for a single decimal point
-        String cleanedNumber = number.replaceAll("[^\\d.]", "");
-
-        // If there are multiple decimal points, keep only the last one
-        if (cleanedNumber.chars().filter(ch -> ch == '.').count() > 1) {
-            int lastDotIndex = cleanedNumber.lastIndexOf('.');
-            cleanedNumber = cleanedNumber.substring(0, lastDotIndex)
-                    + cleanedNumber.substring(lastDotIndex).replace(".", "");
+            return BigDecimal.ZERO;
         }
 
-        // If there's a decimal point, remove it and parse as an integer
-        // (assuming it represents thousands separators)
-        if (cleanedNumber.contains(".")) {
-            cleanedNumber = cleanedNumber.replace(".", "");
-        }
+        // Remove "Rp. " prefix if present
+        number = number.replace("Rp ", "");
 
-        return Integer.parseInt(cleanedNumber);
+        // Define Indonesian locale for correct decimal and grouping separators
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("id", "ID"));
+
+        // Create DecimalFormat with Indonesian locale and grouping separator
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.00", symbols);
+        decimalFormat.setParseBigDecimal(true);
+
+        try {
+            // Parse the string into a BigDecimal, handling grouping and decimal separators
+            BigDecimal result = (BigDecimal) decimalFormat.parse(number);
+            return result;
+        } catch (ParseException e) {
+            // Handle parsing errors, perhaps return BigDecimal.ZERO or throw an exception
+            System.err.println("Error parsing number: " + e.getMessage());
+            return BigDecimal.ZERO;
+        }
     }
 }

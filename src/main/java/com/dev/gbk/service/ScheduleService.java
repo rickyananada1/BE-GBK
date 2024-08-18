@@ -151,8 +151,8 @@ public class ScheduleService {
                 .session(scheduleRequest.getSession())
                 .statusBooking(scheduleRequest.getStatusBooking())
                 .statusPayment(scheduleRequest.getStatusPayment())
-                .totalPaid(Utils.convertStringToInteger(scheduleRequest.getTotalPaid()))
-                .totalSF(Utils.convertStringToInteger(scheduleRequest.getTotalSF()))
+                .totalPaid(Utils.convertStringToBigDecimal(scheduleRequest.getTotalPaid()))
+                .totalSF(Utils.convertStringToBigDecimal(scheduleRequest.getTotalSF()))
                 .customerName(scheduleRequest.getCustomerName())
                 .customerEmail(scheduleRequest.getCustomerEmail())
                 .customerPhone(scheduleRequest.getCustomerPhone())
@@ -197,8 +197,8 @@ public class ScheduleService {
         schedule.setSession(scheduleRequest.getSession());
         schedule.setStatusBooking(scheduleRequest.getStatusBooking());
         schedule.setStatusPayment(scheduleRequest.getStatusPayment());
-        schedule.setTotalPaid(Utils.convertStringToInteger(scheduleRequest.getTotalPaid()));
-        schedule.setTotalSF(Utils.convertStringToInteger(scheduleRequest.getTotalSF()));
+        schedule.setTotalPaid(Utils.convertStringToBigDecimal(scheduleRequest.getTotalPaid()));
+        schedule.setTotalSF(Utils.convertStringToBigDecimal(scheduleRequest.getTotalSF()));
         schedule.setScheduleTime(scheduleRequest.getScheduleTime());
         schedule.setCustomerName(scheduleRequest.getCustomerName());
         schedule.setCustomerEmail(scheduleRequest.getCustomerEmail());
