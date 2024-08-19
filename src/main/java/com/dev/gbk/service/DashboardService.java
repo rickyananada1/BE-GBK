@@ -151,18 +151,16 @@ public class DashboardService {
                                                 || "Umum".equals(schedule.getCategory()))
                                 .collect(Collectors.toList());
 
-                int totalPaid = filteredSchedules.stream()
-                                .filter(schedule -> "Paid".equals(schedule.getStatusPayment()))
-                                .mapToInt(schedule -> 1) // Hitung setiap schedule sebagai 1
-                                .sum();
+                int totalPaid = (int) filteredSchedules.stream()
+                                .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
+                                .count();
 
-                int totalMaintenance = filteredSchedules.stream()
-                                .filter(schedule -> "Maintenance".equals(schedule.getStatusPayment()))
-                                .mapToInt(schedule -> 1) // Hitung setiap schedule sebagai 1
-                                .sum();
+                int totalMaintenance = (int) filteredSchedules.stream()
+                                .filter(schedule -> MAINTENANCE_STATUS.equals(schedule.getStatusPayment()))
+                                .count();
 
                 List<ScheduleDTO> paidSchedules = filteredSchedules.stream()
-                                .filter(schedule -> "Paid".equals(schedule.getStatusPayment()))
+                                .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
                                 .map(schedule -> new ScheduleDTO(
                                                 schedule.getVenues().stream().map(Venue::getVenue)
                                                                 .collect(Collectors.toList()),
@@ -172,7 +170,7 @@ public class DashboardService {
                                 .collect(Collectors.toList());
 
                 List<ScheduleDTO> maintenanceSchedules = filteredSchedules.stream()
-                                .filter(schedule -> "Maintenance".equals(schedule.getStatusPayment()))
+                                .filter(schedule -> MAINTENANCE_STATUS.equals(schedule.getStatusPayment()))
                                 .map(schedule -> new ScheduleDTO(
                                                 schedule.getVenues().stream().map(Venue::getVenue)
                                                                 .collect(Collectors.toList()),
@@ -197,11 +195,11 @@ public class DashboardService {
 
         private CardEventDTO createCardEventDTO(List<Schedule> schedules) {
                 int totalPaid = (int) schedules.stream()
-                                .filter(s -> "Paid".equals(s.getStatusPayment()))
+                                .filter(s -> PAID_STATUS.equals(s.getStatusPayment()))
                                 .count();
 
                 int totalMaintenance = (int) schedules.stream()
-                                .filter(s -> "Maintenance".equals(s.getStatusPayment()))
+                                .filter(s -> MAINTENANCE_STATUS.equals(s.getStatusPayment()))
                                 .count();
 
                 List<ScheduleDTO> scheduleDTOs = schedules.stream()
@@ -257,18 +255,6 @@ public class DashboardService {
                 YearMonth startYM = YearMonth.from(start);
                 YearMonth endYM = YearMonth.from(end);
                 return startYM.until(endYM, java.time.temporal.ChronoUnit.MONTHS) + 1;
-        }
-
-        private List<ScheduleDTO> mapSchedulesToDTO(List<Schedule> schedules, String statusPayment) {
-                return schedules.stream()
-                                .filter(s -> statusPayment.equals(s.getStatusPayment()))
-                                .map(s -> new ScheduleDTO(
-                                                s.getVenues().stream().map(Venue::getVenue)
-                                                                .collect(Collectors.toList()),
-                                                s.getScheduleStartDate(),
-                                                s.getScheduleEndDate(),
-                                                s.getStatusPayment()))
-                                .collect(Collectors.toList());
         }
 
         private String createEventMapKey(List<Venue> venues, String category) {
