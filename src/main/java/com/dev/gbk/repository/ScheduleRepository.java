@@ -53,7 +53,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
         List<Object[]> sumSoftBookingTotalPaidGroupedByCategoryAndDates(@Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
-        @Query("SELECT s.scheduleStartDate, SUM(s.totalPaid) FROM Schedule s WHERE s.statusPayment = 'Maintenance' AND s.scheduleStartDate BETWEEN :startDate AND :endDate GROUP BY s.scheduleStartDate")
+        @Query("SELECT s.scheduleStartDate, SUM(s.totalPaid) FROM Schedule s WHERE s.statusBooking = 'Maintenance' AND s.scheduleStartDate BETWEEN :startDate AND :endDate GROUP BY s.scheduleStartDate")
         List<Object[]> sumMaintenanceByDay(@Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
@@ -63,36 +63,12 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
                         + "(s.scheduleStartDate IS NOT NULL AND s.scheduleEndDate IS NOT NULL AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate)))")
         Double sumMaintenanceByType(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-        @Query("SELECT SUM(CASE WHEN s.statusPayment = 'Paid' THEN s.totalPaid ELSE 0 END), " +
-                        "SUM(CASE WHEN s.statusPayment = 'Maintenance' THEN s.totalPaid ELSE 0 END) " +
-                        "FROM Schedule s JOIN s.venues v WHERE v.unit.name = :unitName " +
-                        "AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate")
-        List<Object[]> findGamesCardTotals(@Param("unitName") String unitName,
-                        @Param("startDate") LocalDate startDate,
-                        @Param("endDate") LocalDate endDate);
-
-        @Query("SELECT s FROM Schedule s JOIN s.venues v WHERE v.unit.name = :unitName " +
-                        "AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate")
-        List<Schedule> findGamesCardSchedules(@Param("unitName") String unitName,
-                        @Param("startDate") LocalDate startDate,
-                        @Param("endDate") LocalDate endDate);
-
-        @Query("SELECT s.venues, s.category, SUM(CASE WHEN s.statusPayment = 'Paid' THEN s.totalPaid ELSE 0 END)" +
-                        ", SUM(CASE WHEN s.statusPayment = 'Maintenance' THEN s.totalPaid ELSE 0 END) " +
-                        "FROM Schedule s " +
-                        "JOIN s.venues v " +
-                        "WHERE v.unit.name = :unit " +
-                        "AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate " +
-                        "GROUP BY s.venues, s.category")
-        List<Object[]> findEventCardTotals(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
-                        @Param("endDate") LocalDate endDate);
-
         @Query("SELECT s FROM Schedule s " +
                         "JOIN s.venues v " +
-                        "WHERE v.unit.name = :unit " +
+                        "WHERE (:unit IS NULL OR v.unit.name = :unit) " +
                         "AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate " +
-                        "AND (s.statusPayment = 'Paid' OR s.statusPayment = 'Maintenance')")
-        List<Schedule> findEventCardSchedules(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
+                        "GROUP BY s.category")
+        List<Schedule> findSchedules(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
 }

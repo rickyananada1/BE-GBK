@@ -28,8 +28,17 @@ public class UserController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_USER')")
     public ResponseEntity<Object> getUsers(@RequestParam(value = "search", required = false) String search,
-            @RequestParam(value = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size) {
+        if (page == null && size == null) {
+            return ResponseHandler.generateResponse("Success get all users", HttpStatus.OK,
+                    userService.findAll(search));
+        }
+
+        if (page == null)
+            page = 0;
+        if (size == null)
+            size = 10;
         return ResponseHandler.generateResponse("Success get all users", HttpStatus.OK,
                 userService.findAll(search, page, size));
     }

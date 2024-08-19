@@ -41,8 +41,11 @@ public class RetailService {
                 .orElseGet(() -> retailRepository.findAll(pageable));
     }
 
-    public List<Retail> findAll() {
-        return retailRepository.findAll();
+    public List<Retail> findAll(String search) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
+        Optional<Specification<Retail>> specification = specificationBuilder.parseAndBuild(search);
+        return specification.map(retailSpecification -> retailRepository.findAll(retailSpecification, sort))
+                .orElseGet(() -> retailRepository.findAll(sort));
     }
 
     public Retail findById(Long id) {

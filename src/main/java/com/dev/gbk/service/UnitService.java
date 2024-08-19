@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -26,17 +27,18 @@ public class UnitService {
         this.unitRepository = unitRepository;
     }
 
-    public List<Unit> findAll() {
-        return unitRepository.findAll();
+    public List<Unit> findAll(String search) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
+        Optional<Specification<Unit>> specification = specificationBuilder.parseAndBuild(search);
+        return specification.map(unitSpecification -> unitRepository.findAll(unitSpecification, sort))
+                .orElseGet(() -> unitRepository.findAll(sort));
     }
 
     public Page<Unit> findAll(String search, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Optional<Specification<Unit>> specification = specificationBuilder.parseAndBuild(search);
-        if (specification.isPresent()) {
-            return unitRepository.findAll(specification.get(), pageable);
-        }
-        return unitRepository.findAll(pageable);
+        return specification.map(unitSpecification -> unitRepository.findAll(unitSpecification, pageable))
+                .orElseGet(() -> unitRepository.findAll(pageable));
     }
 
     public Unit findById(Long id) {

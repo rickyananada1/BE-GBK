@@ -22,6 +22,7 @@ import com.dev.gbk.spesification.SpecificationBuilderImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,6 +47,13 @@ public class UserService {
         Optional<Specification<User>> specification = specificationBuilder.parseAndBuild(search);
         return specification.map(userSpecification -> userRepository.findAll(userSpecification, pageable))
                 .orElseGet(() -> userRepository.findAll(pageable));
+    }
+
+    public List<User> findAll(String search) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
+        Optional<Specification<User>> specification = specificationBuilder.parseAndBuild(search);
+        return specification.map(userSpecification -> userRepository.findAll(userSpecification, sort))
+                .orElseGet(() -> userRepository.findAll(sort));
     }
 
     public User save(UserRequest userRequest) {

@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,6 +29,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @SecurityRequirement(name = "bearerAuth")
 public class DashboardController {
     private final DashboardService dashboardService;
+    private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
 
     public DashboardController(DashboardService dashboardService) {
         this.dashboardService = dashboardService;
@@ -199,8 +202,18 @@ public class DashboardController {
             @RequestParam(value = "endDate", required = false) String endDate,
             @RequestParam(value = "unit", required = false) String unit) {
 
-        CardGamesDTO gamesCardData = dashboardService.getGamesCardData(startDate,
-                endDate, unit);
+        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
+
+        if (start != null && end != null && end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
+
+        logger.info("start: " + start + ", end: " + end + ", unit: " + unit);
+
+        CardGamesDTO gamesCardData = dashboardService.getGamesCardData(start, end, unit);
         return ResponseHandler.generateResponse("Success get games card data",
                 HttpStatus.OK, gamesCardData);
     }
@@ -212,7 +225,16 @@ public class DashboardController {
             @RequestParam(value = "endDate", required = false) String endDate,
             @RequestParam(value = "unit", required = false) String unit) {
 
-        List<CardEventDTO> eventCardData = dashboardService.getEventCardData(startDate, endDate, unit);
+        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
+
+        if (start != null && end != null && end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
+
+        List<CardEventDTO> eventCardData = dashboardService.getEventCardData(start, end, unit);
         return ResponseHandler.generateResponse("Success get event card data",
                 HttpStatus.OK, eventCardData);
     }

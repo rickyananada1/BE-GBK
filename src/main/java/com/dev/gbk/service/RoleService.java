@@ -47,6 +47,13 @@ public class RoleService {
                 .orElseGet(() -> roleRepository.findAll(pageable));
     }
 
+    public List<Role> findAll(String search) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
+        Optional<Specification<Role>> specification = specificationBuilder.parseAndBuild(search);
+        return specification.map(roleSpecification -> roleRepository.findAll(roleSpecification, sort))
+                .orElseGet(() -> roleRepository.findAll(sort));
+    }
+
     public Role findByName(String name) {
         return roleRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Role not found"));
     }

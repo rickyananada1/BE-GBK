@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +37,12 @@ public class MasterRetailService {
                 .orElseGet(() -> masterRetailRepository.findAll(pageable));
     }
 
-    public List<MasterRetail> findAll() {
-        return masterRetailRepository.findAll();
+    public List<MasterRetail> findAll(String search) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
+        Optional<Specification<MasterRetail>> specification = specificationBuilder.parseAndBuild(search);
+        return specification.map(masterRetailSpecification -> masterRetailRepository
+                .findAll(masterRetailSpecification, sort))
+                .orElseGet(() -> masterRetailRepository.findAll(sort));
     }
 
     public MasterRetail findById(Long id) {

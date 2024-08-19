@@ -102,10 +102,6 @@ public class ScheduleService {
                 .orElseGet(() -> scheduleRepository.findAll(pageable));
     }
 
-    public List<Schedule> findAll() {
-        return scheduleRepository.findAll();
-    }
-
     public List<Schedule> findAll(String search) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
         Optional<Specification<Schedule>> specification = specificationBuilder.parseAndBuild(search);

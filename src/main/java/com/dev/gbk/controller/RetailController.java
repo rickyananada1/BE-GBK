@@ -35,8 +35,17 @@ public class RetailController {
     @PreAuthorize("hasAuthority('VIEW_DATA_RETAIL')")
     @GetMapping
     public ResponseEntity<Object> findAll(@RequestParam(value = "search", required = false) String search,
-            @RequestParam(value = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size) {
+        if (page == null && size == null) {
+            return ResponseHandler.generateResponse("Success get all retails", HttpStatus.OK,
+                    retailService.findAll(search));
+        }
+
+        if (page == null)
+            page = 0;
+        if (size == null)
+            size = 10;
         return ResponseHandler.generateResponse("Success get all retails", HttpStatus.OK,
                 retailService.findAll(search, page, size));
     }
