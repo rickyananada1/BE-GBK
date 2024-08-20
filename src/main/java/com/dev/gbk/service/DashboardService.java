@@ -141,45 +141,54 @@ public class DashboardService {
                                                 result -> ((Number) result[1]).intValue()));
         }
 
-        public CardGamesDTO getGamesCardData(LocalDate startDate, LocalDate endDate, String unit) {
+        public List<CardGamesDTO> getGamesCardData(LocalDate startDate, LocalDate endDate, String unit) {
                 // Ambil semua data schedule
                 List<Schedule> schedules = scheduleRepository.findSchedules(unit, startDate, endDate);
 
-                // filter data schedule dimana games adalah Timnas atau Umum
-                List<Schedule> filteredSchedules = schedules.stream()
-                                .filter(schedule -> "Timnas".equals(schedule.getCategory())
-                                                || "Umum".equals(schedule.getCategory()))
-                                .collect(Collectors.toList());
+                // Kelompokkan berdasarkan kategori "Timnas" dan "Umum"
+                Map<String, List<Schedule>> groupedSchedules = schedules.stream()
+                                .collect(Collectors.groupingBy(schedule -> schedule.getGames()));
 
-                int totalPaid = (int) filteredSchedules.stream()
-                                .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
-                                .count();
+                // Buat daftar CardGamesDTO untuk setiap kategori
+                List<CardGamesDTO> cardGamesDTOList = new ArrayList<>();
 
-                int totalMaintenance = (int) filteredSchedules.stream()
-                                .filter(schedule -> MAINTENANCE_STATUS.equals(schedule.getStatusPayment()))
-                                .count();
+                for (Map.Entry<String, List<Schedule>> entry : groupedSchedules.entrySet()) {
+                        String category = entry.getKey();
+                        List<Schedule> categorySchedules = entry.getValue();
 
-                List<ScheduleDTO> paidSchedules = filteredSchedules.stream()
-                                .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
-                                .map(schedule -> new ScheduleDTO(
-                                                schedule.getVenues().stream().map(Venue::getVenue)
-                                                                .collect(Collectors.toList()),
-                                                schedule.getScheduleStartDate(),
-                                                schedule.getScheduleEndDate(),
-                                                schedule.getStatusPayment()))
-                                .collect(Collectors.toList());
+                        int totalPaid = (int) categorySchedules.stream()
+                                        .filter(schedule -> "Paid".equals(schedule.getStatusPayment()))
+                                        .count();
 
-                List<ScheduleDTO> maintenanceSchedules = filteredSchedules.stream()
-                                .filter(schedule -> MAINTENANCE_STATUS.equals(schedule.getStatusPayment()))
-                                .map(schedule -> new ScheduleDTO(
-                                                schedule.getVenues().stream().map(Venue::getVenue)
-                                                                .collect(Collectors.toList()),
-                                                schedule.getScheduleStartDate(),
-                                                schedule.getScheduleEndDate(),
-                                                schedule.getStatusPayment()))
-                                .collect(Collectors.toList());
+                        int totalMaintenance = (int) categorySchedules.stream()
+                                        .filter(schedule -> "Maintenance".equals(schedule.getStatusPayment()))
+                                        .count();
 
-                return new CardGamesDTO(totalPaid, totalMaintenance, paidSchedules, maintenanceSchedules);
+                        List<ScheduleDTO> paidSchedules = categorySchedules.stream()
+                                        .filter(schedule -> "Paid".equals(schedule.getStatusPayment()))
+                                        .map(schedule -> new ScheduleDTO(
+                                                        schedule.getVenues().stream().map(Venue::getVenue)
+                                                                        .collect(Collectors.toList()),
+                                                        schedule.getScheduleStartDate(),
+                                                        schedule.getScheduleEndDate(),
+                                                        schedule.getStatusPayment()))
+                                        .collect(Collectors.toList());
+
+                        List<ScheduleDTO> maintenanceSchedules = categorySchedules.stream()
+                                        .filter(schedule -> "Maintenance".equals(schedule.getStatusPayment()))
+                                        .map(schedule -> new ScheduleDTO(
+                                                        schedule.getVenues().stream().map(Venue::getVenue)
+                                                                        .collect(Collectors.toList()),
+                                                        schedule.getScheduleStartDate(),
+                                                        schedule.getScheduleEndDate(),
+                                                        schedule.getStatusPayment()))
+                                        .collect(Collectors.toList());
+
+                        cardGamesDTOList.add(new CardGamesDTO(totalPaid, totalMaintenance, paidSchedules,
+                                        maintenanceSchedules, category));
+                }
+
+                return cardGamesDTOList;
         }
 
         public List<CardEventDTO> getEventCardData(LocalDate startDate, LocalDate endDate, String unit) {

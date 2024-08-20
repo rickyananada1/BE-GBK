@@ -213,7 +213,7 @@ public class DashboardController {
 
         logger.info("start: " + start + ", end: " + end + ", unit: " + unit);
 
-        CardGamesDTO gamesCardData = dashboardService.getGamesCardData(start, end, unit);
+        List<CardGamesDTO> gamesCardData = dashboardService.getGamesCardData(start, end, unit);
         return ResponseHandler.generateResponse("Success get games card data",
                 HttpStatus.OK, gamesCardData);
     }
