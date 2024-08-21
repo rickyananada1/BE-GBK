@@ -75,7 +75,7 @@ public class DashboardController {
     }
 
     @GetMapping("/total-paid-profile-event")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
     public ResponseEntity<Object> getTotalPaidForProfileEvent(
             @RequestParam("startDate") String startDate,
             @RequestParam("endDate") String endDate,
@@ -95,7 +95,7 @@ public class DashboardController {
     }
 
     @GetMapping("/total-paid-games")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
     public ResponseEntity<Object> getTotalPaidForGames(
             @RequestParam("startDate") String startDate,
             @RequestParam("endDate") String endDate,
@@ -115,6 +115,7 @@ public class DashboardController {
     }
 
     @GetMapping("/income")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
     public IncomeDTO getIncome(@RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
             @RequestParam(value = "unitName", required = false) String unitName) {
@@ -132,6 +133,7 @@ public class DashboardController {
     }
 
     @GetMapping("/projection/income")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
     public Map<String, Integer> getProjectionIncome(
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
@@ -156,6 +158,7 @@ public class DashboardController {
     }
 
     @GetMapping("/type-total")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
     public ResponseEntity<Object> getTotalByType(
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
@@ -175,6 +178,7 @@ public class DashboardController {
     }
 
     @GetMapping("/game-total")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
     public ResponseEntity<Object> getTotalByGame(
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
