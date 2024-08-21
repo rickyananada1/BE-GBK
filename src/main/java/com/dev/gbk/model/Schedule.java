@@ -12,7 +12,9 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -23,6 +25,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -47,7 +50,7 @@ public class Schedule implements Serializable {
     private String bookingNumber;
 
     @ManyToMany
-    @CollectionTable(name = "schedule_venues", joinColumns = @JoinColumn(name = "schedule_id"))
+    @CollectionTable(name = "schedules_venues", joinColumns = @JoinColumn(name = "schedule_id", referencedColumnName = "id"))
     private List<Venue> venues;
 
     @Column(name = "type")

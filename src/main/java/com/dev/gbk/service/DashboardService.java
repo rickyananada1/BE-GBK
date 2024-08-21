@@ -38,10 +38,8 @@ public class DashboardService {
                 // filter schedules statusPayment is paid
                 Map<String, Long> categoryCount = schedules.stream()
                                 .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
-                                .collect(Collectors.groupingBy(
-                                                schedule -> Optional.ofNullable(schedule.getCategory())
-                                                                .orElse("Unknown Category"),
-                                                Collectors.counting()));
+                                .filter(schedule -> schedule.getCategory() != null)
+                                .collect(Collectors.groupingBy(Schedule::getCategory, Collectors.counting()));
 
                 long totalEvents = categoryCount.values().stream().mapToLong(Long::longValue).sum();
 
@@ -148,9 +146,8 @@ public class DashboardService {
 
                 // Kelompokkan berdasarkan kategori "Timnas" dan "Umum"
                 Map<String, List<Schedule>> groupedSchedules = schedules.stream()
-                                .collect(Collectors.groupingBy(
-                                                schedule -> Optional.ofNullable(schedule.getGames())
-                                                                .orElse("Unknown Category")));
+                                .filter(schedule -> schedule.getCategory() != null)
+                                .collect(Collectors.groupingBy(Schedule::getCategory));
 
                 // Buat daftar CardGamesDTO untuk setiap kategori
                 List<CardGamesDTO> cardGamesDTOList = new ArrayList<>();
@@ -197,9 +194,13 @@ public class DashboardService {
         public List<CardEventDTO> getEventCardData(LocalDate startDate, LocalDate endDate, String unit) {
                 List<Schedule> schedules = scheduleRepository.findSchedules(unit, startDate, endDate);
                 // Group schedules by the concatenation of venues and category
-                Map<String, CardEventDTO> eventMap = schedules.stream().collect(Collectors.groupingBy(
-                                schedule -> createEventMapKey(schedule.getVenues(), schedule.getCategory()),
-                                Collectors.collectingAndThen(Collectors.toList(), this::createCardEventDTO)));
+                Map<String, CardEventDTO> eventMap = schedules.stream()
+                                .filter(schedule -> schedule.getCategory() != null)
+                                .collect(Collectors.groupingBy(
+                                                schedule -> createEventMapKey(schedule.getVenues(),
+                                                                schedule.getCategory()),
+                                                Collectors.collectingAndThen(Collectors.toList(),
+                                                                this::createCardEventDTO)));
 
                 return new ArrayList<>(eventMap.values());
         }
