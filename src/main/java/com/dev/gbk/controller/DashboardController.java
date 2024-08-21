@@ -5,8 +5,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,7 +27,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @SecurityRequirement(name = "bearerAuth")
 public class DashboardController {
     private final DashboardService dashboardService;
-    private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
 
     public DashboardController(DashboardService dashboardService) {
         this.dashboardService = dashboardService;
@@ -210,8 +207,6 @@ public class DashboardController {
             start = end;
             end = temp;
         }
-
-        logger.info("start: " + start + ", end: " + end + ", unit: " + unit);
 
         List<CardGamesDTO> gamesCardData = dashboardService.getGamesCardData(start, end, unit);
         return ResponseHandler.generateResponse("Success get games card data",

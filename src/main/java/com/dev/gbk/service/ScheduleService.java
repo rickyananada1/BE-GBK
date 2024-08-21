@@ -44,56 +44,6 @@ public class ScheduleService {
         this.venueRepository = venueRepository;
     }
 
-    // public List<TimeSlot> getAvailableTimeSlots(LocalDate startDate, LocalDate
-    // endDate) {
-    // // List to store time slots
-    // List<TimeSlot> timeSlots = new ArrayList<>();
-
-    // // Generate time slots for each day within the date range
-    // LocalDate currentDate = startDate;
-
-    // while (!currentDate.isAfter(endDate)) {
-    // // Generate time slots from 6 AM to 10 PM
-    // for (int hour = 6; hour < 22; hour += 2) {
-    // try {
-    // LocalTime fromTime = LocalTime.of(hour, 0);
-    // LocalTime toTime = LocalTime.of(hour + 2, 0);
-
-    // // Create TimeSlot object
-    // TimeSlot slot = new TimeSlot(fromTime, toTime, "Available");
-    // timeSlots.add(slot);
-    // } catch (Exception e) {
-    // log.error(e.getMessage());
-    // }
-    // }
-
-    // // Add one day
-    // currentDate = currentDate.plusDays(1);
-    // }
-
-    // if (timeSlots.isEmpty()) {
-    // return timeSlots;
-    // }
-
-    // // Get booked schedules within the date range
-    // List<Schedule> bookedSchedules =
-    // scheduleRepository.findByScheduleDateBetween(startDate, endDate);
-
-    // // Check availability for each time slot
-    // for (Schedule schedule : bookedSchedules) {
-    // for (TimeSlot slot : timeSlots) {
-    // if ((slot.getFromTime().equals(schedule.getScheduleTimeFrom()) ||
-    // slot.getFromTime().isAfter(schedule.getScheduleTimeFrom())) &&
-    // (slot.getToTime().equals(schedule.getScheduleTimeTo()) ||
-    // slot.getToTime().isBefore(schedule.getScheduleTimeTo()))) {
-    // slot.setStatus("Booked");
-    // }
-    // }
-    // }
-
-    // return timeSlots;
-    // }
-
     public Page<Schedule> findAll(String search, int page, int size) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -112,10 +62,10 @@ public class ScheduleService {
     public List<Schedule> findPendingSchedulesCreatedBefore(Long venue) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         if (venue != null) {
-            return scheduleRepository.findByStatusBookingAndVenuesIdAndCreatedAtBefore("Soft Booking", venue,
+            return scheduleRepository.findByStatusPaymentAndVenuesIdAndCreatedAtBefore("Soft Booking", venue,
                     currentDateTime.minusDays(3));
         } else {
-            return scheduleRepository.findByStatusBookingAndCreatedAtBefore("Soft Booking",
+            return scheduleRepository.findByStatusPaymentAndCreatedAtBefore("Soft Booking",
                     currentDateTime.minusDays(3));
         }
     }

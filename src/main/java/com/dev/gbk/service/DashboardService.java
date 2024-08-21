@@ -7,8 +7,6 @@ import com.dev.gbk.repository.RetailRepository;
 import com.dev.gbk.repository.ScheduleRepository;
 
 import org.apache.commons.lang3.function.TriFunction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -28,7 +26,6 @@ public class DashboardService {
 
         private final ScheduleRepository scheduleRepository;
         private final RetailRepository retailRepository;
-        private static final Logger logger = LoggerFactory.getLogger(DashboardService.class);
 
         public DashboardService(ScheduleRepository scheduleRepository, RetailRepository retailRepository) {
                 this.scheduleRepository = scheduleRepository;
@@ -36,11 +33,15 @@ public class DashboardService {
         }
 
         public Map<String, BigDecimal> getUsageByCategory(LocalDate startDate, LocalDate endDate, String unitName) {
-                List<Schedule> schedules = fetchSchedules(unitName, endDate);
+                List<Schedule> schedules = scheduleRepository.findSchedules(unitName, startDate, endDate);
 
+                // filter schedules statusPayment is paid
                 Map<String, Long> categoryCount = schedules.stream()
-                                .filter(schedule -> isWithinDateRange(schedule, startDate, endDate))
-                                .collect(Collectors.groupingBy(Schedule::getCategory, Collectors.counting()));
+                                .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
+                                .collect(Collectors.groupingBy(
+                                                schedule -> Optional.ofNullable(schedule.getCategory())
+                                                                .orElse("Unknown Category"),
+                                                Collectors.counting()));
 
                 long totalEvents = categoryCount.values().stream().mapToLong(Long::longValue).sum();
 
@@ -48,10 +49,10 @@ public class DashboardService {
         }
 
         public Map<String, BigDecimal> getUsageByProfileEvent(LocalDate startDate, LocalDate endDate, String unitName) {
-                List<Schedule> schedules = fetchSchedules(unitName, endDate);
+                List<Schedule> schedules = scheduleRepository.findSchedules(unitName, startDate, endDate);
 
                 Map<String, Long> profileEventCount = schedules.stream()
-                                .filter(schedule -> isWithinDateRange(schedule, startDate, endDate))
+                                .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
                                 .collect(Collectors.groupingBy(Schedule::getProfileEvent, Collectors.counting()));
 
                 long totalEvents = profileEventCount.values().stream().mapToLong(Long::longValue).sum();
@@ -147,7 +148,9 @@ public class DashboardService {
 
                 // Kelompokkan berdasarkan kategori "Timnas" dan "Umum"
                 Map<String, List<Schedule>> groupedSchedules = schedules.stream()
-                                .collect(Collectors.groupingBy(schedule -> schedule.getGames()));
+                                .collect(Collectors.groupingBy(
+                                                schedule -> Optional.ofNullable(schedule.getGames())
+                                                                .orElse("Unknown Category")));
 
                 // Buat daftar CardGamesDTO untuk setiap kategori
                 List<CardGamesDTO> cardGamesDTOList = new ArrayList<>();
@@ -157,15 +160,15 @@ public class DashboardService {
                         List<Schedule> categorySchedules = entry.getValue();
 
                         int totalPaid = (int) categorySchedules.stream()
-                                        .filter(schedule -> "Paid".equals(schedule.getStatusPayment()))
+                                        .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
                                         .count();
 
                         int totalMaintenance = (int) categorySchedules.stream()
-                                        .filter(schedule -> "Maintenance".equals(schedule.getStatusPayment()))
+                                        .filter(schedule -> MAINTENANCE_STATUS.equals(schedule.getStatusPayment()))
                                         .count();
 
                         List<ScheduleDTO> paidSchedules = categorySchedules.stream()
-                                        .filter(schedule -> "Paid".equals(schedule.getStatusPayment()))
+                                        .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
                                         .map(schedule -> new ScheduleDTO(
                                                         schedule.getVenues().stream().map(Venue::getVenue)
                                                                         .collect(Collectors.toList()),
@@ -175,7 +178,7 @@ public class DashboardService {
                                         .collect(Collectors.toList());
 
                         List<ScheduleDTO> maintenanceSchedules = categorySchedules.stream()
-                                        .filter(schedule -> "Maintenance".equals(schedule.getStatusPayment()))
+                                        .filter(schedule -> MAINTENANCE_STATUS.equals(schedule.getStatusPayment()))
                                         .map(schedule -> new ScheduleDTO(
                                                         schedule.getVenues().stream().map(Venue::getVenue)
                                                                         .collect(Collectors.toList()),
@@ -193,7 +196,6 @@ public class DashboardService {
 
         public List<CardEventDTO> getEventCardData(LocalDate startDate, LocalDate endDate, String unit) {
                 List<Schedule> schedules = scheduleRepository.findSchedules(unit, startDate, endDate);
-                logger.info("schedules: " + schedules.size());
                 // Group schedules by the concatenation of venues and category
                 Map<String, CardEventDTO> eventMap = schedules.stream().collect(Collectors.groupingBy(
                                 schedule -> createEventMapKey(schedule.getVenues(), schedule.getCategory()),
@@ -232,19 +234,6 @@ public class DashboardService {
         }
 
         // === Helper Methods ===
-
-        private List<Schedule> fetchSchedules(String unitName, LocalDate endDate) {
-                return (unitName != null)
-                                ? scheduleRepository.findByUnitNameAndStatusPaymentAndCreatedAtBefore(unitName,
-                                                endDate.atStartOfDay())
-                                : scheduleRepository.findByStatusPaymentAndCreatedAtBefore(PAID_STATUS,
-                                                endDate.atStartOfDay());
-        }
-
-        private boolean isWithinDateRange(Schedule schedule, LocalDate startDate, LocalDate endDate) {
-                return !schedule.getScheduleStartDate().isBefore(startDate)
-                                && !schedule.getScheduleEndDate().isAfter(endDate);
-        }
 
         private <T> Map<String, BigDecimal> calculatePercentages(Map<String, T> countMap, long total) {
                 return countMap.entrySet().stream()

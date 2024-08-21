@@ -14,20 +14,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSpecificationExecutor<Schedule> {
-        List<Schedule> findByStatusBookingAndCreatedAtBefore(String status, LocalDateTime dateTime);
+        List<Schedule> findByStatusPaymentAndCreatedAtBefore(String statusPayment, LocalDateTime dateTime);
 
-        List<Schedule> findByStatusBookingAndVenuesIdAndCreatedAtBefore(
-                        String statusBooking, Long venueId, LocalDateTime createdAt);
+        List<Schedule> findByStatusPaymentAndVenuesIdAndCreatedAtBefore(
+                        String statusPayment, Long venueId, LocalDateTime createdAt);
 
         boolean existsByBookingNumber(String bookingNumber);
-
-        @Query("SELECT s FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE u.name = :unitName AND s.statusPayment = 'Paid' AND s.createdAt <= :createdAt")
-        List<Schedule> findByUnitNameAndStatusPaymentAndCreatedAtBefore(String unitName, LocalDateTime createdAt);
-
-        @Query("SELECT s FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE u.name = :unitName AND s.statusPayment = 'Paid'")
-        List<Schedule> findByUnitNameAndStatusPayment(String unitName);
-
-        List<Schedule> findByStatusPaymentAndCreatedAtBefore(String statusPayment, LocalDateTime createdAt);
 
         Schedule findTopByOrderByIdDesc();
 
