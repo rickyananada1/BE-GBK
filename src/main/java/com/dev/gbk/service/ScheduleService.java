@@ -134,7 +134,6 @@ public class ScheduleService {
             venues.add(venue);
         }
 
-        schedule.setBookingNumber(scheduleRequest.getBookingNumber());
         schedule.setType(scheduleRequest.getType());
         schedule.setProfileEvent(scheduleRequest.getProfileEvent());
         schedule.setDescriptionEvent(scheduleRequest.getDescriptionEvent());

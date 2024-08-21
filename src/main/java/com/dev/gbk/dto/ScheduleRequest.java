@@ -19,10 +19,6 @@ import lombok.Setter;
 @Builder
 public class ScheduleRequest {
     @Nullable
-    @JsonProperty("BookingNumber")
-    private String bookingNumber;
-
-    @Nullable
     @JsonProperty("Type")
     private String type;
 

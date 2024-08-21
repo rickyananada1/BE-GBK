@@ -37,7 +37,7 @@ public class DashboardController {
     public ResponseEntity<Object> getUsageByCategory(
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "unit", required = false) String unit) {
+            @RequestParam(value = "unit", required = false) String unitName) {
 
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
@@ -48,7 +48,7 @@ public class DashboardController {
             end = temp;
         }
 
-        Map<String, BigDecimal> result = dashboardService.getUsageByCategory(start, end, unit);
+        Map<String, BigDecimal> result = dashboardService.getUsageByCategory(start, end, unitName);
         return ResponseHandler.generateResponse("Success get usage by category",
                 HttpStatus.OK, result);
     }
@@ -58,7 +58,7 @@ public class DashboardController {
     public ResponseEntity<Object> getUsageByProfileEvent(
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "unit", required = false) String unit) {
+            @RequestParam(value = "unit", required = false) String unitName) {
 
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
@@ -69,7 +69,7 @@ public class DashboardController {
             end = temp;
         }
 
-        Map<String, BigDecimal> result = dashboardService.getUsageByProfileEvent(start, end, unit);
+        Map<String, BigDecimal> result = dashboardService.getUsageByProfileEvent(start, end, unitName);
         return ResponseHandler.generateResponse("Success get usage by profile event",
                 HttpStatus.OK, result);
     }
@@ -116,7 +116,8 @@ public class DashboardController {
 
     @GetMapping("/income")
     public IncomeDTO getIncome(@RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate) {
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "unitName", required = false) String unitName) {
 
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
@@ -127,14 +128,15 @@ public class DashboardController {
             end = temp;
         }
 
-        return dashboardService.getTotalIncome(start, end);
+        return dashboardService.getTotalIncome(start, end, unitName);
     }
 
     @GetMapping("/projection/income")
     public Map<String, Integer> getProjectionIncome(
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "type", required = true) String type) {
+            @RequestParam(value = "type", required = true) String type,
+            @RequestParam(value = "unitName", required = false) String unitName) {
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
 
@@ -145,9 +147,9 @@ public class DashboardController {
         }
 
         if ("profileEvent".equalsIgnoreCase(type)) {
-            return dashboardService.getProjectionTotalPaidGroupedByProfileEvent(start, end);
+            return dashboardService.getProjectionTotalPaidGroupedByProfileEvent(start, end, unitName);
         } else if ("games".equalsIgnoreCase(type)) {
-            return dashboardService.getProjectionTotalPaidGroupedByGames(start, end);
+            return dashboardService.getProjectionTotalPaidGroupedByGames(start, end, unitName);
         } else {
             throw new IllegalArgumentException("Invalid type parameter. Use 'profileEvent' or 'games'.");
         }

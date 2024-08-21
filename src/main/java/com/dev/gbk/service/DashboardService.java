@@ -32,10 +32,10 @@ public class DashboardService {
                 this.retailRepository = retailRepository;
         }
 
-        public Map<String, BigDecimal> getUsageByCategory(LocalDate startDate, LocalDate endDate, String unitName) {
-                List<Schedule> schedules = scheduleRepository.findSchedules(unitName, startDate, endDate);
+        public Map<String, BigDecimal> getUsageByCategory(LocalDate startDate, LocalDate endDate, String unitNames) {
+                List<String> units = Arrays.asList(unitNames.split(","));
+                List<Schedule> schedules = scheduleRepository.findSchedules(units, startDate, endDate);
 
-                // filter schedules statusPayment is paid
                 Map<String, Long> categoryCount = schedules.stream()
                                 .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
                                 .filter(schedule -> schedule.getCategory() != null)
@@ -46,8 +46,10 @@ public class DashboardService {
                 return calculatePercentages(categoryCount, totalEvents);
         }
 
-        public Map<String, BigDecimal> getUsageByProfileEvent(LocalDate startDate, LocalDate endDate, String unitName) {
-                List<Schedule> schedules = scheduleRepository.findSchedules(unitName, startDate, endDate);
+        public Map<String, BigDecimal> getUsageByProfileEvent(LocalDate startDate, LocalDate endDate,
+                        String unitNames) {
+                List<String> units = Arrays.asList(unitNames.split(","));
+                List<Schedule> schedules = scheduleRepository.findSchedules(units, startDate, endDate);
 
                 Map<String, Long> profileEventCount = schedules.stream()
                                 .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
@@ -59,26 +61,10 @@ public class DashboardService {
         }
 
         public Map<String, Integer> getTotalPaidGroupedByProfileEvent(LocalDate startDate, LocalDate endDate,
-                        String unitName) {
-                return getTotalPaidGroupedBy(startDate, endDate, unitName,
-                                scheduleRepository::sumTotalPaidGroupedByProfileEventAndUnitAndDates,
-                                scheduleRepository::sumTotalPaidGroupedByProfileEventAndDates);
-        }
-
-        public Map<String, Integer> getTotalPaidGroupedByGames(LocalDate startDate, LocalDate endDate,
-                        String unitName) {
-                return getTotalPaidGroupedBy(startDate, endDate, unitName,
-                                scheduleRepository::sumTotalPaidGroupedByCategoryAndUnitAndDates,
-                                scheduleRepository::sumTotalPaidGroupedByCategoryAndDates);
-        }
-
-        private Map<String, Integer> getTotalPaidGroupedBy(LocalDate startDate, LocalDate endDate, String unitName,
-                        TriFunction<String, LocalDate, LocalDate, List<Object[]>> unitQuery,
-                        BiFunction<LocalDate, LocalDate, List<Object[]>> generalQuery) {
-
-                List<Object[]> results = (unitName != null)
-                                ? unitQuery.apply(unitName, startDate, endDate)
-                                : generalQuery.apply(startDate, endDate);
+                        String unitNames) {
+                List<String> units = Arrays.asList(unitNames.split(","));
+                List<Object[]> results = scheduleRepository.sumTotalPaidGroupedByProfileEventAndDates(startDate,
+                                endDate, units);
 
                 return results.stream()
                                 .collect(Collectors.toMap(
@@ -86,12 +72,15 @@ public class DashboardService {
                                                 result -> ((Number) result[1]).intValue()));
         }
 
-        public Map<LocalDate, Integer> getTotalMaintenanceByDay(LocalDate startDate, LocalDate endDate) {
-                List<Object[]> results = scheduleRepository.sumMaintenanceByDay(startDate, endDate);
+        public Map<String, Integer> getTotalPaidGroupedByGames(LocalDate startDate, LocalDate endDate,
+                        String unitNames) {
+                List<String> units = Arrays.asList(unitNames.split(","));
 
+                List<Object[]> results = scheduleRepository.sumTotalPaidGroupedByCategoryAndDates(startDate,
+                                endDate, units);
                 return results.stream()
                                 .collect(Collectors.toMap(
-                                                result -> (LocalDate) result[0],
+                                                result -> (String) result[0],
                                                 result -> ((Number) result[1]).intValue()));
         }
 
@@ -99,7 +88,8 @@ public class DashboardService {
                 return MONTHLY_PARKING_FEE.intValue();
         }
 
-        public IncomeDTO getTotalIncome(LocalDate startDate, LocalDate endDate) {
+        public IncomeDTO getTotalIncome(LocalDate startDate, LocalDate endDate, String unitNames) {
+                List<String> units = Arrays.asList(unitNames.split(","));
 
                 BigDecimal retailIncome = safeBigDecimalFromDouble(
                                 retailRepository.sumPriceByStatusAndDateRangeAndArea("Sewa", null));
@@ -112,7 +102,7 @@ public class DashboardService {
                                                 null));
 
                 BigDecimal maintenanceVenue = safeBigDecimalFromDouble(
-                                scheduleRepository.sumMaintenanceByType(startDate, endDate));
+                                scheduleRepository.sumMaintenanceByType(units, startDate, endDate));
 
                 long monthsBetween = calculateMonthsBetween(startDate, endDate);
                 BigDecimal totalParkingFee = MONTHLY_PARKING_FEE.multiply(BigDecimal.valueOf(monthsBetween));
@@ -122,34 +112,35 @@ public class DashboardService {
         }
 
         public Map<String, Integer> getProjectionTotalPaidGroupedByProfileEvent(LocalDate startDate,
-                        LocalDate endDate) {
+                        LocalDate endDate, String unitNames) {
+                List<String> units = Arrays.asList(unitNames.split(","));
                 List<Object[]> results = scheduleRepository
-                                .sumSoftBookingTotalPaidGroupedByProfileEventAndDates(startDate, endDate);
+                                .sumSoftBookingTotalPaidGroupedByProfileEventAndDates(startDate, endDate, units);
                 return results.stream()
                                 .collect(Collectors.toMap(
                                                 result -> (String) result[0],
                                                 result -> ((Number) result[1]).intValue()));
         }
 
-        public Map<String, Integer> getProjectionTotalPaidGroupedByGames(LocalDate startDate, LocalDate endDate) {
+        public Map<String, Integer> getProjectionTotalPaidGroupedByGames(LocalDate startDate, LocalDate endDate,
+                        String unitNames) {
+                List<String> units = Arrays.asList(unitNames.split(","));
                 List<Object[]> results = scheduleRepository.sumSoftBookingTotalPaidGroupedByCategoryAndDates(startDate,
-                                endDate);
+                                endDate, units);
                 return results.stream()
                                 .collect(Collectors.toMap(
                                                 result -> (String) result[0],
                                                 result -> ((Number) result[1]).intValue()));
         }
 
-        public List<CardGamesDTO> getGamesCardData(LocalDate startDate, LocalDate endDate, String unit) {
-                // Ambil semua data schedule
-                List<Schedule> schedules = scheduleRepository.findSchedules(unit, startDate, endDate);
+        public List<CardGamesDTO> getGamesCardData(LocalDate startDate, LocalDate endDate, String unitNames) {
+                List<String> units = Arrays.asList(unitNames.split(","));
+                List<Schedule> schedules = scheduleRepository.findSchedules(units, startDate, endDate);
 
-                // Kelompokkan berdasarkan kategori "Timnas" dan "Umum"
                 Map<String, List<Schedule>> groupedSchedules = schedules.stream()
                                 .filter(schedule -> schedule.getCategory() != null)
                                 .collect(Collectors.groupingBy(Schedule::getCategory));
 
-                // Buat daftar CardGamesDTO untuk setiap kategori
                 List<CardGamesDTO> cardGamesDTOList = new ArrayList<>();
 
                 for (Map.Entry<String, List<Schedule>> entry : groupedSchedules.entrySet()) {
@@ -191,9 +182,10 @@ public class DashboardService {
                 return cardGamesDTOList;
         }
 
-        public List<CardEventDTO> getEventCardData(LocalDate startDate, LocalDate endDate, String unit) {
-                List<Schedule> schedules = scheduleRepository.findSchedules(unit, startDate, endDate);
-                // Group schedules by the concatenation of venues and category
+        public List<CardEventDTO> getEventCardData(LocalDate startDate, LocalDate endDate, String unitNames) {
+                List<String> units = Arrays.asList(unitNames.split(","));
+                List<Schedule> schedules = scheduleRepository.findSchedules(units, startDate, endDate);
+
                 Map<String, CardEventDTO> eventMap = schedules.stream()
                                 .filter(schedule -> schedule.getCategory() != null)
                                 .collect(Collectors.groupingBy(

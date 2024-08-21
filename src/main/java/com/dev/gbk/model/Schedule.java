@@ -12,10 +12,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -50,7 +47,7 @@ public class Schedule implements Serializable {
     private String bookingNumber;
 
     @ManyToMany
-    @CollectionTable(name = "schedules_venues", joinColumns = @JoinColumn(name = "schedule_id", referencedColumnName = "id"))
+    @JoinTable(name = "schedules_venues", joinColumns = @JoinColumn(name = "schedule_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "venue_id", referencedColumnName = "id"))
     private List<Venue> venues;
 
     @Column(name = "type")

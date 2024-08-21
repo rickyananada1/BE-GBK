@@ -16,7 +16,6 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -87,7 +86,7 @@ public class Venue implements Serializable {
     private LocalDateTime updatedAt;
 
     @ManyToMany
-    @CollectionTable(name = "venues_schedules", joinColumns = @JoinColumn(name = "venue_id", referencedColumnName = "id"))
+    @JoinTable(name = "schedules_venues", joinColumns = @JoinColumn(name = "venue_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "schedule_id", referencedColumnName = "id"))
     @JsonBackReference
     private Collection<Schedule> schedules;
 
