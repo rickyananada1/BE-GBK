@@ -103,7 +103,7 @@ public class DashboardService {
                                 scheduleRepository.sumMaintenanceByType(units, startDate, endDate));
 
                 BigDecimal sewaLahan = safeBigDecimalFromDouble(
-                                retailRepository.sumPriceByStatusAndDateRangeAndArea("Sewa Lahan", null));
+                                scheduleRepository.sumSewaLahanByStatusPayment(startDate, endDate));
 
                 long monthsBetween = calculateMonthsBetween(startDate, endDate);
                 BigDecimal totalParkingFee = MONTHLY_PARKING_FEE.multiply(BigDecimal.valueOf(monthsBetween));

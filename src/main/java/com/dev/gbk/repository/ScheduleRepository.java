@@ -60,6 +60,15 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
                         @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
+
+        @Query("SELECT SUM(s.totalPaid) FROM Schedule s WHERE s.statusPayment = 'PAID' AND category = 'Sewa Lahan'"
+            + "AND ((:startDate IS NULL AND :endDate IS NULL AND s.scheduleStartDate IS NOT NULL) "
+            + "OR (:startDate IS NOT NULL AND :endDate IS NOT NULL AND "
+            + "(s.scheduleStartDate IS NOT NULL AND s.scheduleEndDate IS NOT NULL AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate)))")
+        Double sumSewaLahanByStatusPayment(@Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
+
+
         @Query("SELECT s FROM Schedule s " +
                         "JOIN s.venues v " +
                         "WHERE (:units IS NULL OR v.unit.name IN :units) " +
