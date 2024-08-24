@@ -102,11 +102,14 @@ public class DashboardService {
                 BigDecimal maintenanceVenue = safeBigDecimalFromDouble(
                                 scheduleRepository.sumMaintenanceByType(units, startDate, endDate));
 
+                BigDecimal sewaLahan = safeBigDecimalFromDouble(
+                                retailRepository.sumPriceByStatusAndDateRangeAndArea("Sewa Lahan", null));
+
                 long monthsBetween = calculateMonthsBetween(startDate, endDate);
                 BigDecimal totalParkingFee = MONTHLY_PARKING_FEE.multiply(BigDecimal.valueOf(monthsBetween));
 
                 return new IncomeDTO(retailIncome, retailOccupied, retailNonOccupied, maintenanceVenue,
-                                totalParkingFee);
+                                totalParkingFee,sewaLahan);
         }
 
         public Map<String, Integer> getProjectionTotalPaidGroupedByProfileEvent(LocalDate startDate,

@@ -30,4 +30,7 @@ public class IncomeDTO {
 
     @JsonProperty("maintenanceParkir")
     private BigDecimal totalMaintenanceParkir;
+
+    @JsonProperty("totalpendapatansewalahan")
+    private BigDecimal totalPendapatanSewaLahan;
 }
