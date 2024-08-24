@@ -102,14 +102,47 @@ public class DashboardService {
                 BigDecimal maintenanceVenue = safeBigDecimalFromDouble(
                                 scheduleRepository.sumMaintenanceByType(units, startDate, endDate));
 
-                BigDecimal sewaLahan = safeBigDecimalFromDouble(
-                                scheduleRepository.sumSewaLahanByStatusPayment(startDate, endDate));
+                List<Object> response = scheduleRepository.sumSewaLahanByStatusPayment(startDate, endDate);
+
+                BigDecimal sewaLahan = safeBigDecimalFromDouble(response.stream()
+                                .filter(obj -> "Sewa Lahan".equals(((Object[]) obj)[0]))
+                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                .sum());
+
+                BigDecimal sewaLahanProyeksi = safeBigDecimalFromDouble(response.stream()
+                                .filter(obj -> "Sewa Lahan Proyeksi".equals(((Object[]) obj)[0]))
+                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                .sum());
+
+                BigDecimal gamesUmum = safeBigDecimalFromDouble(response.stream()
+                                .filter(obj -> "Games Umum".equals(((Object[]) obj)[0]))
+                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                .sum());
+
+                BigDecimal gamesUmumProyeksi = safeBigDecimalFromDouble(response.stream()
+                                .filter(obj -> "Games Umum Proyeksi".equals(((Object[]) obj)[0]))
+                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                .sum());
+
+                BigDecimal gamesTimnas = safeBigDecimalFromDouble(response.stream()
+                                .filter(obj -> "Games Timnas".equals(((Object[]) obj)[0]))
+                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                .sum());
+
+                BigDecimal gamesTimnasProyeksi = safeBigDecimalFromDouble(response.stream()
+                                .filter(obj -> "Games Timnas Proyeksi".equals(((Object[]) obj)[0]))
+                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                .sum());
+                BigDecimal maintenance = safeBigDecimalFromDouble(response.stream()
+                                .filter(obj -> "Maintenance".equals(((Object[]) obj)[0]))
+                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                .sum());
 
                 long monthsBetween = calculateMonthsBetween(startDate, endDate);
                 BigDecimal totalParkingFee = MONTHLY_PARKING_FEE.multiply(BigDecimal.valueOf(monthsBetween));
 
                 return new IncomeDTO(retailIncome, retailOccupied, retailNonOccupied, maintenanceVenue,
-                                totalParkingFee,sewaLahan);
+                                totalParkingFee,sewaLahan, sewaLahanProyeksi, gamesUmum, gamesUmumProyeksi,gamesTimnas, gamesTimnasProyeksi, maintenance);
         }
 
         public Map<String, Integer> getProjectionTotalPaidGroupedByProfileEvent(LocalDate startDate,

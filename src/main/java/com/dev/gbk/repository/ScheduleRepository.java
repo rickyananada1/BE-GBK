@@ -61,11 +61,24 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
                         @Param("endDate") LocalDate endDate);
 
 
-        @Query("SELECT SUM(s.totalPaid) FROM Schedule s WHERE s.statusPayment = 'PAID' AND category = 'Sewa Lahan'"
-            + "AND ((:startDate IS NULL AND :endDate IS NULL AND s.scheduleStartDate IS NOT NULL) "
-            + "OR (:startDate IS NOT NULL AND :endDate IS NOT NULL AND "
-            + "(s.scheduleStartDate IS NOT NULL AND s.scheduleEndDate IS NOT NULL AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate)))")
-        Double sumSewaLahanByStatusPayment(@Param("startDate") LocalDate startDate,
+        @Query("SELECT " +
+                "    CASE " +
+                "        WHEN r.category = 'Sewa Lahan' AND r.statusPayment = 'Paid' AND r.statusBooking = 'Processing' THEN 'Sewa Lahan' " +
+                "        WHEN (r.games = 'Umum') AND r.statusPayment = 'Paid' AND r.statusBooking = 'Processing' THEN 'Games Umum' " +
+                "        WHEN (r.games = 'Timnas') AND r.statusPayment = 'Paid' AND r.statusBooking = 'Processing' THEN 'Games Timnas' " +
+                "        WHEN r.statusPayment = 'Maintenance' THEN 'Maintenance' " +
+                "        WHEN r.category IS NOT NULL AND r.category != '' AND r.category != 'Sewa Lahan' AND r.statusPayment = 'Paid' AND r.statusBooking = 'Processing' THEN 'Events' " +
+                "        WHEN r.category = 'Sewa Lahan' AND r.statusPayment != 'Paid' AND r.statusBooking = 'Processing' THEN 'Sewa Lahan Proyeksi' " +
+                "        WHEN (r.games = 'Umum') AND r.statusPayment != 'Paid' AND r.statusBooking = 'Processing' THEN 'Games Umum Proyeksi' " +
+                "        WHEN (r.games = 'Timnas') AND r.statusPayment != 'Paid' AND r.statusBooking = 'Processing' THEN 'Games Timnas Proyeksi' " +
+                "        WHEN r.statusPayment = 'Maintenance' THEN 'Maintenance' " +
+                "        WHEN r.category IS NOT NULL AND r.category != '' AND r.category != 'Sewa Lahan' AND r.statusPayment != 'Paid' AND r.statusBooking = 'Processing' THEN 'Events Proyeksi' " +
+                "    END AS kategori, " +
+                "    SUM(r.totalPaid) + SUM(r.totalSF) AS total " +
+                "FROM Schedule r " +
+                "WHERE r.scheduleStartDate >= :startDate AND r.scheduleEndDate <= :endDate " +
+                "GROUP BY kategori")
+        List<Object> sumSewaLahanByStatusPayment(@Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 
 
