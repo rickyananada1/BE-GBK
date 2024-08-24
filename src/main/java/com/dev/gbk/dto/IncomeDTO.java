@@ -52,4 +52,10 @@ public class IncomeDTO {
     @JsonProperty("totalpendapatanmaintenance")
     private BigDecimal totalPendapatanMaintenance;
 
+    @JsonProperty("totalpendapatanevents")
+    private BigDecimal totalPendapatanEvents;
+
+    @JsonProperty("totalpendapataneventsproyeksi")
+    private BigDecimal totalPendapatanEventsProyeksi;
+
 }

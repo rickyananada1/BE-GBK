@@ -138,11 +138,21 @@ public class DashboardService {
                                 .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
                                 .sum());
 
+                BigDecimal events = safeBigDecimalFromDouble(response.stream()
+                                .filter(obj -> "Events".equals(((Object[]) obj)[0]))
+                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                .sum());
+
+                BigDecimal eventsProyeksi = safeBigDecimalFromDouble(response.stream()
+                                .filter(obj -> "Events Proyeksi".equals(((Object[]) obj)[0]))
+                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                .sum());
+
                 long monthsBetween = calculateMonthsBetween(startDate, endDate);
                 BigDecimal totalParkingFee = MONTHLY_PARKING_FEE.multiply(BigDecimal.valueOf(monthsBetween));
 
                 return new IncomeDTO(retailIncome, retailOccupied, retailNonOccupied, maintenanceVenue,
-                                totalParkingFee,sewaLahan, sewaLahanProyeksi, gamesUmum, gamesUmumProyeksi,gamesTimnas, gamesTimnasProyeksi, maintenance);
+                                totalParkingFee,sewaLahan, sewaLahanProyeksi, gamesUmum, gamesUmumProyeksi,gamesTimnas, gamesTimnasProyeksi, maintenance, events, eventsProyeksi);
         }
 
         public Map<String, Integer> getProjectionTotalPaidGroupedByProfileEvent(LocalDate startDate,
