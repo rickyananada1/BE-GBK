@@ -61,6 +61,9 @@ public class UserService {
         if (userRepository.existsByUsernameOrEmail(userRequest.getUsername(), userRequest.getEmail())) {
             throw new GBKAPIException("User already exists");
         }
+        if (userRequest.getPassword() == null) {
+            throw new GBKAPIException("Password cannot be null");
+        }
         User user = User.builder().name(userRequest.getName()).username(userRequest.getUsername())
                 .email(userRequest.getEmail()).password(passwordEncoder.encode(userRequest.getPassword()))
                 .contact_person(userRequest.getContact_person()).division(userRequest.getDivision())
@@ -90,7 +93,9 @@ public class UserService {
         user.setName(userRequest.getName());
         user.setUsername(userRequest.getUsername());
         user.setEmail(userRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        if (userRequest.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        }
         user.setContact_person(userRequest.getContact_person());
         user.setDivision(userRequest.getDivision());
         user.setStatus(userRequest.getStatus());
