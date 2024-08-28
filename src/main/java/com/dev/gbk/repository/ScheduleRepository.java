@@ -89,4 +89,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
         List<Schedule> findSchedules(@Param("units") List<String> units, @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
+        @Query("SELECT s FROM Schedule s JOIN s.venues v WHERE v.venue = :unit AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate")
+        List<Schedule> findSingleSchedules(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
+
 }

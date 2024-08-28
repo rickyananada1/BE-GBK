@@ -2,9 +2,11 @@ package com.dev.gbk.controller;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.dev.gbk.response.Occupancy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -155,6 +157,27 @@ public class DashboardController {
         } else {
             throw new IllegalArgumentException("Invalid type parameter. Use 'profileEvent' or 'games'.");
         }
+    }
+
+    @GetMapping("/get-occupancy")
+    public ResponseEntity<Occupancy> getOccupancy(
+        @RequestParam(value = "venue", required = false, defaultValue = "ALL") String venue,
+        @RequestParam(value = "startDate", required = false) String startDate,
+        @RequestParam(value = "endDate", required = false) String endDate) {
+
+        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
+
+        if (start != null && end != null && end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
+        if ("ALL".equals(venue)) {
+            return ResponseEntity.ok(new Occupancy());
+        }
+        Occupancy occupancy = dashboardService.getOccupancy(start, end, venue);
+        return ResponseEntity.ok(occupancy);
     }
 
     @GetMapping("/type-total")

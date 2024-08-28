@@ -6,12 +6,14 @@ import com.dev.gbk.model.Venue;
 import com.dev.gbk.repository.RetailRepository;
 import com.dev.gbk.repository.ScheduleRepository;
 
+import com.dev.gbk.response.Occupancy;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -296,4 +298,30 @@ public class DashboardService {
                 return venues.stream().map(Venue::getVenue).collect(Collectors.joining(",")) + ":" + category;
         }
 
+        public Occupancy getOccupancy(LocalDate start, LocalDate end, String venue) {
+                List<Schedule> scheduleBasedOnVenue = scheduleRepository.findSingleSchedules(venue, start, end);
+                List<LocalDate> dayOfVenue = new ArrayList<>();
+                for (Schedule schedule : scheduleBasedOnVenue) {
+                        if (schedule.getScheduleStartInLoad() != null) {
+                                dayOfVenue.add(schedule.getScheduleStartInLoad());
+                                dayOfVenue.add(schedule.getScheduleEndInLoad());
+                        }
+                        if (schedule.getScheduleStartDate() != null) {
+                                dayOfVenue.add(schedule.getScheduleStartDate());
+                                dayOfVenue.add(schedule.getScheduleEndDate());
+                        }
+                        if (schedule.getScheduleStartOutLoad() != null) {
+                                dayOfVenue.add(schedule.getScheduleStartOutLoad());
+                                dayOfVenue.add(schedule.getScheduleEndOutLoad());
+                        }
+                }
+                Collections.sort(dayOfVenue);
+                // Get the earliest and latest dates
+                LocalDate earliestDate = dayOfVenue.get(0);
+                LocalDate latestDate = dayOfVenue.get(dayOfVenue.size() - 1);
+
+                // Calculate the number of days between the earliest and latest dates
+                long daysBetween = ChronoUnit.DAYS.between(earliestDate, latestDate);
+                return new Occupancy();
+        }
 }
