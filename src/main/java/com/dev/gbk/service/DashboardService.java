@@ -314,13 +314,19 @@ public class DashboardService {
                                 dayOfVenue.add(schedule.getScheduleStartOutLoad());
                                 dayOfVenue.add(schedule.getScheduleEndOutLoad());
                         }
+//                        jika status payment maintenance maka tidak dihitung untuk occupancy
+                        if (schedule.getStatusPayment().equals("Maintenance") || schedule.getStatusPayment().equals("Soft Booking")) {
+                                dayOfVenue.remove(schedule.getScheduleStartDate());
+                                dayOfVenue.remove(schedule.getScheduleEndDate());
+                        }
+
                 }
                 Collections.sort(dayOfVenue);
                 LocalDate earliestDate = dayOfVenue.get(0);
                 LocalDate latestDate = dayOfVenue.get(dayOfVenue.size() - 1);
 
                 Double percentationOCCFisik = calculateOCCFisikPercentage(earliestDate, latestDate);
-                System.out.println("Persentase occ fisik: " + percentationOCCFisik);
+                System.out.println("OCC Fisik: " + percentationOCCFisik);
                 return new Occupancy(percentationOCCFisik);
         }
 
