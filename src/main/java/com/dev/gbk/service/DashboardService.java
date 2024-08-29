@@ -316,12 +316,19 @@ public class DashboardService {
                         }
                 }
                 Collections.sort(dayOfVenue);
-                // Get the earliest and latest dates
                 LocalDate earliestDate = dayOfVenue.get(0);
                 LocalDate latestDate = dayOfVenue.get(dayOfVenue.size() - 1);
 
-                // Calculate the number of days between the earliest and latest dates
-                long daysBetween = ChronoUnit.DAYS.between(earliestDate, latestDate);
-                return new Occupancy();
+                Double percentationOCCFisik = calculateOCCFisikPercentage(earliestDate, latestDate);
+                System.out.println("Persentase occ fisik: " + percentationOCCFisik);
+                return new Occupancy(percentationOCCFisik);
+        }
+
+        public static Double calculateOCCFisikPercentage(LocalDate startDate, LocalDate endDate) {
+                long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+                YearMonth yearMonth = YearMonth.from(startDate);
+                int daysInMonth = yearMonth.lengthOfMonth();
+
+                return (double) daysBetween / daysInMonth * 100;
         }
 }
