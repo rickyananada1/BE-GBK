@@ -67,7 +67,7 @@ public class VenueService {
                 .morning_weekdays(venueRequest.getMorning_weekdays())
                 .afternoon_weekdays(venueRequest.getAfternoof_weekdays())
                 .evening_weekdays(venueRequest.getEvening_weekdays())
-                .venue(venueRequest.getVenue())
+                .venue(venueRequest.getVenue()).isEligibleSession(venueRequest.getIsEligibleForSession())
                 .build();
         return venueRepository.save(v);
     }

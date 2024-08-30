@@ -301,37 +301,45 @@ public class DashboardService {
         public Occupancy getOccupancy(LocalDate start, LocalDate end, String venue) {
                 List<Schedule> scheduleBasedOnVenue = scheduleRepository.findSingleSchedules(venue, start, end);
                 List<LocalDate> dayOfVenue = new ArrayList<>();
+                long daysEventTime = 0;
                 for (Schedule schedule : scheduleBasedOnVenue) {
-                        if (schedule.getScheduleStartInLoad() != null) {
-                                dayOfVenue.add(schedule.getScheduleStartInLoad());
-                                dayOfVenue.add(schedule.getScheduleEndInLoad());
-                        }
-                        if (schedule.getScheduleStartDate() != null) {
-                                dayOfVenue.add(schedule.getScheduleStartDate());
-                                dayOfVenue.add(schedule.getScheduleEndDate());
-                        }
-                        if (schedule.getScheduleStartOutLoad() != null) {
-                                dayOfVenue.add(schedule.getScheduleStartOutLoad());
-                                dayOfVenue.add(schedule.getScheduleEndOutLoad());
-                        }
-//                        jika status payment maintenance maka tidak dihitung untuk occupancy
+                        long daysBetween = 0;
                         if (schedule.getStatusPayment().equals("Maintenance") || schedule.getStatusPayment().equals("Soft Booking")) {
-                                dayOfVenue.remove(schedule.getScheduleStartDate());
-                                dayOfVenue.remove(schedule.getScheduleEndDate());
+                                continue;
+                        }
+                        boolean isEventDaySameWithInLoad = schedule.getScheduleStartInLoad().equals(schedule.getScheduleStartDate());
+                        boolean isEventDaySameWithOutLoad = schedule.getScheduleEndOutLoad().equals(schedule.getScheduleStartDate());
+                        if (schedule.getScheduleStartInLoad() != null && !(isEventDaySameWithInLoad)) {
+                                daysBetween =
+                                    ChronoUnit.DAYS.between(schedule.getScheduleStartInLoad(),
+                                        schedule.getScheduleEndInLoad()) + 1;
+                                daysEventTime += daysBetween;
+
+                        }
+                        if (schedule.getScheduleStartDate() != null && !isEventDaySameWithInLoad) {
+                                daysBetween =
+                                    ChronoUnit.DAYS.between(schedule.getScheduleStartDate(),
+                                        schedule.getScheduleEndDate()) + 1;
+                                daysEventTime += daysBetween;
+                        }
+                        if (schedule.getScheduleStartOutLoad() != null && !isEventDaySameWithOutLoad) {
+                                daysBetween =
+                                    ChronoUnit.DAYS.between(schedule.getScheduleStartOutLoad(),
+                                        schedule.getScheduleEndOutLoad()) + 1;
+                                daysEventTime += daysBetween;
+                        }
+                        if (isEventDaySameWithInLoad) {
+                                daysEventTime += 1;
                         }
 
                 }
-                Collections.sort(dayOfVenue);
-                LocalDate earliestDate = dayOfVenue.get(0);
-                LocalDate latestDate = dayOfVenue.get(dayOfVenue.size() - 1);
 
-                Double percentationOCCFisik = calculateOCCFisikPercentage(earliestDate, latestDate);
+                Double percentationOCCFisik = calculateOCCFisikPercentage(start, daysEventTime);
                 System.out.println("OCC Fisik: " + percentationOCCFisik);
                 return new Occupancy(percentationOCCFisik);
         }
 
-        public static Double calculateOCCFisikPercentage(LocalDate startDate, LocalDate endDate) {
-                long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        public static Double calculateOCCFisikPercentage(LocalDate startDate, Long daysBetween) {
                 YearMonth yearMonth = YearMonth.from(startDate);
                 int daysInMonth = yearMonth.lengthOfMonth();
 

@@ -65,4 +65,7 @@ public class VenueRequest {
     @NotEmpty
     @JsonProperty("evening_weekdays")
     private String evening_weekdays;
+
+    @JsonProperty("is_eligible_for_session")
+    private Boolean isEligibleForSession = false;
 }

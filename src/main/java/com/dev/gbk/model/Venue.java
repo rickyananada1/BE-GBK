@@ -56,6 +56,8 @@ public class Venue implements Serializable {
     @Column(length = 60)
     private String type;
 
+    private Boolean isEligibleSession;
+
     @Column(length = 60)
     private String status;
 
