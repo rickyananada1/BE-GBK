@@ -302,9 +302,14 @@ public class DashboardService {
                 List<Schedule> scheduleBasedOnVenue = scheduleRepository.findSingleSchedules(venue, start, end);
                 List<LocalDate> dayOfVenue = new ArrayList<>();
                 long daysEventTime = 0;
+                long daysMaintenance = 0;
                 for (Schedule schedule : scheduleBasedOnVenue) {
                         long daysBetween = 0;
-                        if (schedule.getStatusPayment().equals("Maintenance") || schedule.getStatusPayment().equals("Soft Booking")) {
+                        if (schedule.getStatusPayment().equals("Maintenance") ||schedule.getStatusPayment().equals("Soft Booking")) {
+                                daysBetween =
+                                    ChronoUnit.DAYS.between(schedule.getScheduleStartDate(),
+                                        schedule.getScheduleEndDate()) + 1;
+                                daysMaintenance += daysBetween;
                                 continue;
                         }
                         boolean isEventDaySameWithInLoad = schedule.getScheduleStartInLoad().equals(schedule.getScheduleStartDate());
@@ -334,9 +339,17 @@ public class DashboardService {
 
                 }
 
+                System.out.println("Days Event Time: " + daysEventTime);
+                System.out.println("Days Maintenance: " + daysMaintenance);
+
                 Double percentationOCCFisik = calculateOCCFisikPercentage(start, daysEventTime);
+                Double percentationOCCPKBLU = calculateOCCPKBLUPercentageDays(start, daysEventTime, daysMaintenance);
                 System.out.println("OCC Fisik: " + percentationOCCFisik);
-                return new Occupancy(percentationOCCFisik);
+                System.out.println("OCC PKBLU: " + percentationOCCPKBLU);
+                if (Double.isInfinite(percentationOCCPKBLU)) {
+                        percentationOCCPKBLU = 100.0;
+                }
+                return new Occupancy(percentationOCCFisik, percentationOCCPKBLU);
         }
 
         public static Double calculateOCCFisikPercentage(LocalDate startDate, Long daysBetween) {
@@ -344,5 +357,12 @@ public class DashboardService {
                 int daysInMonth = yearMonth.lengthOfMonth();
 
                 return (double) daysBetween / daysInMonth * 100;
+        }
+
+        public static Double calculateOCCPKBLUPercentageDays(LocalDate startDate, Long daysBetween, Long maintenance) {
+                YearMonth yearMonth = YearMonth.from(startDate);
+                int daysInMonth = yearMonth.lengthOfMonth();
+
+                return (double) daysBetween / (daysInMonth - maintenance )* 100;
         }
 }

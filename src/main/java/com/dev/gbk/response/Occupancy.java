@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Occupancy {
   private Double occFisik;
+  private Double occPKBLUHari;
 }
