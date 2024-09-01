@@ -1,11 +1,15 @@
 package com.dev.gbk.service;
 
-import com.dev.gbk.dto.*;
+import com.dev.gbk.dto.CardEventDTO;
+import com.dev.gbk.dto.CardGamesDTO;
+import com.dev.gbk.dto.CardRetailDTO;
+import com.dev.gbk.dto.IncomeDTO;
+import com.dev.gbk.dto.ScheduleDTO;
 import com.dev.gbk.model.Schedule;
 import com.dev.gbk.model.Venue;
 import com.dev.gbk.repository.RetailRepository;
 import com.dev.gbk.repository.ScheduleRepository;
-
+import com.dev.gbk.repository.VenueRepository;
 import com.dev.gbk.response.Occupancy;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +18,11 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,13 +31,15 @@ public class DashboardService {
         private static final String PAID_STATUS = "Paid";
         private static final String MAINTENANCE_STATUS = "Maintenance";
         private static final BigDecimal MONTHLY_PARKING_FEE = BigDecimal.valueOf(1_600_000); // 1.6 million
+        private static final int SUM_OF_SESSION = 248;
 
         private final ScheduleRepository scheduleRepository;
         private final RetailRepository retailRepository;
-
-        public DashboardService(ScheduleRepository scheduleRepository, RetailRepository retailRepository) {
+        private final VenueRepository venueRepository;
+        public DashboardService(ScheduleRepository scheduleRepository, RetailRepository retailRepository , VenueRepository venueRepository) {
                 this.scheduleRepository = scheduleRepository;
                 this.retailRepository = retailRepository;
+                this.venueRepository = venueRepository;
         }
 
         public Map<String, BigDecimal> getUsageByCategory(LocalDate startDate, LocalDate endDate, String unitNames) {
@@ -299,42 +309,80 @@ public class DashboardService {
         }
 
         public Occupancy getOccupancy(LocalDate start, LocalDate end, String venue) {
+                Venue venue1 = this.venueRepository.findByVenue(venue).orElse(null);
+                if (Objects.nonNull(venue1)) {
+                        if (venue1.getIsEligibleSession()) {
+                                return getOccupancyForEligibleSessionVenue(start,end,venue);
+                        } else {
+                                return getOccupancyForNotEligibleSessionVenue(start ,end, venue);
+                        }
+                }
+                return null;
+        }
+
+        private Occupancy getOccupancyForEligibleSessionVenue(LocalDate start, LocalDate end, String venue) {
+
+                List<LocalDate> dayOfVenue = new ArrayList<>();
+                List<Object> schedule = this.scheduleRepository.findSumOfSchedulesPerDay(venue, start, end);
+                int count = 0;
+                BigDecimal sum = BigDecimal.ZERO;
+                for (Object ob : schedule) {
+                        BigDecimal percentage = (BigDecimal) ob; // Index 0 for totalPercentage
+                         if (percentage != null) {
+                                 sum = sum.add(percentage);
+                                 count++;
+                         }
+                }
+                BigDecimal resultOfPercentage = sum.divide(BigDecimal.valueOf(count), BigDecimal.ROUND_HALF_UP);
+
+                List<String> schedulePkblu = this.scheduleRepository.findScheduleWithPaidStatus(venue, start, end);
+                int daysInMonth = start.lengthOfMonth();
+                double pkblu = (double) schedulePkblu.size() / daysInMonth * 100;
+                return new Occupancy(resultOfPercentage.doubleValue() * 100, pkblu);
+        }
+
+
+        private Occupancy getOccupancyForNotEligibleSessionVenue(LocalDate start, LocalDate end, String venue) {
                 List<Schedule> scheduleBasedOnVenue = scheduleRepository.findSingleSchedules(venue, start, end);
                 List<LocalDate> dayOfVenue = new ArrayList<>();
                 long daysEventTime = 0;
                 long daysMaintenance = 0;
+                boolean isEventDaySameWithInLoad = false;
+                boolean isEventDaySameWithOutLoad = false;
                 for (Schedule schedule : scheduleBasedOnVenue) {
                         long daysBetween = 0;
-                        if (schedule.getStatusPayment().equals("Maintenance") ||schedule.getStatusPayment().equals("Soft Booking")) {
+                        if (schedule.getStatusPayment().equals("Maintenance")) {
                                 daysBetween =
                                     ChronoUnit.DAYS.between(schedule.getScheduleStartDate(),
                                         schedule.getScheduleEndDate()) + 1;
                                 daysMaintenance += daysBetween;
+                                System.out.println("Maintenance Days : " + schedule.getScheduleStartDate() + " And Schedule Id " + schedule.getId());
                                 continue;
                         }
-                        boolean isEventDaySameWithInLoad = schedule.getScheduleStartInLoad().equals(schedule.getScheduleStartDate());
-                        boolean isEventDaySameWithOutLoad = schedule.getScheduleEndOutLoad().equals(schedule.getScheduleStartDate());
+                        if (schedule.getScheduleStartDate() != null) {
+                                daysBetween =
+                                    ChronoUnit.DAYS.between(schedule.getScheduleStartDate(),
+                                        schedule.getScheduleEndDate()) + 1;
+                                daysEventTime += daysBetween;
+                                isEventDaySameWithOutLoad = schedule.getScheduleStartOutLoad().equals(schedule.getScheduleEndDate());
+                                isEventDaySameWithInLoad = schedule.getScheduleStartInLoad().equals(schedule.getScheduleStartDate());
+                                System.out.println("In Start Days : " + schedule.getScheduleStartDate() + " And Schedule Id " + schedule.getId());
+                        }
                         if (schedule.getScheduleStartInLoad() != null && !(isEventDaySameWithInLoad)) {
                                 daysBetween =
                                     ChronoUnit.DAYS.between(schedule.getScheduleStartInLoad(),
                                         schedule.getScheduleEndInLoad()) + 1;
                                 daysEventTime += daysBetween;
 
-                        }
-                        if (schedule.getScheduleStartDate() != null && !isEventDaySameWithInLoad) {
-                                daysBetween =
-                                    ChronoUnit.DAYS.between(schedule.getScheduleStartDate(),
-                                        schedule.getScheduleEndDate()) + 1;
-                                daysEventTime += daysBetween;
+                                System.out.println("In Loading Days : " + schedule.getScheduleStartInLoad() + " And Schedule Id " + schedule.getId());
                         }
                         if (schedule.getScheduleStartOutLoad() != null && !isEventDaySameWithOutLoad) {
                                 daysBetween =
                                     ChronoUnit.DAYS.between(schedule.getScheduleStartOutLoad(),
                                         schedule.getScheduleEndOutLoad()) + 1;
                                 daysEventTime += daysBetween;
-                        }
-                        if (isEventDaySameWithInLoad) {
-                                daysEventTime += 1;
+
+                                System.out.println("End Loading Days : " + schedule.getScheduleStartOutLoad() + " And Schedule Id " + schedule.getId());
                         }
 
                 }

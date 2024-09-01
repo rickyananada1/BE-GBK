@@ -93,4 +93,32 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
         List<Schedule> findSingleSchedules(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 
+        @Query(value = "SELECT "
+            + "(SUM(CASE WHEN s.status_payment = 'Paid' THEN 1 ELSE 0 END) / (8.0 - COALESCE(SUM(CASE WHEN s.status_payment = 'Maintenance' THEN 1 ELSE 0 END), 0))) AS totalPercentage "
+            + "FROM schedules s inner JOIN "
+            + "schedules_venues sv "
+            + "on s.id= sv.schedule_id join "
+            + "schedule_times st ON s.id = st.schedule_id "
+            + "JOIN venues v2  on sv.venue_id=v2.id "
+            + "join units u on v2.unit_id =u.id "
+            + "WHERE v2.venue = :unit AND s.start_date >= :startDate AND s.end_date <= :endDate GROUP by s.start_date ;",
+            nativeQuery = true)
+        List<Object> findSumOfSchedulesPerDay(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
+
+        @Query(value = "SELECT s.start_date "
+            + "FROM schedules s "
+            + "INNER JOIN schedules_venues sv ON s.id = sv.schedule_id "
+            + "JOIN schedule_times st ON s.id = st.schedule_id "
+            + "JOIN venues v2 ON sv.venue_id = v2.id "
+            + "JOIN units u ON v2.unit_id = u.id "
+            + "WHERE v2.venue = :unit "
+            + "AND s.start_date >= :startDate "
+            + "AND s.end_date <= :endDate "
+            + "GROUP BY s.start_date "
+            + "HAVING SUM(CASE WHEN s.status_payment = 'Paid' THEN 1 ELSE 0 END) > 0", nativeQuery = true)
+        List<String> findScheduleWithPaidStatus(@Param("unit") String unit,
+            @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+
 }
