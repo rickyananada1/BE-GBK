@@ -64,19 +64,21 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
         @Query("SELECT " +
                 "    CASE " +
                 "        WHEN r.category = 'Sewa Lahan' AND r.statusPayment = 'Paid' AND r.statusBooking = 'Processing' THEN 'Sewa Lahan' " +
-                "        WHEN (r.games = 'Umum') AND r.statusPayment = 'Paid' AND r.statusBooking = 'Processing' THEN 'Games Umum' " +
-                "        WHEN (r.games = 'Timnas') AND r.statusPayment = 'Paid' AND r.statusBooking = 'Processing' THEN 'Games Timnas' " +
+                "        WHEN r.games = 'Umum' AND r.statusPayment = 'Paid' AND r.statusBooking = 'Processing' THEN 'Games Umum' " +
+                "        WHEN r.games = 'Timnas' AND r.statusPayment = 'Paid' AND r.statusBooking = 'Processing' THEN 'Games Timnas' " +
                 "        WHEN r.statusPayment = 'Maintenance' THEN 'Maintenance' " +
-                "        WHEN r.category IS NOT NULL AND r.category != '' AND r.category != 'Sewa Lahan' AND r.statusPayment = 'Paid' AND r.statusBooking = 'Processing' THEN 'Events' " +
+                "        WHEN r.category = 'Olahraga' AND r.statusPayment = 'Paid' AND r.statusBooking = 'Processing' THEN 'Events Olahraga' " +
+                "        WHEN r.category IS NOT NULL AND r.category != '' AND r.category != 'Sewa Lahan' AND r.category != 'Olahraga' AND r.statusPayment = 'Paid' AND r.statusBooking = 'Processing' THEN 'Events Non-Olahraga' " +
                 "        WHEN r.category = 'Sewa Lahan' AND r.statusPayment != 'Paid' AND r.statusBooking = 'Processing' THEN 'Sewa Lahan Proyeksi' " +
-                "        WHEN (r.games = 'Umum') AND r.statusPayment != 'Paid' AND r.statusBooking = 'Processing' THEN 'Games Umum Proyeksi' " +
-                "        WHEN (r.games = 'Timnas') AND r.statusPayment != 'Paid' AND r.statusBooking = 'Processing' THEN 'Games Timnas Proyeksi' " +
+                "        WHEN r.games = 'Umum' AND r.statusPayment != 'Paid' AND r.statusBooking = 'Processing' THEN 'Games Umum Proyeksi' " +
+                "        WHEN r.games = 'Timnas' AND r.statusPayment != 'Paid' AND r.statusBooking = 'Processing' THEN 'Games Timnas Proyeksi' " +
                 "        WHEN r.statusPayment = 'Maintenance' THEN 'Maintenance' " +
-                "        WHEN r.category IS NOT NULL AND r.category != '' AND r.category != 'Sewa Lahan' AND r.statusPayment != 'Paid' AND r.statusBooking = 'Processing' THEN 'Events Proyeksi' " +
+                "        WHEN r.category = 'Olahraga' AND r.statusPayment != 'Paid' AND r.statusBooking = 'Processing' THEN 'Events Olahraga Proyeksi' " +
+                "        WHEN r.category IS NOT NULL AND r.category != '' AND r.category != 'Sewa Lahan' AND r.category != 'Olahraga' AND r.statusPayment != 'Paid' AND r.statusBooking = 'Processing' THEN 'Events Non-Olahraga Proyeksi' " +
                 "    END AS kategori, " +
                 "    SUM(r.totalPaid) + SUM(r.totalSF) AS total " +
                 "FROM Schedule r " +
-                "WHERE r.scheduleStartDate >= :startDate AND r.scheduleEndDate <= :endDate " +
+                "WHERE r.scheduleStartDate >= :startDate AND r.scheduleEndDate <= :endDate "+
                 "GROUP BY kategori")
         List<Object> sumSewaLahanByStatusPayment(@Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);

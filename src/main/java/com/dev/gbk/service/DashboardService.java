@@ -151,20 +151,30 @@ public class DashboardService {
                                 .sum());
 
                 BigDecimal events = safeBigDecimalFromDouble(response.stream()
-                                .filter(obj -> "Events".equals(((Object[]) obj)[0]))
+                                .filter(obj -> "Events Olahraga".equals(((Object[]) obj)[0]))
                                 .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
                                 .sum());
 
                 BigDecimal eventsProyeksi = safeBigDecimalFromDouble(response.stream()
-                                .filter(obj -> "Events Proyeksi".equals(((Object[]) obj)[0]))
+                                .filter(obj -> "Events Olahraga Proyeksi".equals(((Object[]) obj)[0]))
                                 .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
                                 .sum());
+
+                BigDecimal eventsNon = safeBigDecimalFromDouble(response.stream()
+                        .filter(obj -> "Events Non-Olahraga".equals(((Object[]) obj)[0]))
+                        .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                        .sum());
+
+                BigDecimal eventsProyeksiNon = safeBigDecimalFromDouble(response.stream()
+                        .filter(obj -> "Events Non-Olahraga Proyeksi".equals(((Object[]) obj)[0]))
+                        .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                        .sum());
 
                 long monthsBetween = calculateMonthsBetween(startDate, endDate);
                 BigDecimal totalParkingFee = MONTHLY_PARKING_FEE.multiply(BigDecimal.valueOf(monthsBetween));
 
                 return new IncomeDTO(retailIncome, retailOccupied, retailNonOccupied, maintenanceVenue,
-                                totalParkingFee,sewaLahan, sewaLahanProyeksi, gamesUmum, gamesUmumProyeksi,gamesTimnas, gamesTimnasProyeksi, maintenance, events, eventsProyeksi);
+                                totalParkingFee,sewaLahan, sewaLahanProyeksi, gamesUmum, gamesUmumProyeksi,gamesTimnas, gamesTimnasProyeksi, maintenance, events, eventsProyeksi, eventsNon, eventsProyeksiNon);
         }
 
         public Map<String, Integer> getProjectionTotalPaidGroupedByProfileEvent(LocalDate startDate,
@@ -278,9 +288,11 @@ public class DashboardService {
                 return new CardEventDTO(venue, category, totalPaid, totalMaintenance, scheduleDTOs);
         }
 
-        public List<CardRetailDTO> getRetailCardData() {
-                return retailRepository.findRetailCardData();
+        public CardRetailDTO getRetailCardData() {
+                Double percentage = retailRepository.findRetailCardData();
+                return new CardRetailDTO(percentage);
         }
+
 
         // === Helper Methods ===
 

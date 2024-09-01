@@ -23,13 +23,9 @@ public interface RetailRepository extends JpaRepository<Retail, Long>, JpaSpecif
         Double sumSizeByStatusAndDateRangeAndArea(@Param("status") String status,
                         @Param("area") String area);
 
-        @Query("SELECT new com.dev.gbk.dto.CardRetailDTO("
-                        + "r.masterRetail.tenant_name, "
-                        + "r.masterRetail.area, "
-                        + "(SUM(CASE WHEN r.statusBooking = 'Sewa' THEN r.price ELSE 0 END) / SUM(r.price)) * 100) "
-                        + "FROM Retail r "
-                        + "WHERE r.statusBooking = 'Sewa' "
-                        + "GROUP BY r.masterRetail.tenant_name, r.masterRetail.area")
-        List<CardRetailDTO> findRetailCardData();
+        @Query("SELECT (COUNT(CASE WHEN r.statusBooking = 'Sewa' THEN 1 ELSE NULL END) / " +
+                "(COUNT(*) * 1.0)) * 100 AS percentage " +
+                "FROM Retail r")
+        Double findRetailCardData();
 
 }
