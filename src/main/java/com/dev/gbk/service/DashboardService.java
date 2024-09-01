@@ -322,23 +322,30 @@ public class DashboardService {
 
         private Occupancy getOccupancyForEligibleSessionVenue(LocalDate start, LocalDate end, String venue) {
 
-                List<LocalDate> dayOfVenue = new ArrayList<>();
-                List<Object> schedule = this.scheduleRepository.findSumOfSchedulesPerDay(venue, start, end);
+                List<Object[]> schedule = this.scheduleRepository.findSumOfSchedulesPerDay(venue, start, end);
                 int count = 0;
-                BigDecimal sum = BigDecimal.ZERO;
-                for (Object ob : schedule) {
-                        BigDecimal percentage = (BigDecimal) ob; // Index 0 for totalPercentage
-                         if (percentage != null) {
-                                 sum = sum.add(percentage);
-                                 count++;
-                         }
+                BigDecimal sumOfPercentage = BigDecimal.ZERO;
+                BigDecimal sumOfMaintenance = BigDecimal.ZERO;
+                for (Object[] ob : schedule) {
+                        BigDecimal percentage =
+                            new BigDecimal(ob[0].toString()); // Index 0 for totalPercentage
+                        BigDecimal percentageMaintenance =
+                            new BigDecimal(ob[1].toString()); // Index 0 for totalPercentage
+                        sumOfPercentage = sumOfPercentage.add(percentage);
+                        sumOfMaintenance = sumOfMaintenance.add(percentageMaintenance);
+                        count++;
+
                 }
-                BigDecimal resultOfPercentage = sum.divide(BigDecimal.valueOf(count), BigDecimal.ROUND_HALF_UP);
+                BigDecimal resultOfPercentage = sumOfPercentage.divide(BigDecimal.valueOf(count), BigDecimal.ROUND_HALF_UP);
+
+                BigDecimal resultOfPercentageMaintenance =
+                    sumOfMaintenance.divide(BigDecimal.valueOf(count), BigDecimal.ROUND_HALF_UP);
 
                 List<String> schedulePkblu = this.scheduleRepository.findScheduleWithPaidStatus(venue, start, end);
                 int daysInMonth = start.lengthOfMonth();
                 double pkblu = (double) schedulePkblu.size() / daysInMonth * 100;
-                return new Occupancy(resultOfPercentage.doubleValue() * 100, pkblu);
+                return new Occupancy(resultOfPercentage.doubleValue() * 100, pkblu,
+                    resultOfPercentageMaintenance.doubleValue());
         }
 
 
@@ -397,7 +404,7 @@ public class DashboardService {
                 if (Double.isInfinite(percentationOCCPKBLU)) {
                         percentationOCCPKBLU = 100.0;
                 }
-                return new Occupancy(percentationOCCFisik, percentationOCCPKBLU);
+                return new Occupancy(percentationOCCFisik, percentationOCCPKBLU, 0d);
         }
 
         public static Double calculateOCCFisikPercentage(LocalDate startDate, Long daysBetween) {

@@ -94,7 +94,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
             @Param("endDate") LocalDate endDate);
 
         @Query(value = "SELECT "
-            + "(SUM(CASE WHEN s.status_payment = 'Paid' THEN 1 ELSE 0 END) / (8.0 - COALESCE(SUM(CASE WHEN s.status_payment = 'Maintenance' THEN 1 ELSE 0 END), 0))) AS totalPercentage "
+            + "(SUM(CASE WHEN s.status_payment = 'Paid' THEN 1 ELSE 0 END) / (8.0 - COALESCE(SUM(CASE WHEN s.status_payment = 'Maintenance' THEN 1 ELSE 0 END), 0))) AS totalPercentage, "
+            + "(COALESCE(SUM(CASE WHEN s.status_payment = 'Maintenance' THEN 1 ELSE 0 END), 0) / 8.0) AS totalMaintenance "
             + "FROM schedules s inner JOIN "
             + "schedules_venues sv "
             + "on s.id= sv.schedule_id join "
@@ -103,7 +104,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
             + "join units u on v2.unit_id =u.id "
             + "WHERE v2.venue = :unit AND s.start_date >= :startDate AND s.end_date <= :endDate GROUP by s.start_date ;",
             nativeQuery = true)
-        List<Object> findSumOfSchedulesPerDay(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
+        List<Object[]> findSumOfSchedulesPerDay(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 
         @Query(value = "SELECT s.start_date "
