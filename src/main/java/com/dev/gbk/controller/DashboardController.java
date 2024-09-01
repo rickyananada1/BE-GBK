@@ -265,25 +265,9 @@ public class DashboardController {
 
     @GetMapping("/retail-card")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    public ResponseEntity<Object> getRetailCardData() {
-        try {
-            // Fetching the retail card data percentage from the service
-            Double retailCardData = dashboardService.getRetailCardData().getUsagePercentage();
-
-            // Return success response with the retail card data
-            return ResponseHandler.generateResponse(
-                    "Success get retail card data",
-                    HttpStatus.OK,
-                    retailCardData
-            );
-        } catch (Exception e) {
-            // Handle any potential exceptions
-            return ResponseHandler.generateResponse(
-                    "Error retrieving retail card data",
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    null
-            );
-        }
+    public ResponseEntity<Map<String, Object>> getRetailCardData() {
+        Map<String, Object> result = dashboardService.getRetailCardData();
+        return ResponseEntity.ok().body(result);
     }
 
 }

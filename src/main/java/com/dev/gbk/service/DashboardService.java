@@ -18,11 +18,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -288,9 +284,14 @@ public class DashboardService {
                 return new CardEventDTO(venue, category, totalPaid, totalMaintenance, scheduleDTOs);
         }
 
-        public CardRetailDTO getRetailCardData() {
-                Double percentage = retailRepository.findRetailCardData();
-                return new CardRetailDTO(percentage);
+        public Map<String, Object> getRetailCardData() {
+                Double percentage = retailRepository.getOverallPercentage();
+                List<CardRetailDTO> data = retailRepository.getRetailCardData();
+
+                Map<String, Object> result = new HashMap<>();
+                result.put("percentage", percentage);
+                result.put("data", data);
+                return result;
         }
 
 
