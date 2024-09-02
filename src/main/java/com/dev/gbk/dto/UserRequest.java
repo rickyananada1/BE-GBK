@@ -56,4 +56,8 @@ public class UserRequest {
     @NotEmpty
     @JsonProperty("roles")
     private List<String> roles;
+
+    @NotEmpty
+    @JsonProperty("venue")
+    private String venue;
 }

@@ -85,4 +85,7 @@ public class User implements Serializable {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime updatedAt;
 
+	@Column(length = 100)
+	private String venue;
+
 }
