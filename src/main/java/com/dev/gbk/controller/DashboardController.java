@@ -71,7 +71,7 @@ public class DashboardController {
         if (unitName == null || unitName.equals("")) {
             unitName = (String) session.getAttribute("unit");
             if (unitName == null || unitName.equals("")) {
-                unitName = "ALL";
+                unitName = "";
             }
         }
 
@@ -99,7 +99,7 @@ public class DashboardController {
         if (unitName == null || unitName.equals("")) {
             unitName = (String) session.getAttribute("unit");
             if (unitName == null || unitName.equals("")) {
-                unitName = "ALL";
+                unitName = "";
             }
         }
 
@@ -126,7 +126,7 @@ public class DashboardController {
         if (unitName == null || unitName.equals("")) {
             unitName = (String) session.getAttribute("unit");
             if (unitName == null || unitName.equals("")) {
-                unitName = "ALL";
+                unitName = "";
             }
         }
         Map<String, Integer> totalPaidByProfileEvent = dashboardService.getTotalPaidGroupedByProfileEvent(start, end,
@@ -152,7 +152,7 @@ public class DashboardController {
         if (unitName == null || unitName.equals("")) {
             unitName = (String) session.getAttribute("unit");
             if (unitName == null || unitName.equals("")) {
-                unitName = "ALL";
+                unitName = "";
             }
         }
         Map<String, Integer> totalPaidByGames = dashboardService.getTotalPaidGroupedByGames(start, end,
@@ -178,7 +178,7 @@ public class DashboardController {
         if (unitName == null || unitName.equals("")) {
             unitName = (String) session.getAttribute("unit");
             if (unitName == null || unitName.equals("")) {
-                unitName = "ALL";
+                unitName = "";
             }
         }
 
@@ -204,7 +204,7 @@ public class DashboardController {
         if (unitName == null || unitName.equals("")) {
             unitName = (String) session.getAttribute("unit");
             if (unitName == null || unitName.equals("")) {
-                unitName = "ALL";
+                unitName = "";
             }
         }
 
@@ -268,7 +268,7 @@ public class DashboardController {
         if (unitName == null || unitName.equals("")) {
             unitName = (String) session.getAttribute("unit");
             if (unitName == null || unitName.equals("")) {
-                unitName = "ALL";
+                unitName = "";
             }
         }
         Map<String, Integer> total = dashboardService.getTotalPaidGroupedByProfileEvent(start, end, unitName);
@@ -295,7 +295,7 @@ public class DashboardController {
         if (unitName == null || unitName.equals("")) {
             unitName = (String) session.getAttribute("unit");
             if (unitName == null || unitName.equals("")) {
-                unitName = "ALL";
+                unitName = "";
             }
         }
 
@@ -323,7 +323,7 @@ public class DashboardController {
         if (unit == null || unit.equals("")) {
             unit = (String) session.getAttribute("unit");
             if (unit == null || unit.equals("")) {
-                unit = "ALL";
+                unit = "";
             }
         }
 
@@ -351,7 +351,7 @@ public class DashboardController {
         if (unit == null || unit.equals("")) {
             unit = (String) session.getAttribute("unit");
             if (unit == null || unit.equals("")) {
-                unit = "ALL";
+                unit = "";
             }
         }
 
