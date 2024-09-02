@@ -70,7 +70,7 @@ public class UserService {
                 .unit(userRequest.getUnit()).status(userRequest.getStatus())
                 .roles(userRequest.getRoles().stream().map(roleName -> roleRepository.findByName(roleName).orElse(null))
                         .filter(Objects::nonNull).collect(Collectors.toList()))
-                .unit(userRequest.getUnit()).build();
+                .unit(userRequest.getUnit()).venue(userRequest.getVenue()).build();
 
         return userRepository.save(user);
     }
@@ -102,6 +102,7 @@ public class UserService {
         user.setRoles(userRequest.getRoles().stream().map(roleName -> roleRepository.findByName(roleName).orElse(null))
                 .filter(Objects::nonNull).collect(Collectors.toList()));
         user.setUnit(userRequest.getUnit());
+        user.setVenue(userRequest.getVenue());
         return userRepository.save(user);
     }
 
