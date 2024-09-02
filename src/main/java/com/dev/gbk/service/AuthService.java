@@ -59,6 +59,8 @@ public class AuthService {
         Map<String, Object> response = new HashMap<>();
         response.put("token", token);
         response.put("user", user);
+        response.put("venue", user.getVenue());
+        response.put("unit", user.getUnit());
 
         return response;
     }

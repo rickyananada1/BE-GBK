@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -51,6 +52,7 @@ public class User implements Serializable {
 	@Column(length = 100, unique = true)
 	private String email;
 
+	@JsonIgnore
 	@Column(length = 100)
 	private String password;
 
