@@ -40,7 +40,7 @@ public class DashboardService {
 
         public Map<String, BigDecimal> getUsageByCategory(LocalDate startDate, LocalDate endDate, String unitNames) {
                 List<String> units = unitNames != null ? Arrays.asList(unitNames.split(",")) : null;
-                List<Schedule> schedules = scheduleRepository.findSchedules(units, startDate, endDate);
+                List<Schedule> schedules = scheduleRepository.findSingleSchedules(unitNames, startDate, endDate);
 
                 Map<String, Long> categoryCount = schedules.stream()
                                 .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
@@ -55,7 +55,7 @@ public class DashboardService {
         public Map<String, BigDecimal> getUsageByProfileEvent(LocalDate startDate, LocalDate endDate,
                         String unitNames) {
                 List<String> units = unitNames != null ? Arrays.asList(unitNames.split(",")) : null;
-                List<Schedule> schedules = scheduleRepository.findSchedules(units, startDate, endDate);
+                List<Schedule> schedules = scheduleRepository.findSingleSchedules(unitNames, startDate, endDate);
 
                 Map<String, Long> profileEventCount = schedules.stream()
                                 .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
@@ -197,7 +197,7 @@ public class DashboardService {
 
         public List<CardGamesDTO> getGamesCardData(LocalDate startDate, LocalDate endDate, String unitNames) {
                 List<String> units = unitNames != null ? Arrays.asList(unitNames.split(",")) : null;
-                List<Schedule> schedules = scheduleRepository.findSchedules(units, startDate, endDate);
+                List<Schedule> schedules = scheduleRepository.findSingleSchedules(unitNames, startDate, endDate);
 
                 Map<String, List<Schedule>> groupedSchedules = schedules.stream()
                                 .filter(schedule -> schedule.getCategory() != null)
@@ -246,7 +246,7 @@ public class DashboardService {
 
         public List<CardEventDTO> getEventCardData(LocalDate startDate, LocalDate endDate, String unitNames) {
                 List<String> units = unitNames != null ? Arrays.asList(unitNames.split(",")) : null;
-                List<Schedule> schedules = scheduleRepository.findSchedules(units, startDate, endDate);
+                List<Schedule> schedules = scheduleRepository.findSingleSchedules(unitNames, startDate, endDate);
 
                 Map<String, CardEventDTO> eventMap = schedules.stream()
                                 .filter(schedule -> schedule.getCategory() != null)
