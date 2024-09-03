@@ -219,7 +219,7 @@ public class DashboardController {
 
     @GetMapping("/get-occupancy")
     public ResponseEntity<Occupancy> getOccupancy(
-            @RequestParam(value = "venue", required = false, defaultValue = "") String venue,
+            @RequestParam(value = "venue", required = false) String venue,
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate, HttpSession session) {
 
@@ -235,7 +235,7 @@ public class DashboardController {
         if (venue.equals("")) {
             venue = (String) session.getAttribute("venue");
             if (venue == null || venue.equals("")) {
-                venue = "ALL";
+                venue = "";
             }
         }
 
