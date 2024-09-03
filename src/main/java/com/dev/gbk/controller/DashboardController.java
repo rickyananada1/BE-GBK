@@ -232,7 +232,7 @@ public class DashboardController {
             end = temp;
         }
 
-        if (venue.equals("")) {
+        if (venue == null || venue.equals("")) {
             venue = (String) session.getAttribute("venue");
             if (venue == null || venue.equals("")) {
                 venue = "";
