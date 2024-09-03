@@ -6,19 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.dev.gbk.model.User;
-import com.dev.gbk.repository.UserRepository;
 import com.dev.gbk.response.Occupancy;
-import jakarta.servlet.http.HttpSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,19 +28,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @RequestMapping("/api")
 @SecurityRequirement(name = "bearerAuth")
 public class DashboardController {
-    private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
     private final DashboardService dashboardService;
-    private final UserRepository userRepository;
 
-    private String venue;
-
-    public DashboardController(DashboardService dashboardService, UserRepository userRepository) {
+    public DashboardController(DashboardService dashboardService) {
         this.dashboardService = dashboardService;
-        this.userRepository = userRepository;
-    }
-
-    public void setVenue(String venue) {
-        this.venue = venue;
     }
 
     @GetMapping("/usage-by-category")
@@ -57,7 +39,7 @@ public class DashboardController {
     public ResponseEntity<Object> getUsageByCategory(
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "unit", required = false) String unitName,HttpSession session) {
+            @RequestParam(value = "unit", required = false) String unitName) {
 
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
@@ -66,13 +48,6 @@ public class DashboardController {
             LocalDate temp = start;
             start = end;
             end = temp;
-        }
-
-        if (unitName == null || unitName.equals("")) {
-            unitName = (String) session.getAttribute("unit");
-            if (unitName == null || unitName.equals("")) {
-                unitName = "";
-            }
         }
 
         Map<String, BigDecimal> result = dashboardService.getUsageByCategory(start, end, unitName);
@@ -85,7 +60,7 @@ public class DashboardController {
     public ResponseEntity<Object> getUsageByProfileEvent(
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "unit", required = false) String unitName,HttpSession session) {
+            @RequestParam(value = "unit", required = false) String unitName) {
 
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
@@ -94,13 +69,6 @@ public class DashboardController {
             LocalDate temp = start;
             start = end;
             end = temp;
-        }
-
-        if (unitName == null || unitName.equals("")) {
-            unitName = (String) session.getAttribute("unit");
-            if (unitName == null || unitName.equals("")) {
-                unitName = "";
-            }
         }
 
         Map<String, BigDecimal> result = dashboardService.getUsageByProfileEvent(start, end, unitName);
@@ -113,7 +81,7 @@ public class DashboardController {
     public ResponseEntity<Object> getTotalPaidForProfileEvent(
             @RequestParam("startDate") String startDate,
             @RequestParam("endDate") String endDate,
-            @RequestParam(value = "unitName", required = false) String unitName, HttpSession session) {
+            @RequestParam(value = "unitName", required = false) String unitName) {
 
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
@@ -122,12 +90,6 @@ public class DashboardController {
             LocalDate temp = start;
             start = end;
             end = temp;
-        }
-        if (unitName == null || unitName.equals("")) {
-            unitName = (String) session.getAttribute("unit");
-            if (unitName == null || unitName.equals("")) {
-                unitName = "";
-            }
         }
         Map<String, Integer> totalPaidByProfileEvent = dashboardService.getTotalPaidGroupedByProfileEvent(start, end,
                 unitName);
@@ -139,7 +101,7 @@ public class DashboardController {
     public ResponseEntity<Object> getTotalPaidForGames(
             @RequestParam("startDate") String startDate,
             @RequestParam("endDate") String endDate,
-            @RequestParam(value = "unitName", required = false) String unitName, HttpSession session) {
+            @RequestParam(value = "unitName", required = false) String unitName) {
 
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
@@ -148,12 +110,6 @@ public class DashboardController {
             LocalDate temp = start;
             start = end;
             end = temp;
-        }
-        if (unitName == null || unitName.equals("")) {
-            unitName = (String) session.getAttribute("unit");
-            if (unitName == null || unitName.equals("")) {
-                unitName = "";
-            }
         }
         Map<String, Integer> totalPaidByGames = dashboardService.getTotalPaidGroupedByGames(start, end,
                 unitName);
@@ -164,7 +120,7 @@ public class DashboardController {
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
     public IncomeDTO getIncome(@RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "unitName", required = false) String unitName, HttpSession session) {
+            @RequestParam(value = "unitName", required = false) String unitName) {
 
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
@@ -173,13 +129,6 @@ public class DashboardController {
             LocalDate temp = start;
             start = end;
             end = temp;
-        }
-
-        if (unitName == null || unitName.equals("")) {
-            unitName = (String) session.getAttribute("unit");
-            if (unitName == null || unitName.equals("")) {
-                unitName = "";
-            }
         }
 
         return dashboardService.getTotalIncome(start, end, unitName);
@@ -191,7 +140,7 @@ public class DashboardController {
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
             @RequestParam(value = "type", required = true) String type,
-            @RequestParam(value = "unitName", required = false) String unitName, HttpSession session) {
+            @RequestParam(value = "unitName", required = false) String unitName) {
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
 
@@ -199,13 +148,6 @@ public class DashboardController {
             LocalDate temp = start;
             start = end;
             end = temp;
-        }
-
-        if (unitName == null || unitName.equals("")) {
-            unitName = (String) session.getAttribute("unit");
-            if (unitName == null || unitName.equals("")) {
-                unitName = "";
-            }
         }
 
         if ("profileEvent".equalsIgnoreCase(type)) {
@@ -219,9 +161,9 @@ public class DashboardController {
 
     @GetMapping("/get-occupancy")
     public ResponseEntity<Occupancy> getOccupancy(
-            @RequestParam(value = "venue", required = false) String venue,
-            @RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate, HttpSession session) {
+        @RequestParam(value = "venue", required = false, defaultValue = "ALL") String venue,
+        @RequestParam(value = "startDate", required = false) String startDate,
+        @RequestParam(value = "endDate", required = false) String endDate) {
 
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
@@ -231,22 +173,10 @@ public class DashboardController {
             start = end;
             end = temp;
         }
-
-        if (venue == null || venue.equals("")) {
-            venue = (String) session.getAttribute("venue");
-            if (venue == null || venue.equals("")) {
-                venue = "";
-            }
+        if ("ALL".equals(venue)) {
+            return ResponseEntity.ok(new Occupancy());
         }
-
-        Occupancy occupancy;
-        try {
-            occupancy = dashboardService.getOccupancy(start, end, venue);
-        } catch (Exception e) {
-            logger.error("Error fetching occupancy data for venue: {}, startDate: {}, endDate: {}", venue, start, end, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-
+        Occupancy occupancy = dashboardService.getOccupancy(start, end, venue);
         return ResponseEntity.ok(occupancy);
     }
 
@@ -255,7 +185,7 @@ public class DashboardController {
     public ResponseEntity<Object> getTotalByType(
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "unitName", required = false) String unitName,HttpSession session) {
+            @RequestParam(value = "unitName", required = false) String unitName) {
 
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
@@ -264,12 +194,6 @@ public class DashboardController {
             LocalDate temp = start;
             start = end;
             end = temp;
-        }
-        if (unitName == null || unitName.equals("")) {
-            unitName = (String) session.getAttribute("unit");
-            if (unitName == null || unitName.equals("")) {
-                unitName = "";
-            }
         }
         Map<String, Integer> total = dashboardService.getTotalPaidGroupedByProfileEvent(start, end, unitName);
 
@@ -281,7 +205,7 @@ public class DashboardController {
     public ResponseEntity<Object> getTotalByGame(
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "unitName", required = false) String unitName,HttpSession session) {
+            @RequestParam(value = "unitName", required = false) String unitName) {
 
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
@@ -290,13 +214,6 @@ public class DashboardController {
             LocalDate temp = start;
             start = end;
             end = temp;
-        }
-
-        if (unitName == null || unitName.equals("")) {
-            unitName = (String) session.getAttribute("unit");
-            if (unitName == null || unitName.equals("")) {
-                unitName = "";
-            }
         }
 
         Map<String, Integer> total = dashboardService.getTotalPaidGroupedByGames(start, end, unitName);
@@ -309,7 +226,7 @@ public class DashboardController {
     public ResponseEntity<Object> getGamesCardData(
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "unit", required = false) String unit,HttpSession session) {
+            @RequestParam(value = "unit", required = false) String unit) {
 
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
@@ -318,13 +235,6 @@ public class DashboardController {
             LocalDate temp = start;
             start = end;
             end = temp;
-        }
-
-        if (unit == null || unit.equals("")) {
-            unit = (String) session.getAttribute("unit");
-            if (unit == null || unit.equals("")) {
-                unit = "";
-            }
         }
 
         List<CardGamesDTO> gamesCardData = dashboardService.getGamesCardData(start, end, unit);
@@ -337,7 +247,7 @@ public class DashboardController {
     public ResponseEntity<Object> getEventCardData(
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "unit", required = false) String unit,HttpSession session) {
+            @RequestParam(value = "unit", required = false) String unit) {
 
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
@@ -346,13 +256,6 @@ public class DashboardController {
             LocalDate temp = start;
             start = end;
             end = temp;
-        }
-
-        if (unit == null || unit.equals("")) {
-            unit = (String) session.getAttribute("unit");
-            if (unit == null || unit.equals("")) {
-                unit = "";
-            }
         }
 
         List<CardEventDTO> eventCardData = dashboardService.getEventCardData(start, end, unit);

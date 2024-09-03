@@ -2,7 +2,6 @@ package com.dev.gbk.controller;
 
 import java.util.Map;
 
-import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,7 @@ public class AuthController {
 
 	// Build Login REST API
 	@PostMapping(value = { "/login", "/signin" })
-	public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
+	public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
 		logger.info("username: " + loginRequest.getUsernameOrEmail() + " password: " + loginRequest.getPassword());
 		Map<String, Object> authResponse = authService.login(loginRequest);
 
@@ -38,12 +37,8 @@ public class AuthController {
 		jwtAuthResponse.setAccessToken((String) authResponse.get("token"));
 		jwtAuthResponse.setUser(authResponse.get("user"));
 
-		session.setAttribute("venue", authResponse.get("venue"));
-		session.setAttribute("unit", authResponse.get("unit"));
-
 		return ResponseHandler.generateResponse("Login successfully", HttpStatus.OK, jwtAuthResponse);
 	}
-
 
 	// Build Register REST API
 	@PostMapping(value = { "/register", "/signup" })
