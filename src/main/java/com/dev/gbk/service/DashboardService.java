@@ -11,14 +11,21 @@ import com.dev.gbk.repository.RetailRepository;
 import com.dev.gbk.repository.ScheduleRepository;
 import com.dev.gbk.repository.VenueRepository;
 import com.dev.gbk.response.Occupancy;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -340,10 +347,8 @@ public class DashboardService {
                 BigDecimal sumOfPercentage = BigDecimal.ZERO;
                 BigDecimal sumOfMaintenance = BigDecimal.ZERO;
                 for (Object[] ob : schedule) {
-                        BigDecimal percentage =
-                            new BigDecimal(ob[0].toString()); // Index 0 for totalPercentage
-                        BigDecimal percentageMaintenance =
-                            new BigDecimal(ob[1].toString()); // Index 0 for totalPercentage
+                        BigDecimal percentage = getSingleValueWIthIndex(ob, 0); // Index 0 for totalPercentage
+                        BigDecimal percentageMaintenance = getSingleValueWIthIndex(ob, 1); // Index 0 for totalPercentage
                         sumOfPercentage = sumOfPercentage.add(percentage);
                         sumOfMaintenance = sumOfMaintenance.add(percentageMaintenance);
                         count++;
@@ -358,13 +363,12 @@ public class DashboardService {
                 int daysInMonth = start.lengthOfMonth();
                 double pkblu = (double) schedulePkblu.size() / daysInMonth * 100;
                 return new Occupancy(resultOfPercentage.doubleValue() * 100, pkblu,
-                    resultOfPercentageMaintenance.doubleValue());
+                    resultOfPercentageMaintenance.doubleValue(), 0d);
         }
 
 
         private Occupancy getOccupancyForNotEligibleSessionVenue(LocalDate start, LocalDate end, String venue) {
                 List<Schedule> scheduleBasedOnVenue = scheduleRepository.findSingleSchedules(venue, start, end);
-                List<LocalDate> dayOfVenue = new ArrayList<>();
                 long daysEventTime = 0;
                 long daysMaintenance = 0;
                 boolean isEventDaySameWithInLoad = false;
@@ -376,7 +380,6 @@ public class DashboardService {
                                     ChronoUnit.DAYS.between(schedule.getScheduleStartDate(),
                                         schedule.getScheduleEndDate()) + 1;
                                 daysMaintenance += daysBetween;
-                                System.out.println("Maintenance Days : " + schedule.getScheduleStartDate() + " And Schedule Id " + schedule.getId());
                                 continue;
                         }
                         if (schedule.getScheduleStartDate() != null) {
@@ -386,38 +389,47 @@ public class DashboardService {
                                 daysEventTime += daysBetween;
                                 isEventDaySameWithOutLoad = schedule.getScheduleStartOutLoad().equals(schedule.getScheduleEndDate());
                                 isEventDaySameWithInLoad = schedule.getScheduleStartInLoad().equals(schedule.getScheduleStartDate());
-                                System.out.println("In Start Days : " + schedule.getScheduleStartDate() + " And Schedule Id " + schedule.getId());
                         }
                         if (schedule.getScheduleStartInLoad() != null && !(isEventDaySameWithInLoad)) {
                                 daysBetween =
                                     ChronoUnit.DAYS.between(schedule.getScheduleStartInLoad(),
                                         schedule.getScheduleEndInLoad()) + 1;
                                 daysEventTime += daysBetween;
-
-                                System.out.println("In Loading Days : " + schedule.getScheduleStartInLoad() + " And Schedule Id " + schedule.getId());
                         }
                         if (schedule.getScheduleStartOutLoad() != null && !isEventDaySameWithOutLoad) {
                                 daysBetween =
                                     ChronoUnit.DAYS.between(schedule.getScheduleStartOutLoad(),
                                         schedule.getScheduleEndOutLoad()) + 1;
                                 daysEventTime += daysBetween;
-
-                                System.out.println("End Loading Days : " + schedule.getScheduleStartOutLoad() + " And Schedule Id " + schedule.getId());
                         }
 
                 }
 
-                System.out.println("Days Event Time: " + daysEventTime);
-                System.out.println("Days Maintenance: " + daysMaintenance);
-
+                List<Object[]> retailFromVenue =
+                    this.retailRepository.findSumPaidAndAllRecordForRetail(venue, start, end);
+                BigDecimal retailOccupied = BigDecimal.ZERO;
+                for (Object[] retail : retailFromVenue) {
+                  BigDecimal totalRetailOccupied = getSingleValueWIthIndex(retail, 0); // Index 0 for totalPercentage
+                  BigDecimal totalAllRetail = getSingleValueWIthIndex(retail, 1); // Index 0 for totalPercentage
+                  if (totalRetailOccupied == BigDecimal.ZERO && totalAllRetail == BigDecimal.ZERO)
+                    break;
+                  retailOccupied = totalRetailOccupied.divide(totalAllRetail,
+                          MathContext.DECIMAL128) // Use a context with sufficient precision
+                      .multiply(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
+                }
                 Double percentationOCCFisik = calculateOCCFisikPercentage(start, daysEventTime);
                 Double percentationOCCPKBLU = calculateOCCPKBLUPercentageDays(start, daysEventTime, daysMaintenance);
-                System.out.println("OCC Fisik: " + percentationOCCFisik);
-                System.out.println("OCC PKBLU: " + percentationOCCPKBLU);
+                Double percentationOccMaintenance = calculateOCCMaintenancePercentage(start, daysMaintenance);
                 if (Double.isInfinite(percentationOCCPKBLU)) {
                         percentationOCCPKBLU = 100.0;
                 }
-                return new Occupancy(percentationOCCFisik, percentationOCCPKBLU, 0d);
+          return new Occupancy(percentationOCCFisik, percentationOCCPKBLU,
+              percentationOccMaintenance, retailOccupied.doubleValue());
+        }
+
+        @NotNull
+        private BigDecimal getSingleValueWIthIndex(Object[] retail, int x) {
+                return retail[x] != null ? new BigDecimal(retail[x].toString()) : BigDecimal.ZERO;
         }
 
         public static Double calculateOCCFisikPercentage(LocalDate startDate, Long daysBetween) {
@@ -425,6 +437,11 @@ public class DashboardService {
                 int daysInMonth = yearMonth.lengthOfMonth();
 
                 return (double) daysBetween / daysInMonth * 100;
+        }
+
+
+        public static Double calculateOCCMaintenancePercentage(LocalDate startDate, Long daysBetween) {
+                return  calculateOCCFisikPercentage(startDate, daysBetween);
         }
 
         public static Double calculateOCCPKBLUPercentageDays(LocalDate startDate, Long daysBetween, Long maintenance) {
