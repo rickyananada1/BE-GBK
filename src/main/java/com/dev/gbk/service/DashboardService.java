@@ -7,11 +7,13 @@ import com.dev.gbk.dto.IncomeDTO;
 import com.dev.gbk.dto.ScheduleDTO;
 import com.dev.gbk.model.Schedule;
 import com.dev.gbk.model.Venue;
+import com.dev.gbk.properties.SystemProperties;
 import com.dev.gbk.repository.RetailRepository;
 import com.dev.gbk.repository.ScheduleRepository;
 import com.dev.gbk.repository.VenueRepository;
 import com.dev.gbk.response.Occupancy;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,11 +21,13 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -34,15 +38,19 @@ public class DashboardService {
         private static final String PAID_STATUS = "Paid";
         private static final String MAINTENANCE_STATUS = "Maintenance";
         private static final BigDecimal MONTHLY_PARKING_FEE = BigDecimal.valueOf(1_600_000); // 1.6 million
-        private static final int SUM_OF_SESSION = 248;
 
         private final ScheduleRepository scheduleRepository;
         private final RetailRepository retailRepository;
         private final VenueRepository venueRepository;
-        public DashboardService(ScheduleRepository scheduleRepository, RetailRepository retailRepository , VenueRepository venueRepository) {
+        private final SystemProperties systemProperties;
+
+        public DashboardService(ScheduleRepository scheduleRepository,
+            RetailRepository retailRepository, VenueRepository venueRepository,
+            @Qualifier("systemProperties") SystemProperties systemProperties) {
                 this.scheduleRepository = scheduleRepository;
                 this.retailRepository = retailRepository;
                 this.venueRepository = venueRepository;
+                this.systemProperties = systemProperties;
         }
 
         public Map<String, BigDecimal> getUsageByCategory(LocalDate startDate, LocalDate endDate, String unitNames) {
@@ -148,10 +156,25 @@ public class DashboardService {
                                 .filter(obj -> "Games Timnas Proyeksi".equals(((Object[]) obj)[0]))
                                 .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
                                 .sum());
-                BigDecimal maintenance = safeBigDecimalFromDouble(response.stream()
-                                .filter(obj -> "Maintenance".equals(((Object[]) obj)[0]))
-                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
-                                .sum());
+
+                //Get Total Pendapatan Maintenance based on day
+                List<Schedule> scheduleBasedOnVenue =
+                    scheduleRepository.findSingleSchedulesMaintenance(unitNames, startDate,
+                        endDate);
+                List<String> days = new ArrayList<>();
+                for (Schedule schedule : scheduleBasedOnVenue) {
+                        if (schedule.getStatusPayment().equals("Maintenance")) {
+                                    days.addAll(getDayNamesBetween(schedule.getScheduleStartDate(),
+                                        schedule.getScheduleEndDate()));
+                        }
+                }
+                BigDecimal totalIncomeForMaintenance = BigDecimal.ZERO;
+                for (String day : days) {
+                        BigDecimal priceForMaintenance = systemProperties.getMaintenance().get(day);
+                        totalIncomeForMaintenance = totalIncomeForMaintenance.add(priceForMaintenance);
+                }
+                System.out.println(totalIncomeForMaintenance);
+                System.out.println(days);
 
                 BigDecimal events = safeBigDecimalFromDouble(response.stream()
                                 .filter(obj -> "Events Olahraga".equals(((Object[]) obj)[0]))
@@ -176,8 +199,23 @@ public class DashboardService {
                 long monthsBetween = calculateMonthsBetween(startDate, endDate);
                 BigDecimal totalParkingFee = MONTHLY_PARKING_FEE.multiply(BigDecimal.valueOf(monthsBetween));
 
-                return new IncomeDTO(retailIncome, retailOccupied, retailNonOccupied, maintenanceVenue,
-                                totalParkingFee,sewaLahan, sewaLahanProyeksi, gamesUmum, gamesUmumProyeksi,gamesTimnas, gamesTimnasProyeksi, maintenance, events, eventsProyeksi, eventsNon, eventsProyeksiNon);
+                return new IncomeDTO(retailIncome, retailOccupied, retailNonOccupied,
+                    maintenanceVenue, totalParkingFee, sewaLahan, sewaLahanProyeksi, gamesUmum,
+                    gamesUmumProyeksi, gamesTimnas, gamesTimnasProyeksi, totalIncomeForMaintenance,
+                    events, eventsProyeksi, eventsNon, eventsProyeksiNon);
+        }
+
+        private List<String> getDayNamesBetween(LocalDate startDate, LocalDate endDate) {
+                List<String> dayNames = new ArrayList<>();
+                LocalDate currentDate = startDate;
+
+                while (!currentDate.isAfter(endDate)) {
+                        String dayName = currentDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("id"));
+                        dayNames.add(dayName);
+                        currentDate = currentDate.plusDays(1);
+                }
+
+                return dayNames;
         }
 
         public Map<String, Integer> getProjectionTotalPaidGroupedByProfileEvent(LocalDate startDate,

@@ -95,6 +95,11 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
         List<Schedule> findSingleSchedules(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 
+
+        @Query("SELECT s FROM Schedule s JOIN s.venues v WHERE v.venue = :unit AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate AND s.statusPayment = 'Maintenance'")
+        List<Schedule> findSingleSchedulesMaintenance(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
+
         @Query(value = "SELECT "
             + "(SUM(CASE WHEN s.status_payment = 'Paid' THEN 1 ELSE 0 END) / (8.0 - COALESCE(SUM(CASE WHEN s.status_payment = 'Maintenance' THEN 1 ELSE 0 END), 0))) AS totalPercentage, "
             + "(COALESCE(SUM(CASE WHEN s.status_payment = 'Maintenance' THEN 1 ELSE 0 END), 0) / 8.0) AS totalMaintenance "
