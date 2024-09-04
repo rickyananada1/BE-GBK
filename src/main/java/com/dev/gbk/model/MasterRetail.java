@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "master_retails")
+@Table(name = "master_retails", indexes = @Index(name = "idx_master_retails_tenant_name", columnList = "tenant_name"))
 public class MasterRetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
