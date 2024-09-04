@@ -21,6 +21,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -35,7 +36,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "schedules")
+@Table(name = "schedules", indexes = {
+        @Index(name = "idx_booking_number", columnList = "booking_number"),
+        @Index(name = "idx_type", columnList = "type"),
+        @Index(name = "idx_profile_event", columnList = "profile_event"),
+        @Index(name = "idx_games", columnList = "games"),
+        @Index(name = "idx_category", columnList = "category"),
+        @Index(name = "idx_schedule_start_in_load", columnList = "schedule_start_in_load"),
+        @Index(name = "idx_schedule_end_in_load", columnList = "schedule_end_in_load"),
+        @Index(name = "idx_start_date", columnList = "start_date"),
+        @Index(name = "idx_end_date", columnList = "end_date"),
+        @Index(name = "idx_status_payment", columnList = "status_payment"),
+        @Index(name = "idx_status_booking", columnList = "status_booking")
+})
 @EntityListeners(AuditingEntityListener.class)
 public class Schedule implements Serializable {
 

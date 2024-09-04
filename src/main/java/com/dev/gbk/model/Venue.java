@@ -18,6 +18,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -33,7 +34,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @Entity
-@Table(name = "venues")
+@Table(name = "venues", indexes = { @Index(columnList = "venue"), @Index(columnList = "contact") })
 @EntityListeners(AuditingEntityListener.class)
 public class Venue implements Serializable {
 
