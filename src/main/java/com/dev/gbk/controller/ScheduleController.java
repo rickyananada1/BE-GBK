@@ -39,23 +39,26 @@ public class ScheduleController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DATA_SCHEDULE')")
-    public ResponseEntity<Object> findAll(
-            @RequestParam(value = "search", required = false) String search,
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "size", required = false) Integer size,
-            @RequestParam(value = "unit", required = false) String unit,
-            @RequestParam(value = "event", required = false) String[] event, // Array parameter
-            @RequestParam(value = "tanggal", required = false) String[] tanggal, // Array parameter
-            @RequestParam(value = "status", required = false) String status) {
+    public ResponseEntity<Object> findAll(@RequestParam(value = "search", required = false) String search,
+                                          @RequestParam(value = "page", required = false) Integer page,
+                                          @RequestParam(value = "size", required = false) Integer size,
+                                          @RequestParam(value = "unit", required = false) String unit,
+                                          @RequestParam(value = "event", required = false) String event,
+                                          @RequestParam(value = "tanggal", required = false) String tanggal,
+                                          @RequestParam(value = "status", required = false) String status) {
 
         LocalDate start = null;
         LocalDate end = null;
-        if (tanggal != null && tanggal.length == 2) {
+
+        if (tanggal != null && !tanggal.isEmpty()) {
             try {
-                start = LocalDate.parse(tanggal[0]);
-                end = LocalDate.parse(tanggal[1]);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH);
+                String[] tanggalSplit = tanggal.split(" - ");
+
+                start = LocalDate.parse(tanggalSplit[0].trim(), formatter);
+                end = LocalDate.parse(tanggalSplit[1].trim(), formatter);
             } catch (DateTimeParseException e) {
-                return ResponseHandler.generateResponse("Invalid date format. Please use 'yyyy-MM-dd' format.", HttpStatus.BAD_REQUEST, null);
+                return ResponseHandler.generateResponse("Invalid date format. Please use 'd MMMM yyyy - d MMMM yyyy'.", HttpStatus.BAD_REQUEST, null);
             }
         }
 
@@ -72,7 +75,6 @@ public class ScheduleController {
         return ResponseHandler.generateResponse("Success get all schedules", HttpStatus.OK,
                 scheduleService.findAll(search, page, size, unit, event, start, end, status));
     }
-
 
 
     // @GetMapping("/available")
