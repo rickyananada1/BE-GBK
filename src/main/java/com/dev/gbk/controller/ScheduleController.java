@@ -37,10 +37,10 @@ public class ScheduleController {
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DATA_SCHEDULE')")
     public ResponseEntity<Object> findAll(@RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "size", required = false) Integer size) {
+            @RequestParam(value = "size", required = false) Integer size,@RequestParam(value = "unit", required = false) String unit) {
         if (page == null && size == null) {
             return ResponseHandler.generateResponse("Success get all schedules", HttpStatus.OK,
-                    scheduleService.findAll(search));
+                    scheduleService.findAll(search,unit));
         }
 
         if (page == null)
@@ -49,7 +49,7 @@ public class ScheduleController {
             size = 10;
 
         return ResponseHandler.generateResponse("Success get all schedules", HttpStatus.OK,
-                scheduleService.findAll(search, page, size));
+                scheduleService.findAll(search, page, size,unit));
     }
 
     // @GetMapping("/available")

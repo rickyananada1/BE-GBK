@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import com.dev.gbk.dto.ScheduleRequest;
 
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -44,19 +46,43 @@ public class ScheduleService {
         this.venueRepository = venueRepository;
     }
 
-    public Page<Schedule> findAll(String search, int page, int size) {
+    public Page<Schedule> findAll(String search, int page, int size, String unit) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
         Pageable pageable = PageRequest.of(page, size, sort);
+
+        Specification<Schedule> unitSpecification = (root, query, criteriaBuilder) -> {
+            query.distinct(true);
+            if (unit != null && !unit.isEmpty()) {
+                Join<Schedule, Venue> venueJoin = root.join("venues", JoinType.LEFT);
+                return criteriaBuilder.equal(venueJoin.get("venue"), unit);
+            }
+            return criteriaBuilder.conjunction();
+        };
+
         Optional<Specification<Schedule>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.map(scheduleSpecification -> scheduleRepository.findAll(scheduleSpecification, pageable))
-                .orElseGet(() -> scheduleRepository.findAll(pageable));
+
+        return specification
+                .map(scheduleSpecification -> scheduleRepository.findAll(scheduleSpecification.and(unitSpecification), pageable))
+                .orElseGet(() -> scheduleRepository.findAll(unitSpecification, pageable));
     }
 
-    public List<Schedule> findAll(String search) {
+    public List<Schedule> findAll(String search, String unit) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Specification<Schedule> unitSpecification = (root, query, criteriaBuilder) -> {
+            query.distinct(true);
+            if (unit != null && !unit.isEmpty()) {
+                Join<Schedule, Venue> venueJoin = root.join("venues", JoinType.LEFT);
+                return criteriaBuilder.equal(venueJoin.get("venue"), unit);
+            }
+            return criteriaBuilder.conjunction();
+        };
+
         Optional<Specification<Schedule>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.map(scheduleSpecification -> scheduleRepository.findAll(scheduleSpecification, sort))
-                .orElseGet(() -> scheduleRepository.findAll(sort));
+
+        return specification
+                .map(scheduleSpecification -> scheduleRepository.findAll(scheduleSpecification.and(unitSpecification), sort))
+                .orElseGet(() -> scheduleRepository.findAll(unitSpecification, sort));
     }
 
     public List<Schedule> findPendingSchedulesCreatedBefore(Long venue) {
