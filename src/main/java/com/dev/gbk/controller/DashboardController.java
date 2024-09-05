@@ -270,4 +270,20 @@ public class DashboardController {
         return ResponseEntity.ok().body(result);
     }
 
+    @GetMapping("/sewa-lahan-card")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
+    public ResponseEntity<Map<String, Object>> getSewaLahanCardData(@RequestParam(value = "unit", required = false) String unit,
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate) {
+        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
+
+        if (start != null && end != null && end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
+        Map<String, Object> result = dashboardService.getSewaLahanCardData(unit, start, end);
+        return ResponseEntity.ok().body(result);
+    }
 }

@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.dev.gbk.dto.CardSewaLahanDTO;
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
@@ -13,19 +15,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -50,6 +39,35 @@ import lombok.NoArgsConstructor;
         @Index(name = "idx_status_booking", columnList = "status_booking")
 })
 @EntityListeners(AuditingEntityListener.class)
+@SqlResultSetMapping(
+        name = "CardSewaLahanDTOMapping",
+        classes = @ConstructorResult(
+                targetClass = CardSewaLahanDTO.class,
+                columns = {
+                        @ColumnResult(name = "tenant_name", type = String.class),
+                        @ColumnResult(name = "tanggal", type = String.class)
+                }
+        )
+)
+@NamedNativeQueries({
+        @NamedNativeQuery(
+                name = "getSewaLahanCardData",
+                query = "SELECT v2.venue AS tenant_name, " +
+                        "s.start_date AS tanggal " +
+                        "FROM schedules s " +
+                        "INNER JOIN schedules_venues sv ON s.id = sv.schedule_id " +
+                        "JOIN schedule_times st ON s.id = st.schedule_id " +
+                        "JOIN venues v2 ON sv.venue_id = v2.id " +
+                        "WHERE s.category = 'Sewa Lahan' " +
+                        "AND s.status_payment = 'Paid' " +
+                        "AND s.status_booking = 'Processing' " +
+                        "AND v2.venue = :unit " +
+                        "AND s.start_date >= :startDate " +
+                        "AND s.end_date <= :endDate " +
+                        "GROUP BY s.start_date",
+                resultSetMapping = "CardSewaLahanDTOMapping"
+        )
+})
 public class Schedule implements Serializable {
 
     @Id

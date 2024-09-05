@@ -1,10 +1,6 @@
 package com.dev.gbk.service;
 
-import com.dev.gbk.dto.CardEventDTO;
-import com.dev.gbk.dto.CardGamesDTO;
-import com.dev.gbk.dto.CardRetailDTO;
-import com.dev.gbk.dto.IncomeDTO;
-import com.dev.gbk.dto.ScheduleDTO;
+import com.dev.gbk.dto.*;
 import com.dev.gbk.model.Schedule;
 import com.dev.gbk.model.Venue;
 import com.dev.gbk.properties.SystemProperties;
@@ -488,4 +484,16 @@ public class DashboardService {
 
                 return (double) daysBetween / (daysInMonth - maintenance )* 100;
         }
+
+        public Map<String, Object> getSewaLahanCardData(String unit, LocalDate startDate, LocalDate endDate) {
+                Long total = scheduleRepository.getOverallPercentage(unit, startDate, endDate);
+                List<CardSewaLahanDTO> data = scheduleRepository.getSewaLahanCardData(unit, startDate, endDate);
+                System.out.println("sewa lahan card data" + data);
+                Map<String, Object> result = new HashMap<>();
+                result.put("percentage", total);
+                result.put("details", data);
+
+                return result;
+        }
+
 }
