@@ -109,14 +109,14 @@ public class DashboardService {
                 List<String> units = unitNames != null ? Arrays.asList(unitNames.split(",")) : null;
 
                 BigDecimal retailIncome = safeBigDecimalFromDouble(
-                                retailRepository.sumPriceByStatusAndDateRangeAndArea("Sewa", null));
+                                retailRepository.sumPriceByStatusAndDateRangeAndArea("Sewa", unitNames));
 
                 BigDecimal retailOccupied = safeBigDecimalFromDouble(
-                                retailRepository.sumSizeByStatusAndDateRangeAndArea("Sewa", null));
+                                retailRepository.sumSizeByStatusAndDateRangeAndArea("Sewa", unitNames));
 
                 BigDecimal retailNonOccupied = safeBigDecimalFromDouble(
                                 retailRepository.sumSizeByStatusAndDateRangeAndArea("Belum Sewa",
-                                                null));
+                                        unitNames));
 
                 BigDecimal maintenanceVenue = safeBigDecimalFromDouble(
                                 scheduleRepository.sumMaintenanceByType(units, startDate, endDate));

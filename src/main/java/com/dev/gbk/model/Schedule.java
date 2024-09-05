@@ -61,7 +61,7 @@ import lombok.NoArgsConstructor;
                         "WHERE s.category = 'Sewa Lahan' " +
                         "AND s.status_payment = 'Paid' " +
                         "AND s.status_booking = 'Processing' " +
-                        "AND v2.venue = :unit " +
+                        "AND (:unit IS NULL OR :unit = '' OR v2.venue = :unit) " +
                         "AND s.start_date >= :startDate " +
                         "AND s.end_date <= :endDate " +
                         "GROUP BY s.start_date",
