@@ -80,10 +80,10 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
                 "    SUM(r.totalPaid) + SUM(r.totalSF) AS total " +
                 "FROM Schedule r JOIN r.venues v " +
                 "WHERE r.scheduleStartDate >= :startDate AND r.scheduleEndDate <= :endDate " +
-                "AND (:venues IS NULL OR :venues = '' OR v.venue IN :venues) " +
+                "AND (:venues IS NULL OR :venues = '' OR v.venue = :venues) " +
                 "GROUP BY kategori")
         List<Object> sumSewaLahanByStatusPayment(@Param("startDate") LocalDate startDate,
-                                                 @Param("endDate") LocalDate endDate, @Param("venues") List<String> venues);
+                                                 @Param("endDate") LocalDate endDate, @Param("venues") String venues);
 
 
 

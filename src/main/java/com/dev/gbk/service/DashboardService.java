@@ -121,7 +121,7 @@ public class DashboardService {
                 BigDecimal maintenanceVenue = safeBigDecimalFromDouble(
                                 scheduleRepository.sumMaintenanceByType(units, startDate, endDate));
 
-                List<Object> response = scheduleRepository.sumSewaLahanByStatusPayment(startDate, endDate, units);
+                List<Object> response = scheduleRepository.sumSewaLahanByStatusPayment(startDate, endDate, unitNames);
 
                 BigDecimal sewaLahan = safeBigDecimalFromDouble(response.stream()
                                 .filter(obj -> "Sewa Lahan".equals(((Object[]) obj)[0]))
