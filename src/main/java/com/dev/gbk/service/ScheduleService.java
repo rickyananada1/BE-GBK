@@ -48,11 +48,9 @@ public class ScheduleService {
         this.venueRepository = venueRepository;
     }
 
-    public Page<Schedule> findAll(String search, int page, int size, String unit, String event, LocalDate tanggal, LocalDate end, String status) {
+    public Page<Schedule> findAll(String search, int page, int size, String unit, String[] event, LocalDate start, LocalDate end, String status) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
         Pageable pageable = PageRequest.of(page, size, sort);
-        System.out.println("tanggal : " + tanggal);
-        System.out.println("end : " + end);
 
         Specification<Schedule> scheduleSpecification = (root, query, criteriaBuilder) -> {
             query.distinct(true);
@@ -64,14 +62,14 @@ public class ScheduleService {
                 predicates.add(criteriaBuilder.equal(venueJoin.get("venue"), unit));
             }
 
-            if (event != null && !event.isEmpty()) {
-                predicates.add(criteriaBuilder.equal(root.get("category"), event));
+            if (event != null && event.length > 0) {
+                predicates.add(root.get("category").in((Object[]) event));
             }
 
-            if (tanggal != null && end != null) {
-                predicates.add(criteriaBuilder.between(root.get("scheduleStartDate"), tanggal, end));
-            } else if (tanggal != null) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("scheduleStartDate"), tanggal));
+            if (start != null && end != null) {
+                predicates.add(criteriaBuilder.between(root.get("scheduleStartDate"), start, end));
+            } else if (start != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("scheduleStartDate"), start));
             } else if (end != null) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("scheduleEndDate"), end));
             }
@@ -90,7 +88,7 @@ public class ScheduleService {
                 .orElseGet(() -> scheduleRepository.findAll(scheduleSpecification, pageable));
     }
 
-    public List<Schedule> findAll(String search, String unit, String event, LocalDate tanggal, LocalDate end, String status) {
+    public List<Schedule> findAll(String search, String unit, String[] event, LocalDate start, LocalDate end, String status) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
 
         Specification<Schedule> scheduleSpecification = (root, query, criteriaBuilder) -> {
@@ -103,14 +101,14 @@ public class ScheduleService {
                 predicates.add(criteriaBuilder.equal(venueJoin.get("venue"), unit));
             }
 
-            if (event != null && !event.isEmpty()) {
-                predicates.add(criteriaBuilder.equal(root.get("category"), event));
+            if (event != null && event.length > 0) {
+                predicates.add(root.get("category").in((Object[]) event));
             }
 
-            if (tanggal != null && end != null) {
-                predicates.add(criteriaBuilder.between(root.get("scheduleStartDate"), tanggal, end));
-            } else if (tanggal != null) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("scheduleStartDate"), tanggal));
+            if (start != null && end != null) {
+                predicates.add(criteriaBuilder.between(root.get("scheduleStartDate"), start, end));
+            } else if (start != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("scheduleStartDate"), start));
             } else if (end != null) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("scheduleEndDate"), end));
             }
@@ -128,7 +126,6 @@ public class ScheduleService {
                 .map(spec -> scheduleRepository.findAll(spec.and(scheduleSpecification), sort))
                 .orElseGet(() -> scheduleRepository.findAll(scheduleSpecification, sort));
     }
-
 
     public List<Schedule> findPendingSchedulesCreatedBefore(Long venue) {
         LocalDateTime currentDateTime = LocalDateTime.now();
