@@ -125,7 +125,7 @@ public class DashboardService {
                 BigDecimal maintenanceVenue = safeBigDecimalFromDouble(
                                 scheduleRepository.sumMaintenanceByType(units, startDate, endDate));
 
-                List<Object> response = scheduleRepository.sumSewaLahanByStatusPayment(startDate, endDate);
+                List<Object> response = scheduleRepository.sumSewaLahanByStatusPayment(startDate, endDate, units);
 
                 BigDecimal sewaLahan = safeBigDecimalFromDouble(response.stream()
                                 .filter(obj -> "Sewa Lahan".equals(((Object[]) obj)[0]))
@@ -173,8 +173,6 @@ public class DashboardService {
                         BigDecimal priceForMaintenance = systemProperties.getMaintenance().get(day);
                         totalIncomeForMaintenance = totalIncomeForMaintenance.add(priceForMaintenance);
                 }
-                System.out.println(totalIncomeForMaintenance);
-                System.out.println(days);
 
                 BigDecimal events = safeBigDecimalFromDouble(response.stream()
                                 .filter(obj -> "Events Olahraga".equals(((Object[]) obj)[0]))

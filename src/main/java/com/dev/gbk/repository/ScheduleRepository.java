@@ -77,11 +77,11 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
                 "        WHEN r.category IS NOT NULL AND r.category != '' AND r.category != 'Sewa Lahan' AND r.category != 'Olahraga' AND r.statusPayment != 'Paid' AND r.statusBooking = 'Processing' THEN 'Events Non-Olahraga Proyeksi' " +
                 "    END AS kategori, " +
                 "    SUM(r.totalPaid) + SUM(r.totalSF) AS total " +
-                "FROM Schedule r " +
-                "WHERE r.scheduleStartDate >= :startDate AND r.scheduleEndDate <= :endDate "+
+                "FROM Schedule r JOIN s.venues v" +
+                "WHERE r.scheduleStartDate >= :startDate AND r.scheduleEndDate <= :endDate AND v.venue IN :venues"+
                 "GROUP BY kategori")
         List<Object> sumSewaLahanByStatusPayment(@Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate);
+            @Param("endDate") LocalDate endDate, @Param("venues") List<String> venues);
 
 
         @Query("SELECT s FROM Schedule s " +
