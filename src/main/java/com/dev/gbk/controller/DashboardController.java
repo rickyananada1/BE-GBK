@@ -265,8 +265,8 @@ public class DashboardController {
 
     @GetMapping("/retail-card")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    public ResponseEntity<Map<String, Object>> getRetailCardData() {
-        Map<String, Object> result = dashboardService.getRetailCardData();
+    public ResponseEntity<Map<String, Object>> getRetailCardData(@RequestParam(value = "unit", required = false) String unit) {
+        Map<String, Object> result = dashboardService.getRetailCardData(unit);
         return ResponseEntity.ok().body(result);
     }
 

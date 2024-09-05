@@ -329,9 +329,9 @@ public class DashboardService {
                 return new CardEventDTO(venue, category, totalPaid, totalMaintenance, scheduleDTOs);
         }
 
-        public Map<String, Object> getRetailCardData() {
-                Double percentage = retailRepository.getOverallPercentage();
-                List<CardRetailDTO> data = retailRepository.getRetailCardData();
+        public Map<String, Object> getRetailCardData(String unit) {
+                Double percentage = retailRepository.getOverallPercentage(unit);
+                List<CardRetailDTO> data = retailRepository.getRetailCardData(unit);
 
                 Map<String, Object> result = new HashMap<>();
                 result.put("percentage", percentage);
