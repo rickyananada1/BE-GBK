@@ -24,40 +24,40 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
 
         Schedule findTopByOrderByIdDesc();
 
-        @Query("SELECT s.profileEvent, SUM(s.totalPaid) FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE (:unitNames IS NULL OR :unitNames = '' OR u.name IN :unitNames) AND s.statusPayment = 'Paid' AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate GROUP BY s.profileEvent")
+        @Query("SELECT s.profileEvent, SUM(s.totalPaid) FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE (:unitNames IS NULL OR :unitNames = '' OR u.name = :unitNames) AND s.statusPayment = 'Paid' AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate GROUP BY s.profileEvent")
         List<Object[]> sumTotalPaidGroupedByProfileEventAndDates(@Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate,
-                        @Param("unitNames") List<String> unitNames);
+                        @Param("unitNames") String unitNames);
 
-        @Query("SELECT s.category, SUM(s.totalPaid) FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE (:unitNames IS NULL OR :unitNames = '' OR u.name IN :unitNames) AND s.statusPayment = 'Paid' AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate AND s.category IS NOT NULL GROUP BY s.category")
+        @Query("SELECT s.category, SUM(s.totalPaid) FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE (:unitNames IS NULL OR :unitNames = '' OR u.name = :unitNames) AND s.statusPayment = 'Paid' AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate AND s.category IS NOT NULL GROUP BY s.category")
         List<Object[]> sumTotalPaidGroupedByCategoryAndDates(@Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate,
-                        @Param("unitNames") List<String> unitNames);
+                        @Param("unitNames") String unitNames);
 
-        @Query("SELECT s.profileEvent, SUM(s.totalPaid) FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE (:unitNames IS NULL  OR :unitNames = '' OR u.name IN :unitNames) AND s.statusBooking = 'Soft Booking' AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate GROUP BY s.profileEvent")
+        @Query("SELECT s.profileEvent, SUM(s.totalPaid) FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE (:unitNames IS NULL  OR :unitNames = '' OR u.name = :unitNames) AND s.statusBooking = 'Soft Booking' AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate GROUP BY s.profileEvent")
         List<Object[]> sumSoftBookingTotalPaidGroupedByProfileEventAndDates(@Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate,
-                        @Param("unitNames") List<String> unitNames);
+                        @Param("unitNames") String unitNames);
 
-        @Query("SELECT s.category, SUM(s.totalPaid) FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE (:unitNames IS NULL  OR :unitNames = '' OR u.name IN :unitNames) AND s.statusBooking = 'Soft Booking' AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate GROUP BY s.category")
+        @Query("SELECT s.category, SUM(s.totalPaid) FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE (:unitNames IS NULL  OR :unitNames = '' OR u.name = :unitNames) AND s.statusBooking = 'Soft Booking' AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate GROUP BY s.category")
         List<Object[]> sumSoftBookingTotalPaidGroupedByCategoryAndDates(@Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate,
-                        @Param("unitNames") List<String> unitNames);
+                        @Param("unitNames") String unitNames);
 
         @Query("SELECT s.scheduleStartDate, SUM(s.totalPaid) FROM Schedule s " +
                         "JOIN s.venues v JOIN v.unit u " +
-                        "WHERE (:unitNames IS NULL  OR :unitNames = '' OR u.name IN :unitNames) " +
+                        "WHERE (:unitNames IS NULL  OR :unitNames = '' OR u.name = :unitNames) " +
                         "AND s.statusBooking = 'Maintenance' AND s.scheduleStartDate BETWEEN :startDate AND :endDate " +
                         "GROUP BY s.scheduleStartDate")
         List<Object[]> sumMaintenanceByDay(@Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate,
-                        @Param("unitNames") List<String> unitNames);
+                        @Param("unitNames") String unitNames);
 
-        @Query("SELECT SUM(s.totalPaid) FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE (:unitNames IS NULL OR :unitNames = '' OR u.name IN :unitNames) AND s.statusPayment = 'Maintenance' "
+        @Query("SELECT SUM(s.totalPaid) FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE (:unitNames IS NULL OR :unitNames = '' OR u.name = :unitNames) AND s.statusPayment = 'Maintenance' "
                         + "AND ((:startDate IS NULL AND :endDate IS NULL AND s.scheduleStartDate IS NOT NULL) "
                         + "OR (:startDate IS NOT NULL AND :endDate IS NOT NULL AND "
                         + "(s.scheduleStartDate IS NOT NULL AND s.scheduleEndDate IS NOT NULL AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate)))")
-        Double sumMaintenanceByType(@Param("unitNames") List<String> unitNames,
+        Double sumMaintenanceByType(@Param("unitNames") String unitNames,
                         @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 

@@ -81,7 +81,7 @@ public class DashboardService {
                         String unitNames) {
                 List<String> units = unitNames != null ? Arrays.asList(unitNames.split(",")) : null;
                 List<Object[]> results = scheduleRepository.sumTotalPaidGroupedByProfileEventAndDates(startDate,
-                                endDate, units);
+                                endDate, unitNames);
 
                 return results.stream()
                                 .collect(Collectors.toMap(
@@ -94,7 +94,7 @@ public class DashboardService {
                 List<String> units = unitNames != null ? Arrays.asList(unitNames.split(",")) : null;
 
                 List<Object[]> results = scheduleRepository.sumTotalPaidGroupedByCategoryAndDates(startDate,
-                                endDate, units);
+                                endDate, unitNames);
                 return results.stream()
                                 .collect(Collectors.toMap(
                                                 result -> (String) result[0],
@@ -119,7 +119,7 @@ public class DashboardService {
                                         unitNames));
 
                 BigDecimal maintenanceVenue = safeBigDecimalFromDouble(
-                                scheduleRepository.sumMaintenanceByType(units, startDate, endDate));
+                                scheduleRepository.sumMaintenanceByType(unitNames, startDate, endDate));
 
                 List<Object> response = scheduleRepository.sumSewaLahanByStatusPayment(startDate, endDate, unitNames);
 
@@ -216,7 +216,7 @@ public class DashboardService {
                         LocalDate endDate, String unitNames) {
                 List<String> units = unitNames != null ? Arrays.asList(unitNames.split(",")) : null;
                 List<Object[]> results = scheduleRepository
-                                .sumSoftBookingTotalPaidGroupedByProfileEventAndDates(startDate, endDate, units);
+                                .sumSoftBookingTotalPaidGroupedByProfileEventAndDates(startDate, endDate, unitNames);
                 return results.stream()
                                 .collect(Collectors.toMap(
                                                 result -> (String) result[0],
@@ -227,7 +227,7 @@ public class DashboardService {
                         String unitNames) {
                 List<String> units = unitNames != null ? Arrays.asList(unitNames.split(",")) : null;
                 List<Object[]> results = scheduleRepository.sumSoftBookingTotalPaidGroupedByCategoryAndDates(startDate,
-                                endDate, units);
+                                endDate, unitNames);
                 return results.stream()
                                 .collect(Collectors.toMap(
                                                 result -> (String) result[0],
