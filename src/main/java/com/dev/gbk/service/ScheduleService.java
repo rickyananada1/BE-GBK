@@ -1,5 +1,6 @@
 package com.dev.gbk.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import com.dev.gbk.dto.ScheduleRequest;
 
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -46,44 +48,87 @@ public class ScheduleService {
         this.venueRepository = venueRepository;
     }
 
-    public Page<Schedule> findAll(String search, int page, int size, String unit) {
+    public Page<Schedule> findAll(String search, int page, int size, String unit, String event, LocalDate tanggal, LocalDate end, String status) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
         Pageable pageable = PageRequest.of(page, size, sort);
+        System.out.println("tanggal : " + tanggal);
+        System.out.println("end : " + end);
 
-        Specification<Schedule> unitSpecification = (root, query, criteriaBuilder) -> {
+        Specification<Schedule> scheduleSpecification = (root, query, criteriaBuilder) -> {
             query.distinct(true);
+
+            List<Predicate> predicates = new ArrayList<>();
+
             if (unit != null && !unit.isEmpty()) {
                 Join<Schedule, Venue> venueJoin = root.join("venues", JoinType.LEFT);
-                return criteriaBuilder.equal(venueJoin.get("venue"), unit);
+                predicates.add(criteriaBuilder.equal(venueJoin.get("venue"), unit));
             }
-            return criteriaBuilder.conjunction();
+
+            if (event != null && !event.isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("category"), event));
+            }
+
+            if (tanggal != null && end != null) {
+                predicates.add(criteriaBuilder.between(root.get("scheduleStartDate"), tanggal, end));
+            } else if (tanggal != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("scheduleStartDate"), tanggal));
+            } else if (end != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("scheduleEndDate"), end));
+            }
+
+            if (status != null && !status.isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("statusPayment"), status));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 
         Optional<Specification<Schedule>> specification = specificationBuilder.parseAndBuild(search);
 
         return specification
-                .map(scheduleSpecification -> scheduleRepository.findAll(scheduleSpecification.and(unitSpecification), pageable))
-                .orElseGet(() -> scheduleRepository.findAll(unitSpecification, pageable));
+                .map(spec -> scheduleRepository.findAll(spec.and(scheduleSpecification), pageable))
+                .orElseGet(() -> scheduleRepository.findAll(scheduleSpecification, pageable));
     }
 
-    public List<Schedule> findAll(String search, String unit) {
+    public List<Schedule> findAll(String search, String unit, String event, LocalDate tanggal, LocalDate end, String status) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        Specification<Schedule> unitSpecification = (root, query, criteriaBuilder) -> {
+        Specification<Schedule> scheduleSpecification = (root, query, criteriaBuilder) -> {
             query.distinct(true);
+
+            List<Predicate> predicates = new ArrayList<>();
+
             if (unit != null && !unit.isEmpty()) {
                 Join<Schedule, Venue> venueJoin = root.join("venues", JoinType.LEFT);
-                return criteriaBuilder.equal(venueJoin.get("venue"), unit);
+                predicates.add(criteriaBuilder.equal(venueJoin.get("venue"), unit));
             }
-            return criteriaBuilder.conjunction();
+
+            if (event != null && !event.isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("category"), event));
+            }
+
+            if (tanggal != null && end != null) {
+                predicates.add(criteriaBuilder.between(root.get("scheduleStartDate"), tanggal, end));
+            } else if (tanggal != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("scheduleStartDate"), tanggal));
+            } else if (end != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("scheduleEndDate"), end));
+            }
+
+            if (status != null && !status.isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("statusPayment"), status));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 
         Optional<Specification<Schedule>> specification = specificationBuilder.parseAndBuild(search);
 
         return specification
-                .map(scheduleSpecification -> scheduleRepository.findAll(scheduleSpecification.and(unitSpecification), sort))
-                .orElseGet(() -> scheduleRepository.findAll(unitSpecification, sort));
+                .map(spec -> scheduleRepository.findAll(spec.and(scheduleSpecification), sort))
+                .orElseGet(() -> scheduleRepository.findAll(scheduleSpecification, sort));
     }
+
 
     public List<Schedule> findPendingSchedulesCreatedBefore(Long venue) {
         LocalDateTime currentDateTime = LocalDateTime.now();
