@@ -25,10 +25,10 @@ public interface RetailRepository extends JpaRepository<Retail, Long>, JpaSpecif
         Double sumSizeByStatusAndDateRangeAndArea(@Param("status") String status,
                         @Param("area") String area);
 
-        @Query("SELECT (COUNT(CASE WHEN r.statusBooking = 'Sewa' THEN 1 ELSE NULL END) / " +
-                "(COUNT(*) * 1.0)) * 100 AS percentage " +
-                "FROM Retail r")
-        Double getOverallPercentage();
+        @Query("SELECT (COUNT(CASE WHEN r.statusBooking = 'Sewa' THEN 1 ELSE NULL END) / COUNT(*)  * 100.0) AS percentage " +
+                "FROM Retail r " +
+                "WHERE r.masterRetail.area = :unit")
+        Double getOverallPercentage(@Param("unit") String unit);
 
         @Query("SELECT new com.dev.gbk.dto.CardRetailDTO("
                 + "r.masterRetail.tenant_name, "
@@ -36,8 +36,9 @@ public interface RetailRepository extends JpaRepository<Retail, Long>, JpaSpecif
                 + "(SUM(CASE WHEN r.statusBooking = 'Sewa' THEN r.price ELSE 0 END) / SUM(r.price)) * 100) "
                 + "FROM Retail r "
                 + "WHERE r.statusBooking = 'Sewa' "
+                + "AND r.masterRetail.area = :unit "
                 + "GROUP BY r.masterRetail.tenant_name, r.masterRetail.area")
-        List<CardRetailDTO> getRetailCardData();
+        List<CardRetailDTO> getRetailCardData(@Param("unit") String unit);
 
         @Query(value = "SELECT "
             + "SUM(CASE WHEN r.status_booking = 'SEWA' THEN CAST(r.size AS DECIMAL(10, 2)) ELSE 0 END) AS total_size_paid,"
