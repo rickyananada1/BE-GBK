@@ -5,6 +5,7 @@ import com.dev.gbk.model.Venue;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,18 +35,52 @@ public class VenueService {
         this.unitRepository = unitRepository;
     }
 
-    public Page<Venue> findAll(String search, int page, int size) {
+    public Page<Venue> findAll(String search, int page, int size, String type, List<String> unit) {
         Pageable pageable = PageRequest.of(page, size);
+
         Optional<Specification<Venue>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.map(venueSpecification -> venueRepository.findAll(venueSpecification, pageable))
-                .orElseGet(() -> venueRepository.findAll(pageable));
+        Specification<Venue> additionalSpecs = (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+
+            if (type != null && !type.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("type"), type));
+            }
+
+            if (unit != null && !unit.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate, root.get("unit").get("name").in(unit));
+            }
+
+            return predicate;
+        };
+
+        Specification<Venue> combinedSpec = specification
+                .map(venueSpecification -> venueSpecification.and(additionalSpecs))
+                .orElse(additionalSpecs);
+        return venueRepository.findAll(combinedSpec, pageable);
     }
 
-    public List<Venue> findAll(String search) {
+    public List<Venue> findAll(String search, String type, List<String> unit) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
+
         Optional<Specification<Venue>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.map(venueSpecification -> venueRepository.findAll(venueSpecification, sort))
-                .orElseGet(() -> venueRepository.findAll(sort));
+        Specification<Venue> additionalSpecs = (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+            if (type != null && !type.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("type"), type));
+            }
+
+            if (unit != null && !unit.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate, root.get("unit").get("name").in(unit));
+            }
+
+            return predicate;
+        };
+
+        Specification<Venue> combinedSpec = specification
+                .map(venueSpecification -> venueSpecification.and(additionalSpecs))
+                .orElse(additionalSpecs);
+
+        return venueRepository.findAll(combinedSpec, sort);
     }
 
     public Venue findById(Long id) {

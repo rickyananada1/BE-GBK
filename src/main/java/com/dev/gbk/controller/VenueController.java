@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/venues")
 @SecurityRequirement(name = "bearerAuth")
@@ -38,10 +40,12 @@ public class VenueController {
     public ResponseEntity<Object> findAll(
             @RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "size", required = false) Integer size) {
+            @RequestParam(value = "size", required = false) Integer size,
+            @RequestParam(value = "search", required = false) String type,
+            @RequestParam(value = "search", required = false) List<String> unit) {
         if (page == null && size == null) {
             return ResponseHandler.generateResponse("Success get all venues", HttpStatus.OK,
-                    venueService.findAll(search));
+                    venueService.findAll(search,type,unit));
         }
 
         if (page == null)
@@ -49,7 +53,7 @@ public class VenueController {
         if (size == null)
             size = 10;
         return ResponseHandler.generateResponse("Success get all venues", HttpStatus.OK,
-                venueService.findAll(search, page, size));
+                venueService.findAll(search, page, size,type,unit));
     }
 
     @PreAuthorize("hasAuthority('CREATE_DATA_VENUE')")
