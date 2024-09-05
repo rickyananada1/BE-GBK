@@ -47,7 +47,7 @@ public class VenueService {
             }
 
             if (unit != null && !unit.isEmpty()) {
-                predicate = criteriaBuilder.and(predicate, root.get("unit").get("name").in(unit));
+                predicate = criteriaBuilder.and(predicate, root.get("unit").get("id").in(unit));
             }
 
             return predicate;
@@ -70,7 +70,7 @@ public class VenueService {
             }
 
             if (unit != null && !unit.isEmpty()) {
-                predicate = criteriaBuilder.and(predicate, root.get("unit").get("name").in(unit));
+                predicate = criteriaBuilder.and(predicate, root.get("unit").get("id").in(unit));
             }
 
             return predicate;
