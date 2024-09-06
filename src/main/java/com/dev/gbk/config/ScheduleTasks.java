@@ -54,7 +54,7 @@ public class ScheduleTasks {
             ResponseEntity<RespGbkToken> respGbkToken = gbkFeignClient.getTokenGbk(reqGbkToken);
             if (respGbkToken.getStatusCode().is2xxSuccessful()) {
                 String gbkToken = respGbkToken.getBody().getToken();
-                List<Venue> venues = venueService.findAll(null);
+                List<Venue> venues = venueService.findAll(null, 0, 0, null, null).getContent();
                 for (Venue venue : venues) {
                     ReqScheduleGbk reqScheduleGbk = new ReqScheduleGbk(gbkApiId, venue.getId(), "2024-01-01",
                             "2025-01-01");
