@@ -395,7 +395,7 @@ public class DashboardService {
                 int daysInMonth = start.lengthOfMonth();
                 double pkblu = (double) schedulePkblu.size() / daysInMonth * 100;
                 return new Occupancy(resultOfPercentage.doubleValue() * 100, pkblu,
-                    resultOfPercentageMaintenance.doubleValue(), 0d);
+                    resultOfPercentageMaintenance.doubleValue() * 100, 0d);
         }
 
 
