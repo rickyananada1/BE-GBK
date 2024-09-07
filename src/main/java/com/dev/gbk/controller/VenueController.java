@@ -22,7 +22,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/venues")
@@ -41,11 +45,12 @@ public class VenueController {
             @RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
-            @RequestParam(value = "search", required = false) String type,
-            @RequestParam(value = "search", required = false) List<Integer> unit) {
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "unit", required = false) String unitString) {
+        List<Integer> unitList = convertUnitStringToList(unitString);
         if (page == null && size == null) {
             return ResponseHandler.generateResponse("Success get all venues", HttpStatus.OK,
-                    venueService.findAll(search,type,unit));
+                    venueService.findAll(search,type,unitList));
         }
 
         if (page == null)
@@ -53,7 +58,7 @@ public class VenueController {
         if (size == null)
             size = 10;
         return ResponseHandler.generateResponse("Success get all venues", HttpStatus.OK,
-                venueService.findAll(search, page, size,type,unit));
+                venueService.findAll(search, page, size,type,unitList));
     }
 
     @PreAuthorize("hasAuthority('CREATE_DATA_VENUE')")
@@ -83,4 +88,20 @@ public class VenueController {
         venueService.deleteById(id);
         return ResponseHandler.generateResponse("Success delete venue", HttpStatus.OK, null);
     }
+
+    private List<Integer> convertUnitStringToList(String unitString) {
+        List<Integer> unitList = new ArrayList<>();
+        if (unitString != null && !unitString.isEmpty()) {
+            String[] units = unitString.split(",");
+            for (String unit : units) {
+                try {
+                    unitList.add(Integer.parseInt(unit.trim()));
+                } catch (NumberFormatException e) {
+                    System.err.println("Invalid unit value: " + unit);
+                }
+            }
+        }
+        return unitList;
+    }
+
 }
