@@ -71,7 +71,7 @@ public class VenueService {
             Predicate predicate = criteriaBuilder.conjunction();
             if (search != null && !search.isEmpty()) {
                 predicate = criteriaBuilder.and(predicate,
-                        criteriaBuilder.like(criteriaBuilder.lower(root.get("venueName")), "%" + search.toLowerCase() + "%"));
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("venue")), "%" + search.toLowerCase() + "%"));
             }
 
             if (type != null && !type.isEmpty()) {
