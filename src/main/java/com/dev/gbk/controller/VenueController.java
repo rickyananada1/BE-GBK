@@ -42,7 +42,7 @@ public class VenueController {
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "search", required = false) String type,
-            @RequestParam(value = "search", required = false) List<String> unit) {
+            @RequestParam(value = "search", required = false) List<Integer> unit) {
         if (page == null && size == null) {
             return ResponseHandler.generateResponse("Success get all venues", HttpStatus.OK,
                     venueService.findAll(search,type,unit));

@@ -2,8 +2,11 @@ package com.dev.gbk.service;
 
 import com.dev.gbk.model.Unit;
 import com.dev.gbk.model.Venue;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Page;
@@ -35,12 +38,16 @@ public class VenueService {
         this.unitRepository = unitRepository;
     }
 
-    public Page<Venue> findAll(String search, int page, int size, String type, List<String> unit) {
+    public Page<Venue> findAll(String search, int page, int size, String type, List<Integer> unit) {
         Pageable pageable = PageRequest.of(page, size);
 
-        Optional<Specification<Venue>> specification = specificationBuilder.parseAndBuild(search);
-        Specification<Venue> additionalSpecs = (root, query, criteriaBuilder) -> {
+        Specification<Venue> searchSpec = (root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
+
+            if (search != null && !search.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("venue")), "%" + search.toLowerCase() + "%"));
+            }
 
             if (type != null && !type.isEmpty()) {
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("type"), type));
@@ -53,18 +60,20 @@ public class VenueService {
             return predicate;
         };
 
-        Specification<Venue> combinedSpec = specification
-                .map(venueSpecification -> venueSpecification.and(additionalSpecs))
-                .orElse(additionalSpecs);
-        return venueRepository.findAll(combinedSpec, pageable);
+        return venueRepository.findAll(searchSpec, pageable);
     }
 
-    public List<Venue> findAll(String search, String type, List<String> unit) {
+
+    public List<Venue> findAll(String search, String type, List<Integer> unit) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        Optional<Specification<Venue>> specification = specificationBuilder.parseAndBuild(search);
-        Specification<Venue> additionalSpecs = (root, query, criteriaBuilder) -> {
+        Specification<Venue> searchSpec = (root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
+            if (search != null && !search.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("venueName")), "%" + search.toLowerCase() + "%"));
+            }
+
             if (type != null && !type.isEmpty()) {
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("type"), type));
             }
@@ -76,12 +85,9 @@ public class VenueService {
             return predicate;
         };
 
-        Specification<Venue> combinedSpec = specification
-                .map(venueSpecification -> venueSpecification.and(additionalSpecs))
-                .orElse(additionalSpecs);
-
-        return venueRepository.findAll(combinedSpec, sort);
+        return venueRepository.findAll(searchSpec, sort);
     }
+
 
     public Venue findById(Long id) {
         return venueRepository.findById(id)
