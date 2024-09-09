@@ -14,4 +14,5 @@ public class Occupancy {
   private Double occPKBLUHari;
   private Double occMaintenance;
   private Double occRetail;
+
 }

@@ -2,10 +2,12 @@ package com.dev.gbk.service;
 
 import com.dev.gbk.dto.*;
 import com.dev.gbk.model.Schedule;
+import com.dev.gbk.model.Unit;
 import com.dev.gbk.model.Venue;
 import com.dev.gbk.properties.SystemProperties;
 import com.dev.gbk.repository.RetailRepository;
 import com.dev.gbk.repository.ScheduleRepository;
+import com.dev.gbk.repository.UnitRepository;
 import com.dev.gbk.repository.VenueRepository;
 import com.dev.gbk.response.Occupancy;
 import org.jetbrains.annotations.NotNull;
@@ -37,14 +39,17 @@ public class DashboardService {
 
         private final ScheduleRepository scheduleRepository;
         private final RetailRepository retailRepository;
+        private final UnitRepository unitRepository;
         private final VenueRepository venueRepository;
         private final SystemProperties systemProperties;
 
         public DashboardService(ScheduleRepository scheduleRepository,
-            RetailRepository retailRepository, VenueRepository venueRepository,
-            @Qualifier("systemProperties") SystemProperties systemProperties) {
+                        RetailRepository retailRepository, UnitRepository unitRepository,
+                        VenueRepository venueRepository,
+                        @Qualifier("systemProperties") SystemProperties systemProperties) {
                 this.scheduleRepository = scheduleRepository;
                 this.retailRepository = retailRepository;
+                this.unitRepository = unitRepository;
                 this.venueRepository = venueRepository;
                 this.systemProperties = systemProperties;
         }
@@ -116,7 +121,7 @@ public class DashboardService {
 
                 BigDecimal retailNonOccupied = safeBigDecimalFromDouble(
                                 retailRepository.sumSizeByStatusAndDateRangeAndArea("Belum Sewa",
-                                        unitNames));
+                                                unitNames));
 
                 BigDecimal maintenanceVenue = safeBigDecimalFromDouble(
                                 scheduleRepository.sumMaintenanceByType(unitNames, startDate, endDate));
@@ -153,15 +158,15 @@ public class DashboardService {
                                 .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
                                 .sum());
 
-                //Get Total Pendapatan Maintenance based on day
-                List<Schedule> scheduleBasedOnVenue =
-                    scheduleRepository.findSingleSchedulesMaintenance(unitNames, startDate,
-                        endDate);
+                // Get Total Pendapatan Maintenance based on day
+                List<Schedule> scheduleBasedOnVenue = scheduleRepository.findSingleSchedulesMaintenance(unitNames,
+                                startDate,
+                                endDate);
                 List<String> days = new ArrayList<>();
                 for (Schedule schedule : scheduleBasedOnVenue) {
                         if (schedule.getStatusPayment().equals("Maintenance")) {
-                                    days.addAll(getDayNamesBetween(schedule.getScheduleStartDate(),
-                                        schedule.getScheduleEndDate()));
+                                days.addAll(getDayNamesBetween(schedule.getScheduleStartDate(),
+                                                schedule.getScheduleEndDate()));
                         }
                 }
                 BigDecimal totalIncomeForMaintenance = BigDecimal.ZERO;
@@ -181,22 +186,22 @@ public class DashboardService {
                                 .sum());
 
                 BigDecimal eventsNon = safeBigDecimalFromDouble(response.stream()
-                        .filter(obj -> "Events Non-Olahraga".equals(((Object[]) obj)[0]))
-                        .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
-                        .sum());
+                                .filter(obj -> "Events Non-Olahraga".equals(((Object[]) obj)[0]))
+                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                .sum());
 
                 BigDecimal eventsProyeksiNon = safeBigDecimalFromDouble(response.stream()
-                        .filter(obj -> "Events Non-Olahraga Proyeksi".equals(((Object[]) obj)[0]))
-                        .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
-                        .sum());
+                                .filter(obj -> "Events Non-Olahraga Proyeksi".equals(((Object[]) obj)[0]))
+                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                .sum());
 
                 long monthsBetween = calculateMonthsBetween(startDate, endDate);
                 BigDecimal totalParkingFee = MONTHLY_PARKING_FEE.multiply(BigDecimal.valueOf(monthsBetween));
 
                 return new IncomeDTO(retailIncome, retailOccupied, retailNonOccupied,
-                    maintenanceVenue, totalParkingFee, sewaLahan, sewaLahanProyeksi, gamesUmum,
-                    gamesUmumProyeksi, gamesTimnas, gamesTimnasProyeksi, totalIncomeForMaintenance,
-                    events, eventsProyeksi, eventsNon, eventsProyeksiNon);
+                                maintenanceVenue, totalParkingFee, sewaLahan, sewaLahanProyeksi, gamesUmum,
+                                gamesUmumProyeksi, gamesTimnas, gamesTimnasProyeksi, totalIncomeForMaintenance,
+                                events, eventsProyeksi, eventsNon, eventsProyeksiNon);
         }
 
         private List<String> getDayNamesBetween(LocalDate startDate, LocalDate endDate) {
@@ -204,7 +209,8 @@ public class DashboardService {
                 LocalDate currentDate = startDate;
 
                 while (!currentDate.isAfter(endDate)) {
-                        String dayName = currentDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.forLanguageTag("id"));
+                        String dayName = currentDate.getDayOfWeek().getDisplayName(TextStyle.FULL,
+                                        Locale.forLanguageTag("id"));
                         dayNames.add(dayName);
                         currentDate = currentDate.plusDays(1);
                 }
@@ -333,7 +339,6 @@ public class DashboardService {
                 return result;
         }
 
-
         // === Helper Methods ===
 
         private <T> Map<String, BigDecimal> calculatePercentages(Map<String, T> countMap, long total) {
@@ -360,13 +365,66 @@ public class DashboardService {
                 return venues.stream().map(Venue::getVenue).collect(Collectors.joining(",")) + ":" + category;
         }
 
+        public Occupancy getOccupancyPerUnit(LocalDate start, LocalDate end, String unit) {
+                Unit unitData = this.unitRepository.findByName(unit).orElse(null);
+
+                if (Objects.nonNull(unitData)) {
+                        List<Venue> venues = unitData.getVenues(); // Assuming Unit entity has a list of Venues
+
+                        if (!venues.isEmpty()) {
+                                BigDecimal totalOccFisik = BigDecimal.ZERO;
+                                BigDecimal totalOccPKBLU = BigDecimal.ZERO;
+                                BigDecimal totalOccMaintenance = BigDecimal.ZERO;
+                                BigDecimal totalRetailOccupied = BigDecimal.ZERO;
+
+                                for (Venue venue : venues) {
+                                        // Calculate OCC for each venue, using existing methods
+                                        Occupancy venueOccupancy;
+                                        if (venue.getIsEligibleSession()) {
+                                                venueOccupancy = getOccupancyForEligibleSessionVenue(start, end,
+                                                                venue.getVenue());
+                                        } else {
+                                                venueOccupancy = getOccupancyForNotEligibleSessionVenue(start, end,
+                                                                venue.getVenue());
+                                        }
+
+                                        // Sum up the OCC values for all venues
+                                        totalOccFisik = totalOccFisik
+                                                        .add(BigDecimal.valueOf(venueOccupancy.getOccFisik()));
+                                        totalOccPKBLU = totalOccPKBLU
+                                                        .add(BigDecimal.valueOf(venueOccupancy.getOccPKBLUHari()));
+                                        totalOccMaintenance = totalOccMaintenance
+                                                        .add(BigDecimal.valueOf(venueOccupancy.getOccMaintenance()));
+                                        totalRetailOccupied = totalRetailOccupied
+                                                        .add(BigDecimal.valueOf(venueOccupancy.getOccRetail()));
+                                }
+
+                                int numberOfVenues = venues.size();
+                                // Calculate average occupancy across all venues for the unit
+                                return new Occupancy(
+                                                totalOccFisik.divide(BigDecimal.valueOf(numberOfVenues),
+                                                                BigDecimal.ROUND_HALF_UP).doubleValue(),
+                                                totalOccPKBLU.divide(BigDecimal.valueOf(numberOfVenues),
+                                                                BigDecimal.ROUND_HALF_UP).doubleValue(),
+                                                totalOccMaintenance.divide(BigDecimal.valueOf(numberOfVenues),
+                                                                BigDecimal.ROUND_HALF_UP).doubleValue(),
+                                                totalRetailOccupied
+                                                                .divide(BigDecimal.valueOf(numberOfVenues),
+                                                                                BigDecimal.ROUND_HALF_UP)
+                                                                .doubleValue());
+                        }
+                }
+
+                return null;
+        }
+
         public Occupancy getOccupancy(LocalDate start, LocalDate end, String venue) {
                 Venue venue1 = this.venueRepository.findByVenue(venue).orElse(null);
                 if (Objects.nonNull(venue1)) {
                         if (venue1.getIsEligibleSession()) {
-                                return getOccupancyForEligibleSessionVenue(start,end,venue);
+                                return getOccupancyForEligibleSessionVenue(start, end, venue);
                         } else {
-                                return getOccupancyForNotEligibleSessionVenue(start ,end, venue);
+                                return getOccupancyForNotEligibleSessionVenue(start, end, venue);
                         }
                 }
                 return null;
@@ -380,24 +438,25 @@ public class DashboardService {
                 BigDecimal sumOfMaintenance = BigDecimal.ZERO;
                 for (Object[] ob : schedule) {
                         BigDecimal percentage = getSingleValueWIthIndex(ob, 0); // Index 0 for totalPercentage
-                        BigDecimal percentageMaintenance = getSingleValueWIthIndex(ob, 1); // Index 0 for totalPercentage
+                        BigDecimal percentageMaintenance = getSingleValueWIthIndex(ob, 1); // Index 0 for
+                                                                                           // totalPercentage
                         sumOfPercentage = sumOfPercentage.add(percentage);
                         sumOfMaintenance = sumOfMaintenance.add(percentageMaintenance);
                         count++;
 
                 }
-                BigDecimal resultOfPercentage = sumOfPercentage.divide(BigDecimal.valueOf(count), BigDecimal.ROUND_HALF_UP);
+                BigDecimal resultOfPercentage = sumOfPercentage.divide(BigDecimal.valueOf(count),
+                                BigDecimal.ROUND_HALF_UP);
 
-                BigDecimal resultOfPercentageMaintenance =
-                    sumOfMaintenance.divide(BigDecimal.valueOf(count), BigDecimal.ROUND_HALF_UP);
+                BigDecimal resultOfPercentageMaintenance = sumOfMaintenance.divide(BigDecimal.valueOf(count),
+                                BigDecimal.ROUND_HALF_UP);
 
                 List<String> schedulePkblu = this.scheduleRepository.findScheduleWithPaidStatus(venue, start, end);
                 int daysInMonth = start.lengthOfMonth();
                 double pkblu = (double) schedulePkblu.size() / daysInMonth * 100;
                 return new Occupancy(resultOfPercentage.doubleValue() * 100, pkblu,
-                    resultOfPercentageMaintenance.doubleValue() * 100, 0d);
+                                resultOfPercentageMaintenance.doubleValue() * 100, 0d);
         }
-
 
         private Occupancy getOccupancyForNotEligibleSessionVenue(LocalDate start, LocalDate end, String venue) {
                 List<Schedule> scheduleBasedOnVenue = scheduleRepository.findSingleSchedules(venue, start, end);
@@ -408,55 +467,55 @@ public class DashboardService {
                 for (Schedule schedule : scheduleBasedOnVenue) {
                         long daysBetween = 0;
                         if (schedule.getStatusPayment().equals("Maintenance")) {
-                                daysBetween =
-                                    ChronoUnit.DAYS.between(schedule.getScheduleStartDate(),
-                                        schedule.getScheduleEndDate()) + 1;
+                                daysBetween = ChronoUnit.DAYS.between(schedule.getScheduleStartDate(),
+                                                schedule.getScheduleEndDate()) + 1;
                                 daysMaintenance += daysBetween;
                                 continue;
                         }
                         if (schedule.getScheduleStartDate() != null) {
-                                daysBetween =
-                                    ChronoUnit.DAYS.between(schedule.getScheduleStartDate(),
-                                        schedule.getScheduleEndDate()) + 1;
+                                daysBetween = ChronoUnit.DAYS.between(schedule.getScheduleStartDate(),
+                                                schedule.getScheduleEndDate()) + 1;
                                 daysEventTime += daysBetween;
-                                isEventDaySameWithOutLoad = schedule.getScheduleStartOutLoad().equals(schedule.getScheduleEndDate());
-                                isEventDaySameWithInLoad = schedule.getScheduleStartInLoad().equals(schedule.getScheduleStartDate());
+                                isEventDaySameWithOutLoad = schedule.getScheduleStartOutLoad()
+                                                .equals(schedule.getScheduleEndDate());
+                                isEventDaySameWithInLoad = schedule.getScheduleStartInLoad()
+                                                .equals(schedule.getScheduleStartDate());
                         }
                         if (schedule.getScheduleStartInLoad() != null && !(isEventDaySameWithInLoad)) {
-                                daysBetween =
-                                    ChronoUnit.DAYS.between(schedule.getScheduleStartInLoad(),
-                                        schedule.getScheduleEndInLoad()) + 1;
+                                daysBetween = ChronoUnit.DAYS.between(schedule.getScheduleStartInLoad(),
+                                                schedule.getScheduleEndInLoad()) + 1;
                                 daysEventTime += daysBetween;
                         }
                         if (schedule.getScheduleStartOutLoad() != null && !isEventDaySameWithOutLoad) {
-                                daysBetween =
-                                    ChronoUnit.DAYS.between(schedule.getScheduleStartOutLoad(),
-                                        schedule.getScheduleEndOutLoad()) + 1;
+                                daysBetween = ChronoUnit.DAYS.between(schedule.getScheduleStartOutLoad(),
+                                                schedule.getScheduleEndOutLoad()) + 1;
                                 daysEventTime += daysBetween;
                         }
 
                 }
 
-                List<Object[]> retailFromVenue =
-                    this.retailRepository.findSumPaidAndAllRecordForRetail(venue, start, end);
+                List<Object[]> retailFromVenue = this.retailRepository.findSumPaidAndAllRecordForRetail(venue, start,
+                                end);
                 BigDecimal retailOccupied = BigDecimal.ZERO;
                 for (Object[] retail : retailFromVenue) {
-                  BigDecimal totalRetailOccupied = getSingleValueWIthIndex(retail, 0); // Index 0 for totalPercentage
-                  BigDecimal totalAllRetail = getSingleValueWIthIndex(retail, 1); // Index 0 for totalPercentage
-                  if (totalRetailOccupied == BigDecimal.ZERO && totalAllRetail == BigDecimal.ZERO)
-                    break;
-                  retailOccupied = totalRetailOccupied.divide(totalAllRetail,
-                          MathContext.DECIMAL128) // Use a context with sufficient precision
-                      .multiply(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
+                        BigDecimal totalRetailOccupied = getSingleValueWIthIndex(retail, 0); // Index 0 for
+                                                                                             // totalPercentage
+                        BigDecimal totalAllRetail = getSingleValueWIthIndex(retail, 1); // Index 0 for totalPercentage
+                        if (totalRetailOccupied == BigDecimal.ZERO && totalAllRetail == BigDecimal.ZERO)
+                                break;
+                        retailOccupied = totalRetailOccupied.divide(totalAllRetail,
+                                        MathContext.DECIMAL128) // Use a context with sufficient precision
+                                        .multiply(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
                 }
-                Double percentationOCCFisik = calculateOCCFisikPercentage(start, daysEventTime);
-                Double percentationOCCPKBLU = calculateOCCPKBLUPercentageDays(start, daysEventTime, daysMaintenance);
-                Double percentationOccMaintenance = calculateOCCMaintenancePercentage(start, daysMaintenance);
+                Double percentationOCCFisik = calculateOCCFisikPercentage(start, end, daysEventTime);
+                Double percentationOCCPKBLU = calculateOCCPKBLUPercentageDays(start, end, daysEventTime,
+                                daysMaintenance);
+                Double percentationOccMaintenance = calculateOCCMaintenancePercentage(start, end, daysMaintenance);
                 if (Double.isInfinite(percentationOCCPKBLU)) {
                         percentationOCCPKBLU = 100.0;
                 }
-          return new Occupancy(percentationOCCFisik, percentationOCCPKBLU,
-              percentationOccMaintenance, retailOccupied.doubleValue());
+                return new Occupancy(percentationOCCFisik, percentationOCCPKBLU,
+                                percentationOccMaintenance, retailOccupied.doubleValue());
         }
 
         @NotNull
@@ -464,23 +523,20 @@ public class DashboardService {
                 return retail[x] != null ? new BigDecimal(retail[x].toString()) : BigDecimal.ZERO;
         }
 
-        public static Double calculateOCCFisikPercentage(LocalDate startDate, Long daysBetween) {
-                YearMonth yearMonth = YearMonth.from(startDate);
-                int daysInMonth = yearMonth.lengthOfMonth();
-
-                return (double) daysBetween / daysInMonth * 100;
+        public static Double calculateOCCFisikPercentage(LocalDate startDate, LocalDate endDate, Long daysBetween) {
+                long totalDaysInRange = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+                return (double) daysBetween / totalDaysInRange * 100;
         }
 
-
-        public static Double calculateOCCMaintenancePercentage(LocalDate startDate, Long daysBetween) {
-                return  calculateOCCFisikPercentage(startDate, daysBetween);
+        public static Double calculateOCCMaintenancePercentage(LocalDate startDate, LocalDate endDate,
+                        Long daysBetween) {
+                return calculateOCCFisikPercentage(startDate, endDate, daysBetween);
         }
 
-        public static Double calculateOCCPKBLUPercentageDays(LocalDate startDate, Long daysBetween, Long maintenance) {
-                YearMonth yearMonth = YearMonth.from(startDate);
-                int daysInMonth = yearMonth.lengthOfMonth();
-
-                return (double) daysBetween / (daysInMonth - maintenance )* 100;
+        public static Double calculateOCCPKBLUPercentageDays(LocalDate startDate, LocalDate endDate, Long daysBetween,
+                        Long maintenance) {
+                long totalDaysInRange = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+                return (double) daysBetween / (totalDaysInRange - maintenance) * 100;
         }
 
         public Map<String, Object> getSewaLahanCardData(String unit, LocalDate startDate, LocalDate endDate) {

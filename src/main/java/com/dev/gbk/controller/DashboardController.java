@@ -160,10 +160,11 @@ public class DashboardController {
     }
 
     @GetMapping("/get-occupancy")
-    public ResponseEntity<Occupancy> getOccupancy(
-        @RequestParam(value = "venue", required = false, defaultValue = "ALL") String venue,
-        @RequestParam(value = "startDate", required = false) String startDate,
-        @RequestParam(value = "endDate", required = false) String endDate) {
+    public ResponseEntity<Object> getOccupancy(
+            @RequestParam(value = "unitName", required = false) String unitName,
+            @RequestParam(value = "venue", required = false, defaultValue = "ALL") String venue,
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate) {
 
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
@@ -172,6 +173,10 @@ public class DashboardController {
             LocalDate temp = start;
             start = end;
             end = temp;
+        }
+        if (unitName != null) {
+            Occupancy occupancy = dashboardService.getOccupancyPerUnit(start, end, unitName);
+            return ResponseEntity.ok(occupancy);
         }
         if ("ALL".equals(venue)) {
             return ResponseEntity.ok(new Occupancy());
@@ -265,14 +270,16 @@ public class DashboardController {
 
     @GetMapping("/retail-card")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    public ResponseEntity<Map<String, Object>> getRetailCardData(@RequestParam(value = "unit", required = false) String unit) {
+    public ResponseEntity<Map<String, Object>> getRetailCardData(
+            @RequestParam(value = "unit", required = false) String unit) {
         Map<String, Object> result = dashboardService.getRetailCardData(unit);
         return ResponseEntity.ok().body(result);
     }
 
     @GetMapping("/sewa-lahan-card")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")
-    public ResponseEntity<Map<String, Object>> getSewaLahanCardData(@RequestParam(value = "unit", required = false) String unit,
+    public ResponseEntity<Map<String, Object>> getSewaLahanCardData(
+            @RequestParam(value = "unit", required = false) String unit,
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate) {
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);

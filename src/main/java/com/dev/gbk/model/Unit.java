@@ -1,7 +1,7 @@
 package com.dev.gbk.model;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -42,7 +42,7 @@ public class Unit {
 
     @OneToMany(mappedBy = "unit")
     @JsonBackReference
-    private Collection<Venue> venues;
+    private List<Venue> venues;
 
     @CreationTimestamp
     @Column(name = "created_at")
