@@ -21,4 +21,7 @@ public class ScheduleDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
     private String status;
+    private String eventName;
+    private List<String> scheduleTime;
+    private List<String> session;
 }
