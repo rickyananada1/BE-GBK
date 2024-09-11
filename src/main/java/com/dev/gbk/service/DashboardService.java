@@ -554,14 +554,38 @@ public class DashboardService {
         }
 
         public Map<String, Object> getSewaLahanCardData(String unit, LocalDate startDate, LocalDate endDate) {
-                Long total = scheduleRepository.getOverallPercentage(unit, startDate, endDate);
-                List<CardSewaLahanDTO> data = scheduleRepository.getSewaLahanCardData(unit, startDate, endDate);
-                System.out.println("sewa lahan card data" + data);
+                Unit unitData = this.unitRepository.findByName(unit).orElse(null);
+                if (Objects.isNull(unitData)) {
+                        return Collections.emptyMap();
+                }
+
+                List<Venue> venues = unitData.getVenues();
+                if (venues.isEmpty()) {
+                        return Collections.emptyMap();
+                }
+
+                Long total = 0L;
+                List<CardSewaLahanDTO> allDetails = new ArrayList<>();
+
+                for (Venue venue : venues) {
+                        Long venueTotal = scheduleRepository.getOverallPercentage(venue.getVenue(), startDate, endDate);
+                        List<CardSewaLahanDTO> venueDetails = scheduleRepository.getSewaLahanCardData(venue.getVenue(), startDate, endDate);
+
+                        if (venueTotal != null) {
+                                total += venueTotal;
+                        }
+
+                        if (venueDetails != null && !venueDetails.isEmpty()) {
+                                allDetails.addAll(venueDetails);
+                        }
+                }
+
                 Map<String, Object> result = new HashMap<>();
                 result.put("percentage", total);
-                result.put("details", data);
+                result.put("details", allDetails);
 
                 return result;
         }
+
 
 }
