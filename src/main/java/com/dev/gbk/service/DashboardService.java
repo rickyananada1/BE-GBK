@@ -382,6 +382,8 @@ public class DashboardService {
         public Occupancy getOccupancyPerUnit(LocalDate start, LocalDate end, String unit) {
                 Unit unitData = this.unitRepository.findByName(unit).orElse(null);
 
+                System.out.println("Test : ");
+
                 if (Objects.nonNull(unitData)) {
                         List<Venue> venues = unitData.getVenues(); // Assuming Unit entity has a list of Venues
 
@@ -412,12 +414,28 @@ public class DashboardService {
                                         totalRetailOccupied = totalRetailOccupied
                                                         .add(BigDecimal.valueOf(venueOccupancy.getOccRetail()));
                                 }
-
+                                List<Object[]> retailFromVenue = this.retailRepository.findSumPaidAndAllRecordForRetail(unit, start,
+                                    end);
+                                BigDecimal retailOccupied = BigDecimal.ZERO;
+                                for (Object[] retail : retailFromVenue) {
+                                        totalRetailOccupied = getSingleValueWIthIndex(retail, 0); // Index 0 for
+                                        // totalPercentage
+                                        BigDecimal totalAllRetail = getSingleValueWIthIndex(retail, 1); // Index 0 for totalPercentage
+                                        if (totalRetailOccupied == BigDecimal.ZERO && totalAllRetail == BigDecimal.ZERO)
+                                                break;
+                                        retailOccupied = totalRetailOccupied.divide(totalAllRetail,
+                                                MathContext.DECIMAL128) // Use a context with sufficient precision
+                                            .multiply(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
+                                }
                                 int numberOfVenues = venues.size();
+                                if (retailFromVenue.get(0) == null) {
+                                        totalOccFisik = totalOccFisik.divide(BigDecimal.valueOf(numberOfVenues),
+                                            BigDecimal.ROUND_HALF_UP);
+                                }
+                                totalOccFisik = ((totalOccFisik.divide(BigDecimal.valueOf(numberOfVenues),
+                                    BigDecimal.ROUND_HALF_UP)).add(retailOccupied)).divide(BigDecimal.valueOf(2));
                                 // Calculate average occupancy across all venues for the unit
-                                return new Occupancy(
-                                                totalOccFisik.divide(BigDecimal.valueOf(numberOfVenues),
-                                                                BigDecimal.ROUND_HALF_UP).doubleValue(),
+                                return new Occupancy(totalOccFisik.doubleValue(),
                                                 totalOccPKBLU.divide(BigDecimal.valueOf(numberOfVenues),
                                                                 BigDecimal.ROUND_HALF_UP).doubleValue(),
                                                 totalOccMaintenance.divide(BigDecimal.valueOf(numberOfVenues),
@@ -459,17 +477,35 @@ public class DashboardService {
                         count++;
 
                 }
-                BigDecimal resultOfPercentage = sumOfPercentage.divide(BigDecimal.valueOf(count),
+                BigDecimal resultOfPercentage = BigDecimal.ZERO;
+                try {
+                        resultOfPercentage = sumOfPercentage.divide(BigDecimal.valueOf(count),
+                            BigDecimal.ROUND_HALF_UP);
+                } catch (ArithmeticException e) {
+                        System.out.println("There is No Used Session");
+                }
+
+                BigDecimal resultOfPercentageMaintenance = BigDecimal.ZERO;
+                try {
+                        resultOfPercentageMaintenance =
+                            sumOfMaintenance.divide(BigDecimal.valueOf(count),
                                 BigDecimal.ROUND_HALF_UP);
 
-                BigDecimal resultOfPercentageMaintenance = sumOfMaintenance.divide(BigDecimal.valueOf(count),
-                                BigDecimal.ROUND_HALF_UP);
+                } catch (ArithmeticException e) {
+                        System.out.println("There is No Used Session");
+                }
 
-                List<String> schedulePkblu = this.scheduleRepository.findScheduleWithPaidStatus(venue, start, end);
-                int daysInMonth = start.lengthOfMonth();
-                double pkblu = (double) schedulePkblu.size() / daysInMonth * 100;
+                double pkblu = 0.0;
+                try {
+                        List<String> schedulePkblu =
+                            this.scheduleRepository.findScheduleWithPaidStatus(venue, start, end);
+                        int daysInMonth = start.lengthOfMonth();
+                        pkblu = (double) schedulePkblu.size() / daysInMonth * 100;
+                } catch (ArithmeticException e) {
+                        System.out.println("There is No Used Session");
+                }
                 return new Occupancy(resultOfPercentage.doubleValue() * 100, pkblu,
-                                resultOfPercentageMaintenance.doubleValue() * 100, 0d);
+                    resultOfPercentageMaintenance.doubleValue() * 100, 0d);
         }
 
         private Occupancy getOccupancyForNotEligibleSessionVenue(LocalDate start, LocalDate end, String venue) {
@@ -507,20 +543,6 @@ public class DashboardService {
                         }
 
                 }
-
-                List<Object[]> retailFromVenue = this.retailRepository.findSumPaidAndAllRecordForRetail(venue, start,
-                                end);
-                BigDecimal retailOccupied = BigDecimal.ZERO;
-                for (Object[] retail : retailFromVenue) {
-                        BigDecimal totalRetailOccupied = getSingleValueWIthIndex(retail, 0); // Index 0 for
-                                                                                             // totalPercentage
-                        BigDecimal totalAllRetail = getSingleValueWIthIndex(retail, 1); // Index 0 for totalPercentage
-                        if (totalRetailOccupied == BigDecimal.ZERO && totalAllRetail == BigDecimal.ZERO)
-                                break;
-                        retailOccupied = totalRetailOccupied.divide(totalAllRetail,
-                                        MathContext.DECIMAL128) // Use a context with sufficient precision
-                                        .multiply(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
-                }
                 Double percentationOCCFisik = calculateOCCFisikPercentage(start, end, daysEventTime);
                 Double percentationOCCPKBLU = calculateOCCPKBLUPercentageDays(start, end, daysEventTime,
                                 daysMaintenance);
@@ -529,7 +551,7 @@ public class DashboardService {
                         percentationOCCPKBLU = 100.0;
                 }
                 return new Occupancy(percentationOCCFisik, percentationOCCPKBLU,
-                                percentationOccMaintenance, retailOccupied.doubleValue());
+                                percentationOccMaintenance, 0.0);
         }
 
         @NotNull

@@ -112,7 +112,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
             + "schedule_times st ON s.id = st.schedule_id "
             + "JOIN venues v2  on sv.venue_id=v2.id "
             + "join units u on v2.unit_id =u.id "
-            + "WHERE (:unit IS NULL OR :unit = '' OR v2.venue = :unit) AND s.start_date >= :startDate AND s.end_date <= :endDate GROUP by s.start_date ;",
+            + "WHERE v2.venue = :unit AND s.start_date >= :startDate AND s.end_date <= :endDate GROUP by s.start_date ;",
             nativeQuery = true)
         List<Object[]> findSumOfSchedulesPerDay(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
