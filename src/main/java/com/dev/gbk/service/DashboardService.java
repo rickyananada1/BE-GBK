@@ -50,30 +50,43 @@ public class DashboardService {
 
         public Map<String, BigDecimal> getUsageByCategory(LocalDate startDate, LocalDate endDate, String unitNames) {
                 List<String> units = unitNames != null ? Arrays.asList(unitNames.split(",")) : null;
-                List<Schedule> schedules = scheduleRepository.findSingleSchedules(unitNames, startDate, endDate);
+                Unit unitData = this.unitRepository.findByName(unitNames).orElse(null);
+                Map<String, BigDecimal> category = new HashMap<>();
+                if (Objects.nonNull(unitData)) {
+                        for(Venue venue : unitData.getVenues()) {
+                                List<Schedule> schedules = scheduleRepository.findSingleSchedules(venue.getVenue(), startDate, endDate);
 
-                Map<String, Long> categoryCount = schedules.stream()
-                                .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
-                                .filter(schedule -> schedule.getCategory() != null)
-                                .collect(Collectors.groupingBy(Schedule::getCategory, Collectors.counting()));
+                                Map<String, Long> categoryCount = schedules.stream()
+                                    .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
+                                    .filter(schedule -> schedule.getCategory() != null)
+                                    .collect(Collectors.groupingBy(Schedule::getCategory, Collectors.counting()));
 
-                long totalEvents = categoryCount.values().stream().mapToLong(Long::longValue).sum();
-
-                return calculatePercentages(categoryCount, totalEvents);
+                                long totalEvents = categoryCount.values().stream().mapToLong(Long::longValue).sum();
+                                category.putAll(calculatePercentages(categoryCount, totalEvents));
+                        }
+                }
+                return category;
         }
 
         public Map<String, BigDecimal> getUsageByProfileEvent(LocalDate startDate, LocalDate endDate,
                         String unitNames) {
                 List<String> units = unitNames != null ? Arrays.asList(unitNames.split(",")) : null;
-                List<Schedule> schedules = scheduleRepository.findSingleSchedules(unitNames, startDate, endDate);
+                Unit unitData = this.unitRepository.findByName(unitNames).orElse(null);
+                Map<String, BigDecimal> profile = new HashMap<>();
+                if (Objects.nonNull(unitData)) {
+                        for(Venue venue : unitData.getVenues()) {
+                                List<Schedule> schedules = scheduleRepository.findSingleSchedules(venue.getVenue(), startDate, endDate);
+                                Map<String, Long> profileEventCount = schedules.stream()
+                                    .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
+                                    .collect(Collectors.groupingBy(Schedule::getProfileEvent, Collectors.counting()));
 
-                Map<String, Long> profileEventCount = schedules.stream()
-                                .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
-                                .collect(Collectors.groupingBy(Schedule::getProfileEvent, Collectors.counting()));
+                                long totalEvents = profileEventCount.values().stream().mapToLong(Long::longValue).sum();
 
-                long totalEvents = profileEventCount.values().stream().mapToLong(Long::longValue).sum();
+                                profile.putAll(calculatePercentages(profileEventCount, totalEvents));
+                        }
+                }
+                return profile;
 
-                return calculatePercentages(profileEventCount, totalEvents);
         }
 
         public Map<String, Integer> getTotalPaidGroupedByProfileEvent(LocalDate startDate, LocalDate endDate,
@@ -106,7 +119,7 @@ public class DashboardService {
 
         public IncomeDTO getTotalIncome(LocalDate startDate, LocalDate endDate, String unitNames) {
                 List<String> units = unitNames != null ? Arrays.asList(unitNames.split(",")) : null;
-
+                Unit unitData = this.unitRepository.findByName(unitNames).orElse(null);
                 BigDecimal retailIncome = safeBigDecimalFromDouble(
                                 retailRepository.sumPriceByStatusAndDateRangeAndArea("Sewa", unitNames));
 
@@ -117,77 +130,113 @@ public class DashboardService {
                                 retailRepository.sumSizeByStatusAndDateRangeAndArea("Belum Sewa",
                                                 unitNames));
 
-                BigDecimal maintenanceVenue = safeBigDecimalFromDouble(
-                                scheduleRepository.sumMaintenanceByType(unitNames, startDate, endDate));
+                BigDecimal maintenanceVenue = BigDecimal.ZERO;
+                BigDecimal sewaLahan = BigDecimal.ZERO;
+                BigDecimal sewaLahanProyeksi = BigDecimal.ZERO;
+                BigDecimal gamesUmum = BigDecimal.ZERO;
+                BigDecimal gamesUmumProyeksi = BigDecimal.ZERO;
+                BigDecimal gamesTimnas = BigDecimal.ZERO;
+                BigDecimal gamesTimnasProyeksi = BigDecimal.ZERO;
+                BigDecimal events = BigDecimal.ZERO;
+                BigDecimal eventsProyeksi = BigDecimal.ZERO;
+                BigDecimal eventsNon = BigDecimal.ZERO;
+                BigDecimal eventsProyeksiNon = BigDecimal.ZERO;
+                if (Objects.nonNull(unitData)) {
+                        List<Venue> venues = unitData.getVenues(); // Assuming Unit entity has a list of Venues
+                        if (!venues.isEmpty()) {
+                                for(Venue venue : venues) {
+                                        BigDecimal maintenancePerVenue = safeBigDecimalFromDouble(
+                                            scheduleRepository.sumMaintenanceByType(
+                                                venue.getVenue(), startDate, endDate));
+                                        List<Object> response = scheduleRepository.sumSewaLahanByStatusPayment(startDate, endDate, venue.getVenue());
 
-                List<Object> response = scheduleRepository.sumSewaLahanByStatusPayment(startDate, endDate, unitNames);
+                                        BigDecimal sewaLahanPerVenue = safeBigDecimalFromDouble(response.stream()
+                                            .filter(obj -> "Sewa Lahan".equals(((Object[]) obj)[0]))
+                                            .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                            .sum());
 
-                BigDecimal sewaLahan = safeBigDecimalFromDouble(response.stream()
-                                .filter(obj -> "Sewa Lahan".equals(((Object[]) obj)[0]))
-                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
-                                .sum());
+                                        BigDecimal sewaLahanProyeksiPerVenue = safeBigDecimalFromDouble(response.stream()
+                                            .filter(obj -> "Sewa Lahan Proyeksi".equals(((Object[]) obj)[0]))
+                                            .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                            .sum());
 
-                BigDecimal sewaLahanProyeksi = safeBigDecimalFromDouble(response.stream()
-                                .filter(obj -> "Sewa Lahan Proyeksi".equals(((Object[]) obj)[0]))
-                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
-                                .sum());
+                                        BigDecimal gamesUmumPerVenue = safeBigDecimalFromDouble(response.stream()
+                                            .filter(obj -> "Games Umum".equals(((Object[]) obj)[0]))
+                                            .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                            .sum());
 
-                BigDecimal gamesUmum = safeBigDecimalFromDouble(response.stream()
-                                .filter(obj -> "Games Umum".equals(((Object[]) obj)[0]))
-                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
-                                .sum());
+                                        BigDecimal gamesUmumProyeksiPerVenue = safeBigDecimalFromDouble(response.stream()
+                                            .filter(obj -> "Games Umum Proyeksi".equals(((Object[]) obj)[0]))
+                                            .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                            .sum());
 
-                BigDecimal gamesUmumProyeksi = safeBigDecimalFromDouble(response.stream()
-                                .filter(obj -> "Games Umum Proyeksi".equals(((Object[]) obj)[0]))
-                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
-                                .sum());
+                                        BigDecimal gamesTimnasPerVenue = safeBigDecimalFromDouble(response.stream()
+                                            .filter(obj -> "Games Timnas".equals(((Object[]) obj)[0]))
+                                            .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                            .sum());
 
-                BigDecimal gamesTimnas = safeBigDecimalFromDouble(response.stream()
-                                .filter(obj -> "Games Timnas".equals(((Object[]) obj)[0]))
-                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
-                                .sum());
+                                        BigDecimal gamesTimnasProyeksiPerVenue = safeBigDecimalFromDouble(response.stream()
+                                            .filter(obj -> "Games Timnas Proyeksi".equals(((Object[]) obj)[0]))
+                                            .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                            .sum());
 
-                BigDecimal gamesTimnasProyeksi = safeBigDecimalFromDouble(response.stream()
-                                .filter(obj -> "Games Timnas Proyeksi".equals(((Object[]) obj)[0]))
-                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
-                                .sum());
+                                        BigDecimal eventsPerVenue = safeBigDecimalFromDouble(response.stream()
+                                            .filter(obj -> "Events Olahraga".equals(((Object[]) obj)[0]))
+                                            .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                            .sum());
 
-                // Get Total Pendapatan Maintenance based on day
-                List<Schedule> scheduleBasedOnVenue = scheduleRepository.findSingleSchedulesMaintenance(unitNames,
-                                startDate,
-                                endDate);
-                List<String> days = new ArrayList<>();
-                for (Schedule schedule : scheduleBasedOnVenue) {
-                        if (schedule.getStatusPayment().equals("Maintenance")) {
-                                days.addAll(getDayNamesBetween(schedule.getScheduleStartDate(),
-                                                schedule.getScheduleEndDate()));
+                                        BigDecimal eventsProyeksiPerVenue = safeBigDecimalFromDouble(response.stream()
+                                            .filter(obj -> "Events Olahraga Proyeksi".equals(((Object[]) obj)[0]))
+                                            .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                            .sum());
+
+                                        BigDecimal eventsNonPerVenue = safeBigDecimalFromDouble(response.stream()
+                                            .filter(obj -> "Events Non-Olahraga".equals(((Object[]) obj)[0]))
+                                            .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                            .sum());
+
+                                        BigDecimal eventsProyeksiNonPerVenue = safeBigDecimalFromDouble(response.stream()
+                                            .filter(obj -> "Events Non-Olahraga Proyeksi".equals(((Object[]) obj)[0]))
+                                            .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
+                                            .sum());
+
+                                        maintenanceVenue = maintenanceVenue.add(maintenancePerVenue);
+                                        sewaLahan = sewaLahan.add(sewaLahanPerVenue);
+                                        sewaLahanProyeksi = sewaLahanProyeksi.add(sewaLahanProyeksiPerVenue);
+                                        gamesUmum = gamesUmum.add(gamesUmumPerVenue);
+                                        gamesUmumProyeksi = gamesUmumProyeksi.add(gamesUmumProyeksiPerVenue);
+                                        gamesTimnas = gamesTimnas.add(gamesTimnasPerVenue);
+                                        gamesTimnasProyeksi = gamesTimnasProyeksi.add(gamesTimnasProyeksiPerVenue);
+                                        events = events.add(eventsPerVenue);
+                                        eventsProyeksi = eventsProyeksi.add(eventsProyeksiPerVenue);
+                                        eventsNon = eventsNon.add(eventsNonPerVenue);
+                                        eventsProyeksiNon = eventsProyeksiNon.add(eventsProyeksiNonPerVenue);
+                                }
                         }
                 }
+
                 BigDecimal totalIncomeForMaintenance = BigDecimal.ZERO;
-                for (String day : days) {
-                        BigDecimal priceForMaintenance = systemProperties.getMaintenance().get(day);
-                        totalIncomeForMaintenance = totalIncomeForMaintenance.add(priceForMaintenance);
+                if (Objects.nonNull(unitData)) {
+                        for(Venue venue: unitData.getVenues()) {
+                                // Get Total Pendapatan Maintenance based on day
+                                List<Schedule> scheduleBasedOnVenue =
+                                    scheduleRepository.findSingleSchedulesMaintenance(
+                                        venue.getVenue(), startDate, endDate);
+                                List<String> days = new ArrayList<>();
+                                for (Schedule schedule : scheduleBasedOnVenue) {
+                                        if (schedule.getStatusPayment().equals("Maintenance")) {
+                                                days.addAll(getDayNamesBetween(schedule.getScheduleStartDate(),
+                                                    schedule.getScheduleEndDate()));
+                                        }
+                                }
+                                BigDecimal totalIncomeForMaintenancePerVenue = BigDecimal.ZERO;
+                                for (String day : days) {
+                                        BigDecimal priceForMaintenance = systemProperties.getMaintenance().get(day);
+                                        totalIncomeForMaintenancePerVenue = totalIncomeForMaintenancePerVenue.add(priceForMaintenance);
+                                }
+                                totalIncomeForMaintenance = totalIncomeForMaintenance.add(totalIncomeForMaintenancePerVenue);
+                        }
                 }
-
-                BigDecimal events = safeBigDecimalFromDouble(response.stream()
-                                .filter(obj -> "Events Olahraga".equals(((Object[]) obj)[0]))
-                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
-                                .sum());
-
-                BigDecimal eventsProyeksi = safeBigDecimalFromDouble(response.stream()
-                                .filter(obj -> "Events Olahraga Proyeksi".equals(((Object[]) obj)[0]))
-                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
-                                .sum());
-
-                BigDecimal eventsNon = safeBigDecimalFromDouble(response.stream()
-                                .filter(obj -> "Events Non-Olahraga".equals(((Object[]) obj)[0]))
-                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
-                                .sum());
-
-                BigDecimal eventsProyeksiNon = safeBigDecimalFromDouble(response.stream()
-                                .filter(obj -> "Events Non-Olahraga Proyeksi".equals(((Object[]) obj)[0]))
-                                .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
-                                .sum());
 
                 long monthsBetween = calculateMonthsBetween(startDate, endDate);
                 BigDecimal totalParkingFee = MONTHLY_PARKING_FEE.multiply(BigDecimal.valueOf(monthsBetween));
@@ -436,14 +485,12 @@ public class DashboardService {
                                     BigDecimal.ROUND_HALF_UP)).add(retailOccupied)).divide(BigDecimal.valueOf(2));
                                 // Calculate average occupancy across all venues for the unit
                                 return new Occupancy(totalOccFisik.doubleValue(),
-                                                totalOccPKBLU.divide(BigDecimal.valueOf(numberOfVenues),
-                                                                BigDecimal.ROUND_HALF_UP).doubleValue(),
-                                                totalOccMaintenance.divide(BigDecimal.valueOf(numberOfVenues),
-                                                                BigDecimal.ROUND_HALF_UP).doubleValue(),
-                                                totalRetailOccupied
-                                                                .divide(BigDecimal.valueOf(numberOfVenues),
-                                                                                BigDecimal.ROUND_HALF_UP)
-                                                                .doubleValue());
+                                    totalOccPKBLU.divide(BigDecimal.valueOf(numberOfVenues),
+                                        BigDecimal.ROUND_HALF_UP).doubleValue(),
+                                    totalOccMaintenance.divide(BigDecimal.valueOf(numberOfVenues),
+                                        BigDecimal.ROUND_HALF_UP).doubleValue(),
+                                    totalRetailOccupied.divide(BigDecimal.valueOf(numberOfVenues),
+                                        BigDecimal.ROUND_HALF_UP).doubleValue(), 0d);
                         }
                 }
 
@@ -468,14 +515,24 @@ public class DashboardService {
                 int count = 0;
                 BigDecimal sumOfPercentage = BigDecimal.ZERO;
                 BigDecimal sumOfMaintenance = BigDecimal.ZERO;
+                BigDecimal sumOfPercentageTimnas = BigDecimal.ZERO;
                 for (Object[] ob : schedule) {
-                        BigDecimal percentage = getSingleValueWIthIndex(ob, 0); // Index 0 for totalPercentage
-                        BigDecimal percentageMaintenance = getSingleValueWIthIndex(ob, 1); // Index 0 for
+                        BigDecimal percentageTimnas = getSingleValueWIthIndex(ob, 0); // Index 0 for totalPercentage
+                        BigDecimal percentage = getSingleValueWIthIndex(ob, 1); // Index 0 for totalPercentage
+                        BigDecimal percentageMaintenance = getSingleValueWIthIndex(ob, 2); // Index 0 for
                                                                                            // totalPercentage
+                        sumOfPercentageTimnas = sumOfPercentageTimnas.add(percentageTimnas);
                         sumOfPercentage = sumOfPercentage.add(percentage);
                         sumOfMaintenance = sumOfMaintenance.add(percentageMaintenance);
                         count++;
 
+                }
+                BigDecimal resultOfPercentageTimnas = BigDecimal.ZERO;
+                try {
+                        resultOfPercentageTimnas = sumOfPercentageTimnas.divide(BigDecimal.valueOf(count),
+                            BigDecimal.ROUND_HALF_UP);
+                } catch (ArithmeticException e) {
+                        System.out.println("There is No Used Session");
                 }
                 BigDecimal resultOfPercentage = BigDecimal.ZERO;
                 try {
@@ -505,7 +562,7 @@ public class DashboardService {
                         System.out.println("There is No Used Session");
                 }
                 return new Occupancy(resultOfPercentage.doubleValue() * 100, pkblu,
-                    resultOfPercentageMaintenance.doubleValue() * 100, 0d);
+                    resultOfPercentageMaintenance.doubleValue() * 100, 0d, resultOfPercentageTimnas.doubleValue() * 100);
         }
 
         private Occupancy getOccupancyForNotEligibleSessionVenue(LocalDate start, LocalDate end, String venue) {
@@ -551,7 +608,7 @@ public class DashboardService {
                         percentationOCCPKBLU = 100.0;
                 }
                 return new Occupancy(percentationOCCFisik, percentationOCCPKBLU,
-                                percentationOccMaintenance, 0.0);
+                                percentationOccMaintenance, 0.0, 0.0);
         }
 
         @NotNull
