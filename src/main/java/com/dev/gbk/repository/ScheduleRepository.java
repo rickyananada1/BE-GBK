@@ -104,9 +104,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
             @Param("endDate") LocalDate endDate);
 
         @Query(value = "SELECT "
-            + "(SUM(CASE WHEN s.games = 'Timnas' THEN 1 ELSE 0 END) / (8.0 - COALESCE(SUM(CASE WHEN s.status_payment = 'Maintenance' THEN 1 ELSE 0 END), 0))) AS totalPercentageTimnas, "
-            + "(SUM(CASE WHEN s.status_payment = 'Paid' THEN 1 ELSE 0 END) / (8.0 - COALESCE(SUM(CASE WHEN s.status_payment = 'Maintenance' THEN 1 ELSE 0 END), 0))) AS totalPercentage, "
-            + "(COALESCE(SUM(CASE WHEN s.status_payment = 'Maintenance' THEN 1 ELSE 0 END), 0) / 8.0) AS totalMaintenance "
+            + "(SUM(CASE WHEN s.games = 'Timnas' THEN 1 ELSE 0 END)) AS totalPercentageTimnas, "
+            + "(SUM(CASE WHEN s.status_payment = 'Paid' THEN 1 ELSE 0 END)) AS totalPercentage, "
+            + "(COALESCE(SUM(CASE WHEN s.status_payment = 'Maintenance' THEN 1 ELSE 0 END), 0)) AS totalMaintenance "
             + "FROM schedules s inner JOIN "
             + "schedules_venues sv "
             + "on s.id= sv.schedule_id join "

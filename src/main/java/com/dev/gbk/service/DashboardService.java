@@ -352,6 +352,8 @@ public class DashboardService {
                 List<CardEventDTO> allEvents = new ArrayList<>();
 
                 for (Venue venue : venues) {
+                        if (venue.getIsEligibleSession()) {
+                        }
                         List<Schedule> schedules = scheduleRepository.findSingleSchedules(venue.getVenue(), startDate, endDate);
 
                         Map<String, CardEventDTO> eventMap = schedules.stream()
@@ -479,20 +481,21 @@ public class DashboardService {
                                             .multiply(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
                                 }
                                 int numberOfVenues = venues.size();
-                                if (retailFromVenue.get(0) == null) {
+                                Object test = retailFromVenue.get(0);
+                                if (test == null) {
                                         totalOccFisik = totalOccFisik.divide(BigDecimal.valueOf(numberOfVenues),
                                             BigDecimal.ROUND_HALF_UP);
+                                } else {
+                                        totalOccFisik = ((totalOccFisik.divide(BigDecimal.valueOf(numberOfVenues),
+                                            BigDecimal.ROUND_HALF_UP)).add(retailOccupied)).divide(BigDecimal.valueOf(2));
                                 }
-                                totalOccFisik = ((totalOccFisik.divide(BigDecimal.valueOf(numberOfVenues),
-                                    BigDecimal.ROUND_HALF_UP)).add(retailOccupied)).divide(BigDecimal.valueOf(2));
                                 // Calculate average occupancy across all venues for the unit
                                 return new Occupancy(totalOccFisik.doubleValue(),
                                     totalOccPKBLU.divide(BigDecimal.valueOf(numberOfVenues),
                                         BigDecimal.ROUND_HALF_UP).doubleValue(),
                                     totalOccMaintenance.divide(BigDecimal.valueOf(numberOfVenues),
                                         BigDecimal.ROUND_HALF_UP).doubleValue(),
-                                    totalRetailOccupied.divide(BigDecimal.valueOf(numberOfVenues),
-                                        BigDecimal.ROUND_HALF_UP).doubleValue(),
+                                    retailOccupied.doubleValue(),
                                     totalTimnasOcc.divide(BigDecimal.valueOf(numberOfVenues),
                                         BigDecimal.ROUND_HALF_UP).doubleValue());
                         }
@@ -517,6 +520,8 @@ public class DashboardService {
 
                 List<Object[]> schedule = this.scheduleRepository.findSumOfSchedulesPerDay(venue, start, end);
                 int count = 0;
+                int daysInMonth = start.lengthOfMonth();
+                int session = daysInMonth * 8;
                 BigDecimal sumOfPercentage = BigDecimal.ZERO;
                 BigDecimal sumOfMaintenance = BigDecimal.ZERO;
                 BigDecimal sumOfPercentageTimnas = BigDecimal.ZERO;
@@ -533,15 +538,16 @@ public class DashboardService {
                 }
                 BigDecimal resultOfPercentageTimnas = BigDecimal.ZERO;
                 try {
-                        resultOfPercentageTimnas = sumOfPercentageTimnas.divide(BigDecimal.valueOf(count),
-                            BigDecimal.ROUND_HALF_UP);
+                        resultOfPercentageTimnas = sumOfPercentageTimnas.divide(BigDecimal.valueOf(session),
+                            MathContext.DECIMAL128);
                 } catch (ArithmeticException e) {
                         System.out.println("There is No Used Session");
                 }
                 BigDecimal resultOfPercentage = BigDecimal.ZERO;
                 try {
-                        resultOfPercentage = sumOfPercentage.divide(BigDecimal.valueOf(count),
-                            BigDecimal.ROUND_HALF_UP);
+                        int sessionFisik = session - sumOfPercentage.intValueExact();
+                        resultOfPercentage = sumOfPercentage.divide(BigDecimal.valueOf(sessionFisik),
+                            MathContext.DECIMAL128);
                 } catch (ArithmeticException e) {
                         System.out.println("There is No Used Session");
                 }
@@ -549,8 +555,8 @@ public class DashboardService {
                 BigDecimal resultOfPercentageMaintenance = BigDecimal.ZERO;
                 try {
                         resultOfPercentageMaintenance =
-                            sumOfMaintenance.divide(BigDecimal.valueOf(count),
-                                BigDecimal.ROUND_HALF_UP);
+                            sumOfMaintenance.divide(BigDecimal.valueOf(session),
+                                MathContext.DECIMAL128);
 
                 } catch (ArithmeticException e) {
                         System.out.println("There is No Used Session");
@@ -560,7 +566,6 @@ public class DashboardService {
                 try {
                         List<String> schedulePkblu =
                             this.scheduleRepository.findScheduleWithPaidStatus(venue, start, end);
-                        int daysInMonth = start.lengthOfMonth();
                         pkblu = (double) schedulePkblu.size() / daysInMonth * 100;
                 } catch (ArithmeticException e) {
                         System.out.println("There is No Used Session");
