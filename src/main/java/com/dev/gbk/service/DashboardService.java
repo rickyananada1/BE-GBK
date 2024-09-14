@@ -441,6 +441,7 @@ public class DashboardService {
                                 BigDecimal totalOccPKBLU = BigDecimal.ZERO;
                                 BigDecimal totalOccMaintenance = BigDecimal.ZERO;
                                 BigDecimal totalRetailOccupied = BigDecimal.ZERO;
+                                BigDecimal totalTimnasOcc = BigDecimal.ZERO;
 
                                 for (Venue venue : venues) {
                                         // Calculate OCC for each venue, using existing methods
@@ -462,6 +463,7 @@ public class DashboardService {
                                                         .add(BigDecimal.valueOf(venueOccupancy.getOccMaintenance()));
                                         totalRetailOccupied = totalRetailOccupied
                                                         .add(BigDecimal.valueOf(venueOccupancy.getOccRetail()));
+                                        totalTimnasOcc = totalTimnasOcc.add(BigDecimal.valueOf(venueOccupancy.getOccTimnas()));
                                 }
                                 List<Object[]> retailFromVenue = this.retailRepository.findSumPaidAndAllRecordForRetail(unit, start,
                                     end);
@@ -490,7 +492,9 @@ public class DashboardService {
                                     totalOccMaintenance.divide(BigDecimal.valueOf(numberOfVenues),
                                         BigDecimal.ROUND_HALF_UP).doubleValue(),
                                     totalRetailOccupied.divide(BigDecimal.valueOf(numberOfVenues),
-                                        BigDecimal.ROUND_HALF_UP).doubleValue(), 0d);
+                                        BigDecimal.ROUND_HALF_UP).doubleValue(),
+                                    totalTimnasOcc.divide(BigDecimal.valueOf(numberOfVenues),
+                                        BigDecimal.ROUND_HALF_UP).doubleValue());
                         }
                 }
 
