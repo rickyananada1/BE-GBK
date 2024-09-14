@@ -522,6 +522,7 @@ public class DashboardService {
                 int count = 0;
                 int daysInMonth = start.lengthOfMonth();
                 int session = daysInMonth * 8;
+                int tempSession = 8;
                 BigDecimal sumOfPercentage = BigDecimal.ZERO;
                 BigDecimal sumOfMaintenance = BigDecimal.ZERO;
                 BigDecimal sumOfPercentageTimnas = BigDecimal.ZERO;
@@ -530,24 +531,40 @@ public class DashboardService {
                         BigDecimal percentage = getSingleValueWIthIndex(ob, 1); // Index 0 for totalPercentage
                         BigDecimal percentageMaintenance = getSingleValueWIthIndex(ob, 2); // Index 0 for
                                                                                            // totalPercentage
-                        sumOfPercentageTimnas = sumOfPercentageTimnas.add(percentageTimnas);
-                        sumOfPercentage = sumOfPercentage.add(percentage);
-                        sumOfMaintenance = sumOfMaintenance.add(percentageMaintenance);
-                        count++;
+                        BigDecimal sumOfEligibleSession =
+                            BigDecimal.valueOf(tempSession).subtract(percentageMaintenance);
 
+                        percentageTimnas =
+                            percentageTimnas.divide(sumOfEligibleSession, MathContext.DECIMAL128);
+
+                        percentage =
+                            percentage.divide(sumOfEligibleSession, MathContext.DECIMAL128);
+
+                        sumOfMaintenance = sumOfMaintenance.add(percentageMaintenance);
+
+                        sumOfPercentageTimnas = sumOfPercentageTimnas.add(percentageTimnas);
+
+                        sumOfPercentage = sumOfPercentage.add(percentage);
+
+                        count++;
+                }
+                if (count < daysInMonth) {
+                        count += daysInMonth - count;
                 }
                 BigDecimal resultOfPercentageTimnas = BigDecimal.ZERO;
                 try {
-                        resultOfPercentageTimnas = sumOfPercentageTimnas.divide(BigDecimal.valueOf(session),
+                        resultOfPercentageTimnas = sumOfPercentageTimnas.divide(BigDecimal.valueOf(count),
                             MathContext.DECIMAL128);
                 } catch (ArithmeticException e) {
                         System.out.println("There is No Used Session");
                 }
                 BigDecimal resultOfPercentage = BigDecimal.ZERO;
                 try {
-                        int sessionFisik = session - sumOfPercentage.intValueExact();
-                        resultOfPercentage = sumOfPercentage.divide(BigDecimal.valueOf(sessionFisik),
+                        resultOfPercentage = sumOfPercentage.divide(BigDecimal.valueOf(count),
                             MathContext.DECIMAL128);
+                        resultOfPercentage = resultOfPercentage.setScale(2, RoundingMode.HALF_UP);
+                        resultOfPercentage =
+                            (resultOfPercentage.add(resultOfPercentageTimnas));
                 } catch (ArithmeticException e) {
                         System.out.println("There is No Used Session");
                 }

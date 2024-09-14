@@ -105,7 +105,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
 
         @Query(value = "SELECT "
             + "(SUM(CASE WHEN s.games = 'Timnas' THEN 1 ELSE 0 END)) AS totalPercentageTimnas, "
-            + "(SUM(CASE WHEN s.status_payment = 'Paid' THEN 1 ELSE 0 END)) AS totalPercentage, "
+            + "(SUM(CASE WHEN s.status_payment = 'Paid' AND s.games != 'Timnas' THEN 1 ELSE 0 END)) AS totalPercentage, "
             + "(COALESCE(SUM(CASE WHEN s.status_payment = 'Maintenance' THEN 1 ELSE 0 END), 0)) AS totalMaintenance "
             + "FROM schedules s inner JOIN "
             + "schedules_venues sv "
