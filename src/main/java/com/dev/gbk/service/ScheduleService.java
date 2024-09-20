@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import com.dev.gbk.dto.ScheduleRequest;
 
+import com.dev.gbk.model.Unit;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -51,8 +52,6 @@ public class ScheduleService {
     public Page<Schedule> findAll(String search, int page, int size, String unit, String event, LocalDate tanggal, LocalDate end, String status) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
         Pageable pageable = PageRequest.of(page, size, sort);
-        System.out.println("tanggal : " + tanggal);
-        System.out.println("end : " + end);
 
         Specification<Schedule> scheduleSpecification = (root, query, criteriaBuilder) -> {
             query.distinct(true);
@@ -60,8 +59,7 @@ public class ScheduleService {
             List<Predicate> predicates = new ArrayList<>();
 
             if (unit != null && !unit.isEmpty()) {
-                Join<Schedule, Venue> venueJoin = root.join("venues", JoinType.LEFT);
-                predicates.add(criteriaBuilder.equal(venueJoin.get("venue"), unit));
+                predicates.add(criteriaBuilder.equal(root.get("venues").get("unit").get("name"), unit));
             }
 
             if (event != null && !event.isEmpty()) {
@@ -99,8 +97,7 @@ public class ScheduleService {
             List<Predicate> predicates = new ArrayList<>();
 
             if (unit != null && !unit.isEmpty()) {
-                Join<Schedule, Venue> venueJoin = root.join("venues", JoinType.LEFT);
-                predicates.add(criteriaBuilder.equal(venueJoin.get("venue"), unit));
+                predicates.add(criteriaBuilder.equal(root.get("venues").get("unit").get("name"), unit));
             }
 
             if (event != null && !event.isEmpty()) {
