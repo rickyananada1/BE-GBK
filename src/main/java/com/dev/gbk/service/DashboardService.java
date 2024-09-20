@@ -396,12 +396,25 @@ public class DashboardService {
 
         public Map<String, Object> getRetailCardData(String unit) {
                 Double percentage = retailRepository.getOverallPercentage(unit);
-                List<CardRetailDTO> data = retailRepository.getRetailCardData(unit);
+                List<Object[]> results = getRetailCardDataNative(unit);
+                List<CardRetailDTO> dtos = new ArrayList<>();
+                for (Object[] result : results) {
+                        String tenantName = (String) result[0];
+                        String area = (String) result[1];
+
+                        CardRetailDTO dto = new CardRetailDTO(tenantName, area);
+                        dtos.add(dto);
+                }
+
 
                 Map<String, Object> result = new HashMap<>();
                 result.put("percentage", percentage);
-                result.put("data", data);
+                result.put("data", dtos);
                 return result;
+        }
+
+        private List<Object[]> getRetailCardDataNative(String unit) {
+                return retailRepository.getRetailCardDataNative(unit);
         }
 
         // === Helper Methods ===

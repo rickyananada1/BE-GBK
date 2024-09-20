@@ -25,20 +25,28 @@ public interface RetailRepository extends JpaRepository<Retail, Long>, JpaSpecif
         Double sumSizeByStatusAndDateRangeAndArea(@Param("status") String status,
                         @Param("area") String area);
 
-        @Query("SELECT (COUNT(CASE WHEN r.statusBooking = 'Sewa' THEN 1 ELSE NULL END) / COUNT(*)  * 100.0) AS percentage " +
-                "FROM Retail r " +
-                "WHERE  (:unit IS NULL OR :unit = '' OR r.masterRetail.area = :unit)")
+        @Query(value = "SELECT " +
+                "    CASE WHEN COUNT(*) = 0 THEN 0 ELSE (COUNT(CASE WHEN r.status_booking = 'Sewa' THEN 1 ELSE NULL END) / COUNT(*) * 100.0) END AS percentage " +
+                "FROM " +
+                "    retails r " +
+                "WHERE " +
+                "    (r.master_retail_id IN (SELECT m.id FROM master_retails m WHERE m.area = :unit))",
+                nativeQuery = true)
         Double getOverallPercentage(@Param("unit") String unit);
 
-        @Query("SELECT new com.dev.gbk.dto.CardRetailDTO("
-                + "r.masterRetail.tenant_name, "
-                + "r.masterRetail.area, "
-                + "(SUM(CASE WHEN r.statusBooking = 'Sewa' THEN r.price ELSE 0 END) / SUM(r.price)) * 100) "
-                + "FROM Retail r "
-                + "WHERE r.statusBooking = 'Sewa' "
-                + "AND (:unit IS NULL OR :unit = '' OR r.masterRetail.area = :unit) "
-                + "GROUP BY r.masterRetail.tenant_name, r.masterRetail.area")
-        List<CardRetailDTO> getRetailCardData(@Param("unit") String unit);
+        @Query(value = "SELECT " +
+                "    mr.tenant_name, " +
+                "    mr.area " +
+                "FROM " +
+                "    retails r " +
+                "JOIN " +
+                "    master_retails mr ON r.master_retail_id = mr.id " +
+                "WHERE " +
+                "    r.master_retail_id IN (SELECT m.id FROM master_retails m WHERE m.area = :unit) " +
+                "GROUP BY " +
+                "    mr.tenant_name, mr.area",
+                nativeQuery = true)
+        List<Object[]> getRetailCardDataNative(@Param("unit") String unit);
 
         @Query(value = "SELECT "
             + "SUM(CASE WHEN r.status_booking = 'SEWA' THEN CAST(r.size AS DECIMAL(10, 2)) ELSE 0 END) AS total_size_paid,"

@@ -15,5 +15,4 @@ import lombok.Setter;
 public class CardRetailDTO {
     private String tenant_name;
     private String area;
-    private Double usagePercentage;
 }
