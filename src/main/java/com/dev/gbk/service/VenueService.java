@@ -38,7 +38,7 @@ public class VenueService {
         this.unitRepository = unitRepository;
     }
 
-    public Page<Venue> findAll(String search, int page, int size, String type, List<Integer> unit) {
+    public Page<Venue> findAll(String search, int page, int size, String type, List<Integer> unit,String unitName) {
         Pageable pageable = PageRequest.of(page, size);
 
         Specification<Venue> searchSpec = (root, query, criteriaBuilder) -> {
@@ -57,6 +57,10 @@ public class VenueService {
                 predicate = criteriaBuilder.and(predicate, root.get("unit").get("id").in(unit));
             }
 
+            if (unitName != null && !unitName.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(criteriaBuilder.lower(root.get("unit").get("name")), "%" + unitName.toLowerCase() + "%"));
+            }
+
             return predicate;
         };
 
@@ -64,7 +68,7 @@ public class VenueService {
     }
 
 
-    public List<Venue> findAll(String search, String type, List<Integer> unit) {
+    public List<Venue> findAll(String search, String type, List<Integer> unit,String unitName) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
 
         Specification<Venue> searchSpec = (root, query, criteriaBuilder) -> {
@@ -80,6 +84,10 @@ public class VenueService {
 
             if (unit != null && !unit.isEmpty()) {
                 predicate = criteriaBuilder.and(predicate, root.get("unit").get("id").in(unit));
+            }
+
+            if (unitName != null && !unitName.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(criteriaBuilder.lower(root.get("unit").get("name")), "%" + unitName.toLowerCase() + "%"));
             }
 
             return predicate;

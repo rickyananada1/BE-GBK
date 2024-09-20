@@ -47,19 +47,41 @@ public class VenueController {
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "unit", required = false) String unitString) {
-        List<Integer> unitList = convertUnitStringToList(unitString);
+
+        List<Integer> unitList = new ArrayList<>();
+        String unitName = null;
+
+        if (unitString != null && !unitString.isEmpty()) {
+            String[] units = unitString.split(",");
+
+            boolean hasNumeric = false;
+
+            for (String unit : units) {
+                unit = unit.trim();
+                if (unit.matches("\\d+")) {
+                    hasNumeric = true;
+                    unitList.add(Integer.parseInt(unit));
+                } else {
+                    unitName = unit;
+                }
+            }
+
+        }
+
         if (page == null && size == null) {
             return ResponseHandler.generateResponse("Success get all venues", HttpStatus.OK,
-                    venueService.findAll(search,type,unitList));
+                    venueService.findAll(search, type, unitList, unitName));
         }
 
         if (page == null)
             page = 0;
         if (size == null)
             size = 10;
+
         return ResponseHandler.generateResponse("Success get all venues", HttpStatus.OK,
-                venueService.findAll(search, page, size,type,unitList));
+                venueService.findAll(search, page, size, type, unitList, unitName));
     }
+
 
     @PreAuthorize("hasAuthority('CREATE_DATA_VENUE')")
     @PostMapping
