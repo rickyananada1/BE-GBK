@@ -13,17 +13,19 @@ import java.util.List;
 
 public interface RetailRepository extends JpaRepository<Retail, Long>, JpaSpecificationExecutor<Retail> {
 
-        @Query("SELECT SUM(r.price) FROM Retail r " +
-                "WHERE r.statusBooking = :status AND " +
-                "(:area IS NULL OR :area = '' OR r.masterRetail.area = :area)")
+        @Query("SELECT COALESCE(SUM(r.price), 0) FROM Retail r " +
+                "JOIN r.masterRetail mr " +
+                "WHERE r.statusBooking = :status " +
+                "AND (:area IS NOT NULL AND :area <> '' AND mr.area = :area)")
         Double sumPriceByStatusAndDateRangeAndArea(@Param("status") String status,
-                        @Param("area") String area);
+                                                   @Param("area") String area);
 
-        @Query("SELECT SUM(r.size) FROM Retail r " +
-                        "WHERE r.statusBooking = :status AND " +
-                        "(:area IS NULL OR :area = '' OR r.masterRetail.area = :area)")
+        @Query("SELECT COALESCE(SUM(r.size), 0) FROM Retail r " +
+                "JOIN r.masterRetail mr " +
+                "WHERE r.statusBooking = :status " +
+                "AND (:area IS NOT NULL AND :area <> '' AND mr.area = :area)")
         Double sumSizeByStatusAndDateRangeAndArea(@Param("status") String status,
-                        @Param("area") String area);
+                                                  @Param("area") String area);
 
         @Query(value = "SELECT " +
                 "    CASE WHEN COUNT(*) = 0 THEN 0 ELSE (COUNT(CASE WHEN r.status_booking = 'Sewa' THEN 1 ELSE NULL END) / COUNT(*) * 100.0) END AS percentage " +
