@@ -15,10 +15,29 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSpecificationExecutor<Schedule> {
-        List<Schedule> findByStatusPaymentAndCreatedAtBefore(String statusPayment, LocalDateTime dateTime);
+//        buat native query
+        @Query(value = "SELECT s.* " +
+                "FROM schedules s " +
+                "INNER JOIN schedules_venues sv ON sv.schedule_id = s.id " +
+                "INNER JOIN venues v ON v.id = sv.venue_id " +
+                "INNER JOIN units u ON u.id = v.unit_id " +
+                "WHERE s.status_payment = :statusPayment " +
+                "AND s.start_date BETWEEN NOW() AND NOW() + INTERVAL 5 DAY " +
+                "ORDER BY s.updated_at DESC, s.created_at DESC", nativeQuery = true)
+        List<Schedule> findByStatusPaymentAndCreatedAtBefore(String statusPayment);
 
+
+        @Query(value = "SELECT s.* " +
+                "FROM schedules s " +
+                "INNER JOIN schedules_venues sv ON sv.schedule_id = s.id " +
+                "INNER JOIN venues v ON v.id = sv.venue_id " +
+                "INNER JOIN units u ON u.id = v.unit_id " +
+                "WHERE s.status_payment = :statusPayment"+
+                "AND s.start_date BETWEEN NOW() AND NOW() + INTERVAL 5 DAY " +
+                "AND v.unit_id = :venueId " +
+                "ORDER BY s.updated_at DESC, s.created_at DESC", nativeQuery = true)
         List<Schedule> findByStatusPaymentAndVenuesIdAndCreatedAtBefore(
-                        String statusPayment, Long venueId, LocalDateTime createdAt);
+                        String statusPayment, Long venueId);
 
         boolean existsByBookingNumber(String bookingNumber);
 

@@ -130,11 +130,9 @@ public class ScheduleService {
     public List<Schedule> findPendingSchedulesCreatedBefore(Long venue) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         if (venue != null) {
-            return scheduleRepository.findByStatusPaymentAndVenuesIdAndCreatedAtBefore("Soft Booking", venue,
-                    currentDateTime.minusDays(3));
+            return scheduleRepository.findByStatusPaymentAndVenuesIdAndCreatedAtBefore("Soft Booking", venue);
         } else {
-            return scheduleRepository.findByStatusPaymentAndCreatedAtBefore("Soft Booking",
-                    currentDateTime.minusDays(3));
+            return scheduleRepository.findByStatusPaymentAndCreatedAtBefore("Soft Booking");
         }
     }
 
