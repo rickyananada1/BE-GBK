@@ -542,6 +542,7 @@ public class DashboardService {
         private Occupancy getOccupancyForEligibleSessionVenue(LocalDate start, LocalDate end, String venue) {
 
                 List<Object[]> schedule = this.scheduleRepository.findSumOfSchedulesPerDay(venue, start, end);
+                List<Object[]> sessionUsed = this.scheduleRepository.getSessionUsed(venue, start);
                 int count = 0;
                 int daysInMonth = start.lengthOfMonth();
                 int session = daysInMonth * 8;
@@ -549,6 +550,9 @@ public class DashboardService {
                 BigDecimal sumOfPercentage = BigDecimal.ZERO;
                 BigDecimal sumOfMaintenance = BigDecimal.ZERO;
                 BigDecimal sumOfPercentageTimnas = BigDecimal.ZERO;
+                for (Object[] ob : sessionUsed) {
+
+                }
                 for (Object[] ob : schedule) {
                         BigDecimal percentageTimnas = getSingleValueWIthIndex(ob, 0); // Index 0 for totalPercentage
                         BigDecimal percentage = getSingleValueWIthIndex(ob, 1); // Index 0 for totalPercentage

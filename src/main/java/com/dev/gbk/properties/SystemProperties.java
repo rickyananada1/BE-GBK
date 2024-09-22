@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Component("systemProperties")
@@ -14,4 +15,6 @@ import java.util.List;
 public class SystemProperties {
   private HashMap<String, BigDecimal> maintenance;
   private HashMap<String, List<String>> venuesfOfUnitForNotCalculated = new HashMap<>();
+  private Map<String, List<BigDecimal>> priceForVenueInWeekdays = new HashMap<>();
+  private Map<String, List<BigDecimal>> priceForVenueInWeekend = new HashMap<>();
 }

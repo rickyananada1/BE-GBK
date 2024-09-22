@@ -171,4 +171,20 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
         List<CardSewaLahanDTO> getSewaLahanCardData(@Param("unit") String unit,
                                                     @Param("startDate") LocalDate startDate,
                                                     @Param("endDate") LocalDate endDate);
+
+        @Query(value = "SELECT x.id, x.start_date, " +
+            "COUNT(DISTINCT CASE WHEN st.schedule_time IN ('06:00 - 08:00', '08:00 - 10:00') AND x.games != 'timnas' THEN st.schedule_time ELSE NULL END) AS sesi_A, " +
+            "COUNT(DISTINCT CASE WHEN st.schedule_time IN ('10:00 - 12:00', '12:00 - 14:00', '14:00 - 16:00') AND x.games != 'timnas' THEN st.schedule_time ELSE NULL END) AS sesi_B, " +
+            "COUNT(DISTINCT CASE WHEN st.schedule_time IN ('16:00 - 18:00', '18:00 - 20:00', '20:00 - 22:00') AND x.games != 'timnas' THEN st.schedule_time ELSE NULL END) AS sesi_C, " +
+            "CASE WHEN DAYOFWEEK(x.start_date) IN (1, 7) THEN 'Weekend' ELSE 'Not Weekend' END AS day_type " +
+            "FROM schedules x " +
+            "JOIN schedules_venues sv ON x.id = sv.schedule_id " +
+            "JOIN venues v2 ON sv.venue_id = v2.id " +
+            "JOIN schedule_sessions ss ON ss.schedule_id = x.id " +
+            "JOIN schedule_times st ON st.schedule_id = x.id " +
+            "WHERE x.games != 'timnas' AND v2.venue = :venue AND x.start_date >= :startDate " +
+            "GROUP BY x.start_date, x.id " +
+            "ORDER BY x.start_date, x.id", nativeQuery = true)
+        List<Object[]> getSessionUsed(@Param("venue") String venue, @Param("startDate") LocalDate startDate);
+
 }
