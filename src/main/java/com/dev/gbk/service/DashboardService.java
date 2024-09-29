@@ -767,7 +767,6 @@ public class DashboardService {
                         List<BigDecimal> weekdayPrices = systemProperties.getPriceForVenueInWeekdays().get(stadion);
             
                         if (weekdayPrices != null && !weekdayPrices.isEmpty()) {
-                            // Gunakan harga pertama dari daftar untuk perhitungan
                             BigDecimal pricePerSession = weekdayPrices.get(0);
                             totalDayRevenue = pricePerSession.multiply(BigDecimal.valueOf(sessionsPerDay));
                         }
