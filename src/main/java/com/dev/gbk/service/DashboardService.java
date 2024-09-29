@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
@@ -554,6 +555,8 @@ public class DashboardService {
                 BigDecimal sumOfMaintenance = BigDecimal.ZERO;
                 BigDecimal sumOfPercentageTimnas = BigDecimal.ZERO;
                 BigDecimal sumOfPendapatan = BigDecimal.ZERO;
+                BigDecimal sumPendapatanPerTotalProyeksiMaxPendapatan = BigDecimal.ZERO;
+                long totalProyeksiMaxPendapatan = 0;
                 for (Object[] ob : sessionUsed) {
                         BigDecimal sumOfSesiA = getSingleValueWIthIndex(ob, 2); // Index 0 for totalPercentage
                         BigDecimal sumOfSesiB = getSingleValueWIthIndex(ob, 3); // Index 0 for totalPercentage
@@ -570,6 +573,9 @@ public class DashboardService {
                                 BigDecimal priceForWeekdaysSesiC = systemProperties.getPriceForVenueInWeekdays().get(stadion).get(2).multiply(sumOfSesiC);
                                 sumOfPendapatan = sumOfPendapatan.add(priceForWeekdaysSesiA).add(priceForWeekdaysSesiB).add(priceForWeekdaysSesiC);
                         }
+                        totalProyeksiMaxPendapatan = calculateMaxRevenue(start, end,stadion);
+                        
+                        sumPendapatanPerTotalProyeksiMaxPendapatan = sumOfPendapatan.divide(BigDecimal.valueOf(totalProyeksiMaxPendapatan), MathContext.DECIMAL128).multiply(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_EVEN);
                 }
 
                 //Todo : Need to get potential max price for range startdate to end date
@@ -645,7 +651,7 @@ public class DashboardService {
                         System.out.println("There is No Used Session");
                 }
                 return new Occupancy(resultOfPercentage.doubleValue(), pkblu,
-                    resultOfPercentageMaintenance.doubleValue(), 0d, resultOfPercentageTimnas.doubleValue(), sumOfPendapatan.doubleValue());
+                    resultOfPercentageMaintenance.doubleValue(), 0d, resultOfPercentageTimnas.doubleValue(), sumPendapatanPerTotalProyeksiMaxPendapatan.doubleValue());
         }
 
         private Occupancy getOccupancyForNotEligibleSessionVenue(LocalDate start, LocalDate end, String venue) {
@@ -749,5 +755,35 @@ public class DashboardService {
                 return result;
         }
 
-
+        public long calculateMaxRevenue(LocalDate startDate, LocalDate endDate, String stadion) {
+                BigDecimal totalRevenue = BigDecimal.ZERO;
+                int sessionsPerDay = 8;
+            
+                for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+                    DayOfWeek dayOfWeek = date.getDayOfWeek();
+                    BigDecimal totalDayRevenue = BigDecimal.ZERO;
+            
+                    if (dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY) {
+                        List<BigDecimal> weekdayPrices = systemProperties.getPriceForVenueInWeekdays().get(stadion);
+            
+                        if (weekdayPrices != null && !weekdayPrices.isEmpty()) {
+                            // Gunakan harga pertama dari daftar untuk perhitungan
+                            BigDecimal pricePerSession = weekdayPrices.get(0);
+                            totalDayRevenue = pricePerSession.multiply(BigDecimal.valueOf(sessionsPerDay));
+                        }
+                    } else {
+                        List<BigDecimal> weekendPrices = systemProperties.getPriceForVenueInWeekend().get(stadion);
+            
+                        if (weekendPrices != null && !weekendPrices.isEmpty()) {
+                            BigDecimal pricePerSession = weekendPrices.get(0);
+                            totalDayRevenue = pricePerSession.multiply(BigDecimal.valueOf(sessionsPerDay));
+                        }
+                    }
+                    totalRevenue = totalRevenue.add(totalDayRevenue);
+                }
+            
+                System.out.println("Total Revenue: " + totalRevenue);
+                return totalRevenue.longValue();
+        }   
+            
 }
