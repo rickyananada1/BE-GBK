@@ -461,6 +461,7 @@ public class DashboardService {
                                 BigDecimal totalOccMaintenance = BigDecimal.ZERO;
                                 BigDecimal totalRetailOccupied = BigDecimal.ZERO;
                                 BigDecimal totalTimnasOcc = BigDecimal.ZERO;
+                                BigDecimal totalFisikVsPendapatan = BigDecimal.ZERO;
                                 for (Venue venue : venues) {
                                         // Calculate OCC for each venue, using existing methods
                                         Occupancy venueOccupancy;
@@ -482,6 +483,7 @@ public class DashboardService {
                                         totalRetailOccupied = totalRetailOccupied
                                                         .add(BigDecimal.valueOf(venueOccupancy.getOccRetail()));
                                         totalTimnasOcc = totalTimnasOcc.add(BigDecimal.valueOf(venueOccupancy.getOccTimnas()));
+                                        totalFisikVsPendapatan = totalFisikVsPendapatan.add(BigDecimal.valueOf(venueOccupancy.getOccFisikVsPendapatan()));
                                 }
                                 List<Object[]> retailFromVenue = this.retailRepository.findSumPaidAndAllRecordForRetail(unit, start,
                                     end);
@@ -520,7 +522,8 @@ public class DashboardService {
                                         BigDecimal.ROUND_HALF_UP).doubleValue(),
                                     retailOccupied.doubleValue(),
                                     totalTimnasOcc.divide(BigDecimal.valueOf(numberOfVenues),
-                                        BigDecimal.ROUND_HALF_UP).doubleValue());
+                                        BigDecimal.ROUND_HALF_UP).doubleValue(),
+                                    totalFisikVsPendapatan.doubleValue());
                         }
                 }
 
@@ -550,9 +553,28 @@ public class DashboardService {
                 BigDecimal sumOfPercentage = BigDecimal.ZERO;
                 BigDecimal sumOfMaintenance = BigDecimal.ZERO;
                 BigDecimal sumOfPercentageTimnas = BigDecimal.ZERO;
+                BigDecimal sumOfPendapatan = BigDecimal.ZERO;
                 for (Object[] ob : sessionUsed) {
-
+                        BigDecimal sumOfSesiA = getSingleValueWIthIndex(ob, 2); // Index 0 for totalPercentage
+                        BigDecimal sumOfSesiB = getSingleValueWIthIndex(ob, 3); // Index 0 for totalPercentage
+                        BigDecimal sumOfSesiC = getSingleValueWIthIndex(ob, 4); // Index 0 for
+                        String stadion = venue.replace(" ","");
+                        if ("Weekend".equals(ob[5].toString())) {
+                                BigDecimal priceForWeekendSesiA = systemProperties.getPriceForVenueInWeekend().get(stadion).get(0).multiply(sumOfSesiA);
+                                BigDecimal priceForWeekendSesiB = systemProperties.getPriceForVenueInWeekend().get(stadion).get(1).multiply(sumOfSesiB);
+                                BigDecimal priceForWeekendSesiC = systemProperties.getPriceForVenueInWeekend().get(stadion).get(2).multiply(sumOfSesiC);
+                                sumOfPendapatan = sumOfPendapatan.add(priceForWeekendSesiA).add(priceForWeekendSesiB).add(priceForWeekendSesiC);
+                        } else {
+                                BigDecimal priceForWeekdaysSesiA = systemProperties.getPriceForVenueInWeekdays().get(stadion).get(0).multiply(sumOfSesiA);
+                                BigDecimal priceForWeekdaysSesiB = systemProperties.getPriceForVenueInWeekdays().get(stadion).get(1).multiply(sumOfSesiB);
+                                BigDecimal priceForWeekdaysSesiC = systemProperties.getPriceForVenueInWeekdays().get(stadion).get(2).multiply(sumOfSesiC);
+                                sumOfPendapatan = sumOfPendapatan.add(priceForWeekdaysSesiA).add(priceForWeekdaysSesiB).add(priceForWeekdaysSesiC);
+                        }
                 }
+
+                //Todo : Need to get potential max price for range startdate to end date
+                //         For Price Booking in variable sumOfPendapatan
+                //            Formula sumOfPendapatan/potentialMax
                 for (Object[] ob : schedule) {
                         BigDecimal percentageTimnas = getSingleValueWIthIndex(ob, 0); // Index 0 for totalPercentage
                         BigDecimal percentage = getSingleValueWIthIndex(ob, 1); // Index 0 for totalPercentage
@@ -623,7 +645,7 @@ public class DashboardService {
                         System.out.println("There is No Used Session");
                 }
                 return new Occupancy(resultOfPercentage.doubleValue(), pkblu,
-                    resultOfPercentageMaintenance.doubleValue(), 0d, resultOfPercentageTimnas.doubleValue());
+                    resultOfPercentageMaintenance.doubleValue(), 0d, resultOfPercentageTimnas.doubleValue(), sumOfPendapatan.doubleValue());
         }
 
         private Occupancy getOccupancyForNotEligibleSessionVenue(LocalDate start, LocalDate end, String venue) {
@@ -669,7 +691,7 @@ public class DashboardService {
                         percentationOCCPKBLU = 100.0;
                 }
                 return new Occupancy(percentationOCCFisik, percentationOCCPKBLU,
-                                percentationOccMaintenance, 0.0, 0.0);
+                                percentationOccMaintenance, 0.0, 0.0, 0.0);
         }
 
         @NotNull

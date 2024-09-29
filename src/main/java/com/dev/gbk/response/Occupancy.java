@@ -15,5 +15,5 @@ public class Occupancy {
   private Double occMaintenance;
   private Double occRetail;
   private Double occTimnas;
-
+  private Double occFisikVsPendapatan;
 }
