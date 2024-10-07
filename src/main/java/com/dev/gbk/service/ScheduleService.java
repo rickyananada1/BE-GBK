@@ -148,11 +148,11 @@ public class ScheduleService {
                     .orElseThrow(() -> new ResourceNotFoundException("Venue not found"));
             venues.add(venue);
         }
-
+    
         // get last id from schedule
         Schedule latestSchedule = scheduleRepository.findTopByOrderByIdDesc();
         Long lastId = latestSchedule == null ? 0L : latestSchedule.getId();
-
+    
         Schedule schedule = Schedule.builder()
                 .bookingNumber(Utils.generateBookingNumber(lastId, scheduleRequest.getStatusPayment()))
                 .type(scheduleRequest.getType())
@@ -171,23 +171,36 @@ public class ScheduleService {
                 .scheduleTime(scheduleRequest.getScheduleTime())
                 .venues(venues)
                 .build();
-        if (scheduleRequest.getScheduleStartDate() != null && scheduleRequest.getScheduleEndDate() != null) {
-            schedule.setScheduleStartDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate()));
-            schedule.setScheduleEndDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndDate()));
-        }
-
+        
         if (scheduleRequest.getScheduleStartInLoad() != null && scheduleRequest.getScheduleEndInLoad() != null) {
-            schedule.setScheduleStartInLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartInLoad()));
-            schedule.setScheduleEndInLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndInLoad()));
+            LocalDate requestStartInLoad = Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartInLoad());
+            LocalDate requestEndInLoad = Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndInLoad());
+    
+            schedule.setScheduleStartInLoad(requestStartInLoad);
+            schedule.setScheduleEndInLoad(requestEndInLoad);
+    
+            if (checkScheduleExists(requestStartInLoad, requestEndInLoad)) {
+                throw new IllegalStateException("Jadwal sudah ada");
+            }
         }
-
+    
         if (scheduleRequest.getScheduleStartOutLoad() != null && scheduleRequest.getScheduleEndOutLoad() != null) {
             schedule.setScheduleStartOutLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartOutLoad()));
             schedule.setScheduleEndOutLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndOutLoad()));
         }
-
+    
+        if (scheduleRequest.getScheduleStartDate() != null && scheduleRequest.getScheduleEndDate() != null) {
+            schedule.setScheduleStartDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate()));
+            schedule.setScheduleEndDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndDate()));
+        }
+    
         return scheduleRepository.save(schedule);
+    }    
+
+    public boolean checkScheduleExists(LocalDate scheduleStartInLoad, LocalDate scheduleEndInLoad) {
+        return scheduleRepository.existsByScheduleStartInLoadAndScheduleEndInLoad(scheduleStartInLoad, scheduleEndInLoad) == 1;
     }
+    
 
     public Schedule update(Long id, ScheduleRequest scheduleRequest) {
         Schedule schedule = findById(id);
