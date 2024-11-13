@@ -34,7 +34,7 @@ public class UnitController {
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size) {
         if (page == null && size == null) {
-            return ResponseHandler.generateResponse("Success get all retails", HttpStatus.OK,
+            return ResponseHandler.generateResponse("Success get all units", HttpStatus.OK,
                     unitService.findAll(search));
         }
 
@@ -42,7 +42,7 @@ public class UnitController {
             page = 0;
         if (size == null)
             size = 10;
-        return ResponseHandler.generateResponse("Success get all retails", HttpStatus.OK,
+        return ResponseHandler.generateResponse("Success get all unit", HttpStatus.OK,
                 unitService.findAll(search, page, size));
     }
 

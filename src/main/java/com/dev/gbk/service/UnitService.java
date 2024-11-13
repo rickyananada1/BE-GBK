@@ -3,6 +3,7 @@ package com.dev.gbk.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.dev.gbk.model.Venue;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Page;
@@ -29,10 +30,13 @@ public class UnitService {
 
     public List<Unit> findAll(String search) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
-        Optional<Specification<Unit>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.map(unitSpecification -> unitRepository.findAll(unitSpecification, sort))
-                .orElseGet(() -> unitRepository.findAll(sort));
+        Specification<Unit> searchSpec = (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + search.toLowerCase() + "%");
+        };
+
+        return unitRepository.findAll(searchSpec, sort);
     }
+
 
     public Page<Unit> findAll(String search, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
