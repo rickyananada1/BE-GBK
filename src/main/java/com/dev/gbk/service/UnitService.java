@@ -30,7 +30,11 @@ public class UnitService {
 
     public List<Unit> findAll(String search) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
+
         Specification<Unit> searchSpec = (root, query, criteriaBuilder) -> {
+            if (search == null || search.trim().isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
             return criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + search.toLowerCase() + "%");
         };
 
