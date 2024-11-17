@@ -7,6 +7,7 @@ import com.dev.gbk.exception.ResourceNotFoundException;
 
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,34 +36,71 @@ public class RetailService {
         this.retailRepository = retailRepository;
     }
 
-    public Page<Retail> findAll(String search, int page, int size) {
+    public Page<Retail> findAll(String search, int page, int size, String tahun, List<String> unit, String unitName) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Specification<Retail> specification = (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+
             if (search != null && !search.isEmpty()) {
-                return criteriaBuilder.like(
-                        criteriaBuilder.lower(root.get("masterRetail").get("tenant_name")),
-                        "%" + search.toLowerCase() + "%"
-                );
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("masterRetail").get("tenant_name")),
+                                "%" + search.toLowerCase() + "%"));
             }
-            return criteriaBuilder.conjunction();
+
+            if (tahun != null && !tahun.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.equal(criteriaBuilder.function("YEAR", Integer.class, root.get("createdAt")), Integer.parseInt(tahun)));
+            }
+
+            if (unit != null && !unit.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate,
+                        root.get("masterRetail").get("area").in(unit));
+            }
+
+            if (unitName != null && !unitName.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("masterRetail").get("area")),
+                                "%" + unitName.toLowerCase() + "%"));
+            }
+
+            return predicate;
         };
 
         return retailRepository.findAll(specification, pageable);
     }
 
 
-    public List<Retail> findAll(String search) {
+
+    public List<Retail> findAll(String search, String tahun, List<String> unit,String unitName) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
         Specification<Retail> specification = (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+
             if (search != null && !search.isEmpty()) {
-                return criteriaBuilder.like(
-                        criteriaBuilder.lower(root.get("masterRetail").get("tenant_name")),
-                        "%" + search.toLowerCase() + "%"
-                );
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("masterRetail").get("tenant_name")),
+                                "%" + search.toLowerCase() + "%"));
             }
-            return criteriaBuilder.conjunction();
+
+            if (tahun != null && !tahun.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.equal(criteriaBuilder.function("YEAR", Integer.class, root.get("createdAt")), Integer.parseInt(tahun)));
+            }
+
+            if (unit != null && !unit.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate,
+                        root.get("masterRetail").get("area").in(unit));
+            }
+
+            if (unitName != null && !unitName.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("masterRetail").get("area")),
+                                "%" + unitName.toLowerCase() + "%"));
+            }
+
+            return predicate;
         };
         return retailRepository.findAll(specification, sort);
     }

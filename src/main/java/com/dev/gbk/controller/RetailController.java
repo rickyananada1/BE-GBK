@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/retails")
 @SecurityRequirement(name = "bearerAuth")
@@ -36,10 +39,32 @@ public class RetailController {
     @GetMapping
     public ResponseEntity<Object> findAll(@RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "size", required = false) Integer size) {
+            @RequestParam(value = "size", required = false) Integer size,
+            @RequestParam(value = "tahun", required = false) String tahun,
+            @RequestParam(value = "unit", required = false) String unitString) {
+        List<String> unitList = new ArrayList<>();
+        String unitName = null;
+
+        if (unitString != null && !unitString.isEmpty()) {
+            String[] units = unitString.split(",");
+
+            boolean hasNumeric = false;
+
+            for (String unit : units) {
+                unit = unit.trim();
+                if (unit.matches("\\d+")) {
+                    hasNumeric = true;
+                    unitList.add(unit);
+                } else {
+                    unitName = unit;
+                }
+            }
+
+        }
+
         if (page == null && size == null) {
             return ResponseHandler.generateResponse("Success get all retails", HttpStatus.OK,
-                    retailService.findAll(search));
+                    retailService.findAll(search,tahun, unitList, unitName));
         }
 
         if (page == null)
@@ -47,7 +72,7 @@ public class RetailController {
         if (size == null)
             size = 10;
         return ResponseHandler.generateResponse("Success get all retails", HttpStatus.OK,
-                retailService.findAll(search, page, size));
+                retailService.findAll(search, page, size,tahun, unitList, unitName));
     }
 
     @PreAuthorize("hasAuthority('CREATE_DATA_RETAIL')")
