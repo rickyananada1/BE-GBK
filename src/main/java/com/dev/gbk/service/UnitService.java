@@ -44,9 +44,14 @@ public class UnitService {
 
     public Page<Unit> findAll(String search, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Optional<Specification<Unit>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.map(unitSpecification -> unitRepository.findAll(unitSpecification, pageable))
-                .orElseGet(() -> unitRepository.findAll(pageable));
+        Specification<Unit> searchSpec = (root, query, criteriaBuilder) -> {
+            if (search == null || search.trim().isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + search.toLowerCase() + "%");
+        };
+
+        return unitRepository.findAll(searchSpec, pageable);
     }
 
     public Unit findById(Long id) {
