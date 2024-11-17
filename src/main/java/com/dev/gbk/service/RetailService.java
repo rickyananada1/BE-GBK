@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import com.dev.gbk.exception.ResourceNotFoundException;
 
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,16 +38,33 @@ public class RetailService {
     public Page<Retail> findAll(String search, int page, int size) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
         Pageable pageable = PageRequest.of(page, size, sort);
-        Optional<Specification<Retail>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.map(retailSpecification -> retailRepository.findAll(retailSpecification, pageable))
-                .orElseGet(() -> retailRepository.findAll(pageable));
+
+        Specification<Retail> specification = (root, query, criteriaBuilder) -> {
+            if (search != null && !search.isEmpty()) {
+                return criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("masterRetail").get("tenant_name")),
+                        "%" + search.toLowerCase() + "%"
+                );
+            }
+            return criteriaBuilder.conjunction();
+        };
+
+        return retailRepository.findAll(specification, pageable);
     }
+
 
     public List<Retail> findAll(String search) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt").and(Sort.by(Sort.Direction.DESC, "createdAt"));
-        Optional<Specification<Retail>> specification = specificationBuilder.parseAndBuild(search);
-        return specification.map(retailSpecification -> retailRepository.findAll(retailSpecification, sort))
-                .orElseGet(() -> retailRepository.findAll(sort));
+        Specification<Retail> specification = (root, query, criteriaBuilder) -> {
+            if (search != null && !search.isEmpty()) {
+                return criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("masterRetail").get("tenant_name")),
+                        "%" + search.toLowerCase() + "%"
+                );
+            }
+            return criteriaBuilder.conjunction();
+        };
+        return retailRepository.findAll(specification, sort);
     }
 
     public Retail findById(Long id) {
