@@ -197,6 +197,16 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
         Integer existsByScheduleStartInLoadAndScheduleEndInLoad(@Param("scheduleStartInLoad") LocalDate scheduleStartInLoad, 
                                                         @Param("scheduleEndInLoad") LocalDate scheduleEndInLoad);
 
+        @Query(value = "SELECT s.* " +
+                "FROM schedules s " +
+                "WHERE s.profile_event != ''"+
+                "ORDER BY s.profile_event", nativeQuery = true)
+        List<Schedule> findAllByProfileEvent();
 
+        @Query(value = "SELECT s.* " +
+                "FROM schedules s " +
+                "WHERE s.category != ''"+
+                "ORDER BY s.category", nativeQuery = true)
+        List<Schedule> findAllByCategory();
 
 }

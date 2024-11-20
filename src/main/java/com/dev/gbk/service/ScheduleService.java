@@ -277,10 +277,10 @@ public class ScheduleService {
             createSheet(workbook, "List Transaction", scheduleRepository.findAll());
 
             // Sheet 2
-            createSheet(workbook, "LT According Klasfikasi", scheduleRepository.findAll());
+            createSheetByKlasifikasi(workbook, "LT According Klasfikasi", scheduleRepository.findAllByProfileEvent());
 
             // Sheet 3
-            createSheet(workbook, "LT According Kategori", scheduleRepository.findAll());
+            createSheetByCategory(workbook, "LT According Kategori", scheduleRepository.findAllByCategory());
 
             // Write to byte array
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -339,6 +339,62 @@ public class ScheduleService {
             row.createCell(16).setCellValue(rowData.getStatusBooking() != null ? rowData.getStatusBooking() : "");
             row.createCell(17).setCellValue(rowData.getTotalSF() != null ? rowData.getTotalSF().toString() : "");
             row.createCell(18).setCellValue(rowData.getTotalPaid() != null ? rowData.getTotalPaid().toString() : "");
+        }
+
+    }
+
+    private void createSheetByKlasifikasi(Workbook workbook, String sheetName, List<Schedule> data) {
+        Sheet sheet = workbook.createSheet(sheetName);
+        int rowIndex = 0;
+        Row headerRow = sheet.createRow(rowIndex++);
+        headerRow.createCell(0).setCellValue("No");
+        headerRow.createCell(1).setCellValue("Nama Penyewa");
+        headerRow.createCell(2).setCellValue("Nama Kegiatan");
+        headerRow.createCell(3).setCellValue("Venue");
+        headerRow.createCell(4).setCellValue("Tanggal");
+        headerRow.createCell(5).setCellValue("Jenis");
+        headerRow.createCell(6).setCellValue("Harga");
+
+        for (Schedule rowData : data) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(rowIndex);
+
+            row.createCell(1).setCellValue(rowData.getCustomerName() != null ? rowData.getCustomerName() : "");
+            row.createCell(2).setCellValue(rowData.getDescriptionEvent() != null ? rowData.getDescriptionEvent() : "");
+            row.createCell(3).setCellValue(rowData.getVenues() != null && !rowData.getVenues().isEmpty()
+                    ? rowData.getVenues().get(0).getVenue()
+                    : "");
+            row.createCell(4).setCellValue(rowData.getScheduleStartDate() != null ? rowData.getScheduleStartDate().toString() : "");
+            row.createCell(5).setCellValue(rowData.getType() != null ? rowData.getType() : "");
+            row.createCell(6).setCellValue(rowData.getTotalPaid() != null ? rowData.getTotalPaid().toString() : "");
+        }
+
+    }
+
+    private void createSheetByCategory(Workbook workbook, String sheetName, List<Schedule> data) {
+        Sheet sheet = workbook.createSheet(sheetName);
+        int rowIndex = 0;
+        Row headerRow = sheet.createRow(rowIndex++);
+        headerRow.createCell(0).setCellValue("No");
+        headerRow.createCell(1).setCellValue("Nama Penyewa");
+        headerRow.createCell(2).setCellValue("Nama Kegiatan");
+        headerRow.createCell(3).setCellValue("Venue");
+        headerRow.createCell(4).setCellValue("Tanggal");
+        headerRow.createCell(5).setCellValue("Jenis");
+        headerRow.createCell(6).setCellValue("Harga");
+
+        for (Schedule rowData : data) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(rowIndex);
+
+            row.createCell(1).setCellValue(rowData.getCustomerName() != null ? rowData.getCustomerName() : "");
+            row.createCell(2).setCellValue(rowData.getDescriptionEvent() != null ? rowData.getDescriptionEvent() : "");
+            row.createCell(3).setCellValue(rowData.getVenues() != null && !rowData.getVenues().isEmpty()
+                    ? rowData.getVenues().get(0).getVenue()
+                    : "");
+            row.createCell(4).setCellValue(rowData.getScheduleStartDate() != null ? rowData.getScheduleStartDate().toString() : "");
+            row.createCell(5).setCellValue(rowData.getType() != null ? rowData.getType() : "");
+            row.createCell(6).setCellValue(rowData.getTotalPaid() != null ? rowData.getTotalPaid().toString() : "");
         }
 
     }
