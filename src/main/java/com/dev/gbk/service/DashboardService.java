@@ -10,10 +10,16 @@ import com.dev.gbk.repository.ScheduleRepository;
 import com.dev.gbk.repository.UnitRepository;
 import com.dev.gbk.repository.VenueRepository;
 import com.dev.gbk.response.Occupancy;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -781,8 +787,85 @@ public class DashboardService {
                     totalRevenue = totalRevenue.add(totalDayRevenue);
                 }
             
-                System.out.println("Total Revenue: " + totalRevenue);
                 return totalRevenue.longValue();
-        }   
-            
+        }
+
+        public byte[] exportOccupancyToExcel(LocalDate start, LocalDate end, String unitName) {
+                Unit unitData = unitRepository.findByName(unitName).orElse(null);
+
+                if (unitData == null) {
+                        throw new RuntimeException("Unit not found for name: " + unitName);
+                }
+
+                List<Venue> venues = unitData.getVenues();
+                List<String> notForCalculated = Optional.ofNullable(
+                                systemProperties.getVenuesfOfUnitForNotCalculated().get(unitName))
+                        .orElse(new ArrayList<>());
+
+                venues = venues.stream()
+                        .filter(venue -> !notForCalculated.contains(venue.getVenue()))
+                        .toList();
+
+                try (Workbook workbook = new XSSFWorkbook()) {
+                        LocalDate currentDate = start;
+                        while (!currentDate.isAfter(end)) {
+                                String sheetName = currentDate.getMonth().toString() + " " + currentDate.getYear();
+                                Sheet sheet = workbook.createSheet(sheetName);
+
+                                Row headerRow = sheet.createRow(0);
+                                headerRow.createCell(0).setCellValue("Unit Name");
+                                headerRow.createCell(1).setCellValue("Start Date");
+                                headerRow.createCell(2).setCellValue("End Date");
+                                headerRow.createCell(3).setCellValue("Venue Name");
+                                headerRow.createCell(4).setCellValue("Occupancy Fisik");
+                                headerRow.createCell(5).setCellValue("Occupancy PKBLU");
+                                headerRow.createCell(6).setCellValue("Occupancy Maintenance");
+                                headerRow.createCell(7).setCellValue("Occupancy Retail");
+                                headerRow.createCell(8).setCellValue("Occupancy Timnas");
+                                headerRow.createCell(9).setCellValue("Occupancy Fisik vs Pendapatan");
+
+                                int rowIndex = 1;
+
+                                LocalDate monthStart = currentDate.withDayOfMonth(1);
+                                LocalDate monthEnd = currentDate.withDayOfMonth(currentDate.lengthOfMonth());
+
+                                for (Venue venue : venues) {
+                                        Occupancy venueOccupancy;
+                                        if (venue.getIsEligibleSession()) {
+                                                venueOccupancy = getOccupancyForEligibleSessionVenue(monthStart, monthEnd, venue.getVenue());
+                                        } else {
+                                                venueOccupancy = getOccupancyForNotEligibleSessionVenue(monthStart, monthEnd, venue.getVenue());
+                                        }
+
+                                        Row dataRow = sheet.createRow(rowIndex++);
+                                        dataRow.createCell(0).setCellValue(unitName);
+                                        dataRow.createCell(1).setCellValue(monthStart.toString());
+                                        dataRow.createCell(2).setCellValue(monthEnd.toString());
+                                        dataRow.createCell(3).setCellValue(venue.getVenue());
+                                        dataRow.createCell(4).setCellValue(venueOccupancy.getOccFisik());
+                                        dataRow.createCell(5).setCellValue(venueOccupancy.getOccPKBLUHari());
+                                        dataRow.createCell(6).setCellValue(venueOccupancy.getOccMaintenance());
+                                        dataRow.createCell(7).setCellValue(venueOccupancy.getOccRetail());
+                                        dataRow.createCell(8).setCellValue(venueOccupancy.getOccTimnas());
+                                        dataRow.createCell(9).setCellValue(venueOccupancy.getOccFisikVsPendapatan());
+                                }
+
+                                for (int i = 0; i <= 9; i++) {
+                                        sheet.autoSizeColumn(i);
+                                }
+
+                                currentDate = currentDate.plusMonths(1);
+                        }
+
+                        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                                workbook.write(outputStream);
+                                return outputStream.toByteArray();
+                        }
+                } catch (IOException e) {
+                        throw new RuntimeException("Failed to generate Excel file", e);
+                }
+        }
+
+
+
 }
