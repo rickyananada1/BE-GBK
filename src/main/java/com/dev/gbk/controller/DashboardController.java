@@ -1,5 +1,6 @@
 package com.dev.gbk.controller;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.dev.gbk.response.Occupancy;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -184,6 +186,37 @@ public class DashboardController {
         Occupancy occupancy = dashboardService.getOccupancy(start, end, venue);
         return ResponseEntity.ok(occupancy);
     }
+
+    @GetMapping("/export/occupancy")
+    public void exportOccupancy(
+            @RequestParam(value = "unitName", required = false) String unitName,
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            HttpServletResponse response) {
+        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
+
+        // Handle start and end date logic
+        if (start != null && end != null && end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
+
+        // Generate Excel file
+        byte[] excelFile = dashboardService.exportOccupancyToExcel(start, end, unitName);
+
+        // Set response headers
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=occupancy_data.xlsx");
+
+        try {
+            response.getOutputStream().write(excelFile);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to write Excel file to response", e);
+        }
+    }
+
 
     @GetMapping("/type-total")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DASHBOARD')")

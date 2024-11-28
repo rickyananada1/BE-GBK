@@ -1,5 +1,7 @@
 package com.dev.gbk.service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +14,10 @@ import com.dev.gbk.model.Unit;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -265,6 +271,134 @@ public class ScheduleService {
             scheduleRequest.setVenueID(venues);
             store(scheduleRequest);
         }
+    }
+
+    public byte[] generateExcelFile() throws IOException {
+        try (Workbook workbook = new XSSFWorkbook()) {
+            // Sheet 1
+            createSheet(workbook, "List Transaction", scheduleRepository.findAll());
+
+            // Sheet 2
+            createSheetByKlasifikasi(workbook, "LT According Klasfikasi", scheduleRepository.findAllByProfileEvent());
+
+            // Sheet 3
+            createSheetByCategory(workbook, "LT According Kategori", scheduleRepository.findAllByCategory());
+
+            // Write to byte array
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            workbook.write(outputStream);
+            return outputStream.toByteArray();
+        }
+    }
+
+    private void createSheet(Workbook workbook, String sheetName, List<Schedule> data) {
+        Sheet sheet = workbook.createSheet(sheetName);
+        int rowIndex = 0;
+        Row headerRow = sheet.createRow(rowIndex++);
+        headerRow.createCell(0).setCellValue("No");
+        headerRow.createCell(1).setCellValue("Nama Penyewa");
+        headerRow.createCell(2).setCellValue("Email Penyewa");
+        headerRow.createCell(3).setCellValue("No. HP Penyewa");
+        headerRow.createCell(4).setCellValue("Klasifikasi");
+        headerRow.createCell(5).setCellValue("Deskripsi");
+        headerRow.createCell(6).setCellValue("Tipe");
+        headerRow.createCell(7).setCellValue("Kategori");
+        headerRow.createCell(8).setCellValue("Tanggal In Loading");
+        headerRow.createCell(9).setCellValue("Tanggal Event");
+        headerRow.createCell(10).setCellValue("Tanggal Out Loading");
+        headerRow.createCell(11).setCellValue("Unit");
+        headerRow.createCell(12).setCellValue("Venue");
+        headerRow.createCell(13).setCellValue("Sesi");
+        headerRow.createCell(14).setCellValue("Jam Per Sesi");
+        headerRow.createCell(15).setCellValue("Status Payment");
+        headerRow.createCell(16).setCellValue("Status Booking");
+        headerRow.createCell(17).setCellValue("Total Soft Booking");
+        headerRow.createCell(18).setCellValue("Total Paid");
+
+        for (Schedule rowData : data) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(rowIndex);
+
+            row.createCell(1).setCellValue(rowData.getCustomerName() != null ? rowData.getCustomerName() : "");
+            row.createCell(2).setCellValue(rowData.getCustomerEmail() != null ? rowData.getCustomerEmail() : "");
+            row.createCell(3).setCellValue(rowData.getCustomerPhone() != null ? rowData.getCustomerPhone() : "");
+            row.createCell(4).setCellValue(rowData.getProfileEvent() != null ? rowData.getProfileEvent() : "");
+            row.createCell(5).setCellValue(rowData.getDescriptionEvent() != null ? rowData.getDescriptionEvent() : "");
+            row.createCell(6).setCellValue(rowData.getType() != null ? rowData.getType() : "");
+            row.createCell(7).setCellValue(rowData.getCategory() != null ? rowData.getCategory() : "");
+            row.createCell(8).setCellValue(rowData.getScheduleStartInLoad() != null ? rowData.getScheduleStartInLoad().toString() : "");
+            row.createCell(9).setCellValue(rowData.getScheduleStartDate() != null ? rowData.getScheduleStartDate().toString() : "");
+            row.createCell(10).setCellValue(rowData.getScheduleEndOutLoad() != null ? rowData.getScheduleEndOutLoad().toString() : "");
+            row.createCell(11).setCellValue(rowData.getVenues() != null && !rowData.getVenues().isEmpty()
+                    ? rowData.getVenues().get(0).getUnit().getName()
+                    : "");
+            row.createCell(12).setCellValue(rowData.getVenues() != null && !rowData.getVenues().isEmpty()
+                    ? rowData.getVenues().get(0).getVenue()
+                    : "");
+            row.createCell(13).setCellValue(rowData.getScheduleTime() != null ? rowData.getScheduleTime().toString() : "");
+            row.createCell(14).setCellValue(rowData.getSession() != null ? rowData.getSession().toString() : "");
+            row.createCell(15).setCellValue(rowData.getStatusPayment() != null ? rowData.getStatusPayment() : "");
+            row.createCell(16).setCellValue(rowData.getStatusBooking() != null ? rowData.getStatusBooking() : "");
+            row.createCell(17).setCellValue(rowData.getTotalSF() != null ? rowData.getTotalSF().toString() : "");
+            row.createCell(18).setCellValue(rowData.getTotalPaid() != null ? rowData.getTotalPaid().toString() : "");
+        }
+
+    }
+
+    private void createSheetByKlasifikasi(Workbook workbook, String sheetName, List<Schedule> data) {
+        Sheet sheet = workbook.createSheet(sheetName);
+        int rowIndex = 0;
+        Row headerRow = sheet.createRow(rowIndex++);
+        headerRow.createCell(0).setCellValue("No");
+        headerRow.createCell(1).setCellValue("Nama Penyewa");
+        headerRow.createCell(2).setCellValue("Nama Kegiatan");
+        headerRow.createCell(3).setCellValue("Venue");
+        headerRow.createCell(4).setCellValue("Tanggal");
+        headerRow.createCell(5).setCellValue("Jenis");
+        headerRow.createCell(6).setCellValue("Harga");
+
+        for (Schedule rowData : data) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(rowIndex);
+
+            row.createCell(1).setCellValue(rowData.getCustomerName() != null ? rowData.getCustomerName() : "");
+            row.createCell(2).setCellValue(rowData.getDescriptionEvent() != null ? rowData.getDescriptionEvent() : "");
+            row.createCell(3).setCellValue(rowData.getVenues() != null && !rowData.getVenues().isEmpty()
+                    ? rowData.getVenues().get(0).getVenue()
+                    : "");
+            row.createCell(4).setCellValue(rowData.getScheduleStartDate() != null ? rowData.getScheduleStartDate().toString() : "");
+            row.createCell(5).setCellValue(rowData.getType() != null ? rowData.getType() : "");
+            row.createCell(6).setCellValue(rowData.getTotalPaid() != null ? rowData.getTotalPaid().toString() : "");
+        }
+
+    }
+
+    private void createSheetByCategory(Workbook workbook, String sheetName, List<Schedule> data) {
+        Sheet sheet = workbook.createSheet(sheetName);
+        int rowIndex = 0;
+        Row headerRow = sheet.createRow(rowIndex++);
+        headerRow.createCell(0).setCellValue("No");
+        headerRow.createCell(1).setCellValue("Nama Penyewa");
+        headerRow.createCell(2).setCellValue("Nama Kegiatan");
+        headerRow.createCell(3).setCellValue("Venue");
+        headerRow.createCell(4).setCellValue("Tanggal");
+        headerRow.createCell(5).setCellValue("Jenis");
+        headerRow.createCell(6).setCellValue("Harga");
+
+        for (Schedule rowData : data) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(rowIndex);
+
+            row.createCell(1).setCellValue(rowData.getCustomerName() != null ? rowData.getCustomerName() : "");
+            row.createCell(2).setCellValue(rowData.getDescriptionEvent() != null ? rowData.getDescriptionEvent() : "");
+            row.createCell(3).setCellValue(rowData.getVenues() != null && !rowData.getVenues().isEmpty()
+                    ? rowData.getVenues().get(0).getVenue()
+                    : "");
+            row.createCell(4).setCellValue(rowData.getScheduleStartDate() != null ? rowData.getScheduleStartDate().toString() : "");
+            row.createCell(5).setCellValue(rowData.getType() != null ? rowData.getType() : "");
+            row.createCell(6).setCellValue(rowData.getTotalPaid() != null ? rowData.getTotalPaid().toString() : "");
+        }
+
     }
 
 }

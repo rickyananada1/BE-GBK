@@ -7,13 +7,16 @@ import com.dev.gbk.utils.ResponseHandler;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Locale;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -126,4 +129,27 @@ public class ScheduleController {
         scheduleService.delete(id);
         return ResponseHandler.generateResponse("Success delete schedule", HttpStatus.OK, null);
     }
+
+    @GetMapping("/export/excel")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DATA_SCHEDULE')")
+    public ResponseEntity<byte[]> exportExcel() {
+        try {
+            byte[] excelFile = scheduleService.generateExcelFile();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+            headers.setContentDispositionFormData("attachment", "Data Transaksi.xlsx");
+
+            return new ResponseEntity<>(excelFile, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+//
+//    public ResponseEntity<Object> exportToExcel() {
+//        return ResponseHandler.generateResponse("Success export schedules to excel", HttpStatus.OK,
+//                scheduleService.exportToExcel());
+//    }
 }
