@@ -94,4 +94,7 @@ public class ScheduleRequest {
 
     @JsonProperty("UnitId")
     private Long unitId;
+
+    @JsonProperty("SizeOfField")
+    private Long sizeOfField;
 }

@@ -166,4 +166,7 @@ public class Schedule implements Serializable {
     @LastModifiedDate
     @Column(name = "updated_by")
     private Long updatedBy;
+
+    @Column(name = "size_of_field")
+    private Long sizeOfField;
 }

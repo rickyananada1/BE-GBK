@@ -170,6 +170,7 @@ public class ScheduleService {
                 .customerPhone(scheduleRequest.getCustomerPhone())
                 .scheduleTime(scheduleRequest.getScheduleTime())
                 .venues(venues)
+                .sizeOfField(scheduleRequest.getSizeOfField())
                 .build();
         
         if (scheduleRequest.getScheduleStartInLoad() != null && scheduleRequest.getScheduleEndInLoad() != null) {
@@ -228,6 +229,7 @@ public class ScheduleService {
         schedule.setCustomerEmail(scheduleRequest.getCustomerEmail());
         schedule.setCustomerPhone(scheduleRequest.getCustomerPhone());
         schedule.setVenues(venues);
+        schedule.setSizeOfField(scheduleRequest.getSizeOfField());
 
         if (scheduleRequest.getScheduleStartDate() != null && scheduleRequest.getScheduleEndDate() != null) {
             schedule.setScheduleStartDate(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartDate()));
