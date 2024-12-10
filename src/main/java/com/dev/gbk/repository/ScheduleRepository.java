@@ -187,15 +187,18 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
             "ORDER BY x.start_date, x.id", nativeQuery = true)
         List<Object[]> getSessionUsed(@Param("venue") String venue, @Param("startDate") LocalDate startDate);
 
-        @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END " + 
-               "FROM schedules s " + 
-               "JOIN schedules_venues sv ON s.id = sv.schedule_id " + 
-               "JOIN venues v ON v.id = sv.venue_id " + 
-               "JOIN units u ON u.id = v.unit_id " + 
-               "WHERE s.schedule_start_in_load = :scheduleStartInLoad " +
-               "AND s.schedule_end_in_load = :scheduleEndInLoad", nativeQuery = true)
-        Integer existsByScheduleStartInLoadAndScheduleEndInLoad(@Param("scheduleStartInLoad") LocalDate scheduleStartInLoad, 
-                                                        @Param("scheduleEndInLoad") LocalDate scheduleEndInLoad);
+        @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END " +
+                "FROM schedules s " +
+                "JOIN schedules_venues sv ON s.id = sv.schedule_id " +
+                "JOIN venues v ON v.id = sv.venue_id " +
+                "WHERE s.schedule_start_in_load = :scheduleStartInLoad " +
+                "AND s.schedule_end_in_load = :scheduleEndInLoad " +
+                "AND v.id IN :venueIds", nativeQuery = true)
+        Integer existsByScheduleStartInLoadAndScheduleEndInLoadAndVenues(
+                @Param("scheduleStartInLoad") LocalDate scheduleStartInLoad,
+                @Param("scheduleEndInLoad") LocalDate scheduleEndInLoad,
+                @Param("venueIds") List<Long> venueIds);
+
 
         @Query(value = "SELECT s.* " +
                 "FROM schedules s " +

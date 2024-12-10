@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.dev.gbk.dto.ScheduleRequest;
 
@@ -178,19 +179,20 @@ public class ScheduleService {
                 .venues(venues)
                 .sizeOfField(scheduleRequest.getSizeOfField())
                 .build();
-        
+
         if (scheduleRequest.getScheduleStartInLoad() != null && scheduleRequest.getScheduleEndInLoad() != null) {
             LocalDate requestStartInLoad = Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartInLoad());
             LocalDate requestEndInLoad = Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndInLoad());
-    
+
             schedule.setScheduleStartInLoad(requestStartInLoad);
             schedule.setScheduleEndInLoad(requestEndInLoad);
-    
-            if (checkScheduleExists(requestStartInLoad, requestEndInLoad)) {
-                throw new IllegalStateException("Jadwal sudah ada");
+
+            if (checkScheduleExists(requestStartInLoad, requestEndInLoad, venues)) {
+                throw new IllegalStateException("Jadwal sudah ada untuk salah satu venue");
             }
         }
-    
+
+
         if (scheduleRequest.getScheduleStartOutLoad() != null && scheduleRequest.getScheduleEndOutLoad() != null) {
             schedule.setScheduleStartOutLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleStartOutLoad()));
             schedule.setScheduleEndOutLoad(Utils.convertStringToLocalDate(scheduleRequest.getScheduleEndOutLoad()));
@@ -202,12 +204,18 @@ public class ScheduleService {
         }
     
         return scheduleRepository.save(schedule);
-    }    
-
-    public boolean checkScheduleExists(LocalDate scheduleStartInLoad, LocalDate scheduleEndInLoad) {
-        return scheduleRepository.existsByScheduleStartInLoadAndScheduleEndInLoad(scheduleStartInLoad, scheduleEndInLoad) == 1;
     }
-    
+
+    public boolean checkScheduleExists(LocalDate scheduleStartInLoad, LocalDate scheduleEndInLoad, List<Venue> venues) {
+        List<Long> venueIds = venues.stream()
+                .map(Venue::getId)
+                .collect(Collectors.toList());
+
+        return scheduleRepository.existsByScheduleStartInLoadAndScheduleEndInLoadAndVenues(
+                scheduleStartInLoad, scheduleEndInLoad, venueIds) == 1;
+    }
+
+
 
     public Schedule update(Long id, ScheduleRequest scheduleRequest) {
         Schedule schedule = findById(id);
