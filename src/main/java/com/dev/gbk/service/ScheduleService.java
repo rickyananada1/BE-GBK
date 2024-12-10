@@ -187,8 +187,8 @@ public class ScheduleService {
             schedule.setScheduleStartInLoad(requestStartInLoad);
             schedule.setScheduleEndInLoad(requestEndInLoad);
 
-            if (checkScheduleExists(requestStartInLoad, requestEndInLoad, venues)) {
-                throw new IllegalStateException("Jadwal sudah ada untuk salah satu venue");
+            if (checkScheduleExists(requestStartInLoad, requestEndInLoad, venues, schedule.getSession())) {
+                throw new ResourceNotFoundException("Schedule already exists");
             }
         }
 
@@ -206,13 +206,13 @@ public class ScheduleService {
         return scheduleRepository.save(schedule);
     }
 
-    public boolean checkScheduleExists(LocalDate scheduleStartInLoad, LocalDate scheduleEndInLoad, List<Venue> venues) {
+    public boolean checkScheduleExists(LocalDate scheduleStartInLoad, LocalDate scheduleEndInLoad, List<Venue> venues,List<String> sessionSchedule) {
         List<Long> venueIds = venues.stream()
                 .map(Venue::getId)
                 .collect(Collectors.toList());
 
         return scheduleRepository.existsByScheduleStartInLoadAndScheduleEndInLoadAndVenues(
-                scheduleStartInLoad, scheduleEndInLoad, venueIds) == 1;
+                scheduleStartInLoad, scheduleEndInLoad,sessionSchedule, venueIds) == 1;
     }
 
 

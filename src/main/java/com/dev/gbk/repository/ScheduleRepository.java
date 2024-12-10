@@ -191,12 +191,15 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
                 "FROM schedules s " +
                 "JOIN schedules_venues sv ON s.id = sv.schedule_id " +
                 "JOIN venues v ON v.id = sv.venue_id " +
+                "JOIN schedule_sessions ss on ss.schedule_id = s.id "+
                 "WHERE s.schedule_start_in_load = :scheduleStartInLoad " +
                 "AND s.schedule_end_in_load = :scheduleEndInLoad " +
+                "AND ss.session in :sessionSchedule"+
                 "AND v.id IN :venueIds", nativeQuery = true)
         Integer existsByScheduleStartInLoadAndScheduleEndInLoadAndVenues(
                 @Param("scheduleStartInLoad") LocalDate scheduleStartInLoad,
                 @Param("scheduleEndInLoad") LocalDate scheduleEndInLoad,
+                @Param("sessionSchedule") List<String> sessionSchedule,
                 @Param("venueIds") List<Long> venueIds);
 
 
