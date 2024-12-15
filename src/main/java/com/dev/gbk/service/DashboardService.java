@@ -77,24 +77,39 @@ public class DashboardService {
 
         public Map<String, BigDecimal> getUsageByProfileEvent(LocalDate startDate, LocalDate endDate,
                         String unitNames) {
+                // Memecah unitNames menjadi list jika ada lebih dari satu
                 List<String> units = unitNames != null ? Arrays.asList(unitNames.split(",")) : null;
+
+                // Mendapatkan data unit berdasarkan nama
                 Unit unitData = this.unitRepository.findByName(unitNames).orElse(null);
-                Map<String, BigDecimal> profile = new HashMap<>();
+                Map<String, Long> aggregatedProfileEventCount = new HashMap<>();
+
+                // Memproses jika unit ditemukan
                 if (Objects.nonNull(unitData)) {
-                        for(Venue venue : unitData.getVenues()) {
-                                List<Schedule> schedules = scheduleRepository.findSingleSchedules(venue.getVenue(), startDate, endDate);
-                                Map<String, Long> profileEventCount = schedules.stream()
-                                    .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
-                                    .collect(Collectors.groupingBy(Schedule::getProfileEvent, Collectors.counting()));
+                        for (Venue venue : unitData.getVenues()) {
+                        // Mendapatkan jadwal untuk venue tertentu
+                        List<Schedule> schedules = scheduleRepository.findSingleSchedules(venue.getVenue(), startDate, endDate);
 
-                                long totalEvents = profileEventCount.values().stream().mapToLong(Long::longValue).sum();
+                        // Mengelompokkan dan menghitung event berdasarkan profileEvent
+                        Map<String, Long> profileEventCount = schedules.stream()
+                                .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
+                                .filter(schedule -> schedule.getProfileEvent() != null) // Menghindari null keys
+                                .collect(Collectors.groupingBy(Schedule::getProfileEvent, Collectors.counting()));
 
-                                profile.putAll(calculatePercentages(profileEventCount, totalEvents));
+                        // Menggabungkan hasil dari venue ke peta agregat
+                        profileEventCount.forEach((key, count) -> 
+                                aggregatedProfileEventCount.merge(key, count, Long::sum));
                         }
                 }
-                return profile;
 
+                // Menghitung total dari semua event dalam unit
+                long totalEvents = aggregatedProfileEventCount.values().stream().mapToLong(Long::longValue).sum();
+
+                // Menghitung persentase untuk seluruh unit
+                return calculatePercentages(aggregatedProfileEventCount, totalEvents);
         }
+
+
 
         public Map<String, Integer> getTotalPaidGroupedByProfileEvent(LocalDate startDate, LocalDate endDate,
                         String unitNames) {
@@ -427,14 +442,40 @@ public class DashboardService {
         // === Helper Methods ===
 
         private <T> Map<String, BigDecimal> calculatePercentages(Map<String, T> countMap, long total) {
+                if (total == 0 || countMap == null || countMap.isEmpty()) {
+                    System.out.println("Total is zero or countMap is null/empty. Returning empty map.");
+                    return Collections.emptyMap();
+                }
+            
+                System.out.println("Total: " + total);
+                System.out.println("Count Map: " + countMap);
+            
                 return countMap.entrySet().stream()
-                                .collect(Collectors.toMap(
-                                                Map.Entry::getKey,
-                                                entry -> BigDecimal
-                                                                .valueOf(((Number) entry.getValue()).doubleValue()
-                                                                                * 100.0 / total)
-                                                                .setScale(2, RoundingMode.HALF_UP)));
-        }
+                        .filter(entry -> {
+                            boolean isKeyNotNull = entry.getKey() != null;
+                            if (!isKeyNotNull) {
+                                System.out.println("Skipping entry with null key: " + entry);
+                            }
+                            return isKeyNotNull;
+                        })
+                        .collect(Collectors.toMap(
+                                Map.Entry::getKey,
+                                entry -> {
+                                    try {
+                                        double value = ((Number) entry.getValue()).doubleValue();
+                                        BigDecimal percentage = BigDecimal.valueOf(value * 100.0 / total)
+                                                .setScale(2, RoundingMode.HALF_UP);
+                                        System.out.println("Calculated percentage for key " + entry.getKey() + ": " + percentage);
+                                        return percentage;
+                                    } catch (ClassCastException e) {
+                                        System.err.println("Invalid value type for key " + entry.getKey() + ": " + entry.getValue());
+                                        throw e;
+                                    }
+                                }
+                        ));
+            }
+            
+            
 
         private BigDecimal safeBigDecimalFromDouble(Double value) {
                 return (value != null) ? BigDecimal.valueOf(value) : BigDecimal.ZERO;
