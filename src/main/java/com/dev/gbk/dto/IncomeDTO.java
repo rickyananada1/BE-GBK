@@ -19,6 +19,9 @@ public class IncomeDTO {
     @JsonProperty("retailIncome")
     private BigDecimal retailIncome;
 
+    @JsonProperty("retailProyeksi")
+    private BigDecimal retailProyeksi;
+
     @JsonProperty("retailOccupied")
     private BigDecimal retailOccupied;
 
@@ -26,7 +29,10 @@ public class IncomeDTO {
     private BigDecimal retailNonOccupied;
 
     @JsonProperty("maintenanceLapangan")
-    private BigDecimal maintenanceLapangan;
+    private Integer maintenanceLapangan;
+
+    @JsonProperty("maintenanceVenue")
+    private Integer maintenanceVenue;
 
     @JsonProperty("maintenanceParkir")
     private BigDecimal totalMaintenanceParkir;
@@ -49,8 +55,11 @@ public class IncomeDTO {
     @JsonProperty("totalpendapatangamestimnasproyeksi")
     private BigDecimal totalPendapatanGamestimnasProyeksi;
 
-    @JsonProperty("totalpendapatanmaintenance")
-    private BigDecimal totalPendapatanMaintenance;
+    @JsonProperty("totalpendapatanmaintenancelapangan")
+    private BigDecimal totalPendapatanMaintenancelapangan;
+
+    @JsonProperty("totalpendapatanmaintenancevenue")
+    private BigDecimal totalPendapatanMaintenanceVenue;
 
     @JsonProperty("totalpendapataneventsolahraga")
     private BigDecimal totalPendapatanEventsOlahraga;

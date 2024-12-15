@@ -143,16 +143,19 @@ public class DashboardService {
                 List<String> units = unitNames != null ? Arrays.asList(unitNames.split(",")) : null;
                 Unit unitData = this.unitRepository.findByName(unitNames).orElse(null);
                 BigDecimal retailIncome = safeBigDecimalFromDouble(
-                                retailRepository.sumPriceByStatusAndDateRangeAndArea("Sewa", unitNames));
+                                retailRepository.sumPriceByStatusAndDateRangeAndArea("Paid", unitNames));
+                BigDecimal retailProyeksi= safeBigDecimalFromDouble(
+                                retailRepository.sumPriceByStatusAndDateRangeAndArea1("Soft Boking", unitNames));
 
                 BigDecimal retailOccupied = safeBigDecimalFromDouble(
-                                retailRepository.sumSizeByStatusAndDateRangeAndArea("Sewa", unitNames));
+                                retailRepository.sumSizeByStatusAndDateRangeAndArea1("Paid", unitNames));
 
                 BigDecimal retailNonOccupied = safeBigDecimalFromDouble(
-                                retailRepository.sumSizeByStatusAndDateRangeAndArea("Belum Sewa",
+                                retailRepository.sumSizeByStatusAndDateRangeAndArea("Soft Boking","Belum Sewa",
                                                 unitNames));
 
-                BigDecimal maintenanceVenue = BigDecimal.ZERO;
+                Integer maintenanceVenue =0;
+                Integer maintenanceLapangan = 0;
                 BigDecimal sewaLahan = BigDecimal.ZERO;
                 BigDecimal sewaLahanProyeksi = BigDecimal.ZERO;
                 BigDecimal gamesUmum = BigDecimal.ZERO;
@@ -167,9 +170,9 @@ public class DashboardService {
                         List<Venue> venues = unitData.getVenues(); // Assuming Unit entity has a list of Venues
                         if (!venues.isEmpty()) {
                                 for(Venue venue : venues) {
-                                        BigDecimal maintenancePerVenue = safeBigDecimalFromDouble(
-                                            scheduleRepository.sumMaintenanceByType(
-                                                venue.getVenue(), startDate, endDate));
+                                        // BigDecimal maintenancePerVenue = safeBigDecimalFromDouble(
+                                        //     scheduleRepository.sumMaintenanceByType(
+                                        //         venue.getVenue(), startDate, endDate));
                                         List<Object> response = scheduleRepository.sumSewaLahanByStatusPayment(startDate, endDate, venue.getVenue());
 
                                         BigDecimal sewaLahanPerVenue = safeBigDecimalFromDouble(response.stream()
@@ -222,7 +225,7 @@ public class DashboardService {
                                             .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
                                             .sum());
 
-                                        maintenanceVenue = maintenanceVenue.add(maintenancePerVenue);
+                                        // maintenanceVenue = maintenanceVenue.add(maintenancePerVenue);
                                         sewaLahan = sewaLahan.add(sewaLahanPerVenue);
                                         sewaLahanProyeksi = sewaLahanProyeksi.add(sewaLahanProyeksiPerVenue);
                                         gamesUmum = gamesUmum.add(gamesUmumPerVenue);
@@ -237,37 +240,60 @@ public class DashboardService {
                         }
                 }
 
-                BigDecimal totalIncomeForMaintenance = BigDecimal.ZERO;
+                BigDecimal totalIncomeMaintenanceForLapangan = BigDecimal.ZERO;
+                BigDecimal totalIncomeMaintenanceForVenue = BigDecimal.ZERO;
+
                 if (Objects.nonNull(unitData)) {
-                        for(Venue venue: unitData.getVenues()) {
+                        for (Venue venue : unitData.getVenues()) {
                                 // Get Total Pendapatan Maintenance based on day
                                 List<Schedule> scheduleBasedOnVenue =
-                                    scheduleRepository.findSingleSchedulesMaintenance(
+                                scheduleRepository.findSingleSchedulesMaintenance(
                                         venue.getVenue(), startDate, endDate);
-                                List<String> days = new ArrayList<>();
+
+                                // Map untuk mengelompokkan sesi berdasarkan hari
+                                Map<String, List<Schedule>> sessionsByDay = new HashMap<>();
                                 for (Schedule schedule : scheduleBasedOnVenue) {
                                         if (schedule.getStatusPayment().equals("Maintenance")) {
-                                                days.addAll(getDayNamesBetween(schedule.getScheduleStartDate(),
-                                                    schedule.getScheduleEndDate()));
+                                                List<String> days = getDayNamesBetween(schedule.getScheduleStartDate(), schedule.getScheduleEndDate());
+                                                for (String day : days) {
+                                                        sessionsByDay.computeIfAbsent(day, k -> new ArrayList<>()).add(schedule);
+                                                }
                                         }
                                 }
-                                BigDecimal totalIncomeForMaintenancePerVenue = BigDecimal.ZERO;
-                                for (String day : days) {
+
+                                // Proses sesi berdasarkan hari
+                                for (Map.Entry<String, List<Schedule>> entry : sessionsByDay.entrySet()) {
+                                        String day = entry.getKey();
+                                        List<Schedule> schedules = entry.getValue();
+
+                                        // Hitung jumlah sesi untuk hari tersebut
+                                        int totalSessions = schedules.size();
                                         BigDecimal priceForMaintenance = systemProperties.getMaintenance().get(day);
-                                        totalIncomeForMaintenancePerVenue = totalIncomeForMaintenancePerVenue.add(priceForMaintenance);
+
+                                        if (totalSessions < 8) {
+                                                // totalTerpakai maintenanceLapangan hanya totalnya aja bukan per venue
+                                                maintenanceLapangan = maintenanceLapangan + 1;
+                                                // Jika sesi kurang dari 8, tambahkan ke pendapatan Lapangan
+                                                totalIncomeMaintenanceForLapangan = totalIncomeMaintenanceForLapangan.add(priceForMaintenance.multiply(BigDecimal.valueOf(totalSessions)));
+                                        } else  {
+                                                // Jika sesi sama dengan 8, tambahkan ke pendapatan Venue
+                                                maintenanceVenue = maintenanceVenue + 1;
+                                                totalIncomeMaintenanceForVenue = totalIncomeMaintenanceForVenue.add(priceForMaintenance);
+                                        }
                                 }
-                                totalIncomeForMaintenance = totalIncomeForMaintenance.add(totalIncomeForMaintenancePerVenue);
                         }
                 }
 
                 long monthsBetween = calculateMonthsBetween(startDate, endDate);
                 BigDecimal totalParkingFee = MONTHLY_PARKING_FEE.multiply(BigDecimal.valueOf(monthsBetween));
 
-                return new IncomeDTO(retailIncome, retailOccupied, retailNonOccupied,
-                                maintenanceVenue, totalParkingFee, sewaLahan, sewaLahanProyeksi, gamesUmum,
-                                gamesUmumProyeksi, gamesTimnas, gamesTimnasProyeksi, totalIncomeForMaintenance,
+                return new IncomeDTO(retailIncome, retailProyeksi,retailOccupied, retailNonOccupied,
+                                maintenanceLapangan,maintenanceVenue, totalParkingFee, sewaLahan, sewaLahanProyeksi, gamesUmum,
+                                gamesUmumProyeksi, gamesTimnas, gamesTimnasProyeksi, totalIncomeMaintenanceForLapangan,
+                                totalIncomeMaintenanceForVenue,
                                 events, eventsProyeksi, eventsNon, eventsProyeksiNon);
         }
+
 
         private List<String> getDayNamesBetween(LocalDate startDate, LocalDate endDate) {
                 List<String> dayNames = new ArrayList<>();
