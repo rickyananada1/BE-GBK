@@ -783,8 +783,10 @@ public class DashboardService {
                 List<CardSewaLahanDTO> allDetails = new ArrayList<>();
 
                 for (Venue venue : venues) {
-                        Long venueTotal = scheduleRepository.getOverallPercentage(venue.getVenue(), startDate, endDate);
-                        List<CardSewaLahanDTO> venueDetails = scheduleRepository.getSewaLahanCardData(venue.getVenue(), startDate, endDate);
+                        List<String> getVenue = new ArrayList<>();
+                        getVenue.add(venue.getVenue());
+                        Long venueTotal = scheduleRepository.getOverallPercentage(getVenue, startDate, endDate);
+                        List<CardSewaLahanDTO> venueDetails = scheduleRepository.getSewaLahanCardData(getVenue, startDate, endDate);
 
                         if (venueTotal != null) {
                                 total += venueTotal;
