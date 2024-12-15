@@ -1,5 +1,8 @@
 package com.dev.gbk.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,19 +36,39 @@ public class MasterRetailController {
     @GetMapping
     public ResponseEntity<Object> findAll(@RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "size", required = false) Integer size) {
+            @RequestParam(value = "size", required = false) Integer size,
+            @RequestParam(value = "unit", required = false) String unitString) {
+     List<String> unitList = new ArrayList<>();
+        String unitName = null;
+
+        if (unitString != null && !unitString.isEmpty()) {
+            String[] units = unitString.split(",");
+
+            boolean hasNumeric = false;
+
+            for (String unit : units) {
+                unit = unit.trim();
+                if (unit.matches("\\d+")) {
+                    hasNumeric = true;
+                    unitList.add(unit);
+                } else {
+                    unitName = unit;
+                }
+            }
+
+        }
+
         if (page == null && size == null) {
             return ResponseHandler.generateResponse("Success get all retails", HttpStatus.OK,
-                    masterRetailService.findAll(search));
+            masterRetailService.findAll(search, unitList, unitName));
         }
 
         if (page == null)
             page = 0;
         if (size == null)
             size = 10;
-
         return ResponseHandler.generateResponse("Success get all retails", HttpStatus.OK,
-                masterRetailService.findAll(search, page, size));
+        masterRetailService.findAll(search, page, size, unitList, unitName));
     }
 
 
