@@ -63,8 +63,7 @@ import lombok.NoArgsConstructor;
                         "AND s.status_booking = 'Processing' " +
                         "AND v2.venue in :unit " +
                         "AND s.start_date >= :startDate " +
-                        "AND s.end_date <= :endDate " +
-                        "GROUP BY s.start_date",
+                        "AND s.end_date <= :endDate " ,
                 resultSetMapping = "CardSewaLahanDTOMapping"
         )
 })
