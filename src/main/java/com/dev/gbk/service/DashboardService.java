@@ -400,8 +400,8 @@ public class DashboardService {
                 List<CardEventDTO> allEvents = new ArrayList<>();
 
                 for (Venue venue : venues) {
-                        if (venue.getIsEligibleSession()) {
-                        }
+                        // if (venue.getIsEligibleSession()) {
+                        // }
                         List<Schedule> schedules = scheduleRepository.findSingleSchedules(venue.getVenue(), startDate, endDate);
 
                         Map<String, CardEventDTO> eventMap = schedules.stream()
