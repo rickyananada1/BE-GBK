@@ -152,23 +152,24 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
             @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
         @Query(value = "SELECT COUNT(s.start_date) " +
-                "FROM schedules s " +
-                "INNER JOIN schedules_venues sv ON s.id = sv.schedule_id " +
-                "JOIN schedule_times st ON s.id = st.schedule_id " +
-                "JOIN venues v2 ON sv.venue_id = v2.id " +
-                "WHERE s.category = 'Sewa Lahan' " +
-                "AND s.status_payment = 'Paid' " +
-                "AND s.status_booking = 'Processing' " +
-                "AND (:unit IS NULL OR :unit = '' OR v2.venue = :unit) " +
-                "AND s.start_date >= :startDate " +
-                "AND s.end_date <= :endDate " +  // Added space before this line
-                "GROUP BY s.start_date", nativeQuery = true)
-        Long getOverallPercentage(@Param("unit") String unit,
-                                  @Param("startDate") LocalDate startDate,
-                                  @Param("endDate") LocalDate endDate);
+            "FROM schedules s " +
+            "INNER JOIN schedules_venues sv ON s.id = sv.schedule_id " +
+            "JOIN schedule_times st ON s.id = st.schedule_id " +
+            "JOIN venues v2 ON sv.venue_id = v2.id " +
+            "WHERE s.category = 'Sewa Lahan' " +
+            "AND s.status_payment = 'Paid' " +
+            "AND s.status_booking = 'Processing' " +
+            "AND v2.venue IN :unit " +
+            "AND s.start_date >= :startDate " +
+            "AND s.end_date <= :endDate " +
+            "GROUP BY v2.venue, s.start_date", nativeQuery = true)
+        Long getOverallPercentage(@Param("unit") List<String> unit,
+                        @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
+
 
         @Query(name = "getSewaLahanCardData", nativeQuery = true)
-        List<CardSewaLahanDTO> getSewaLahanCardData(@Param("unit") String unit,
+        List<CardSewaLahanDTO> getSewaLahanCardData(@Param("unit") List<String> unit,
                                                     @Param("startDate") LocalDate startDate,
                                                     @Param("endDate") LocalDate endDate);
 

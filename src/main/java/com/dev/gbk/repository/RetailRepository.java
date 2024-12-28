@@ -15,17 +15,32 @@ public interface RetailRepository extends JpaRepository<Retail, Long>, JpaSpecif
 
         @Query("SELECT COALESCE(SUM(r.price), 0) FROM Retail r " +
                 "JOIN r.masterRetail mr " +
-                "WHERE r.statusBooking = :status " +
+                "WHERE r.statusPayment = :status " +
                 "AND (:area IS NOT NULL AND :area <> '' AND mr.area = :area)")
         Double sumPriceByStatusAndDateRangeAndArea(@Param("status") String status,
+                                                   @Param("area") String area);
+        @Query("SELECT COALESCE(SUM(r.price), 0) FROM Retail r " +
+                "JOIN r.masterRetail mr " +
+                "WHERE r.statusPayment = :status " +
+                "AND (:area IS NOT NULL AND :area <> '' AND mr.area = :area)")
+        Double sumPriceByStatusAndDateRangeAndArea1(@Param("status") String status,
                                                    @Param("area") String area);
 
         @Query("SELECT COALESCE(SUM(r.size), 0) FROM Retail r " +
                 "JOIN r.masterRetail mr " +
-                "WHERE r.statusBooking = :status " +
+                "WHERE r.statusPayment = :status " +
+                "AND r.statusBooking = :statusBooking " +
                 "AND (:area IS NOT NULL AND :area <> '' AND mr.area = :area)")
         Double sumSizeByStatusAndDateRangeAndArea(@Param("status") String status,
+                                                  @Param("statusBooking") String statusBooking,
                                                   @Param("area") String area);
+
+        @Query("SELECT COALESCE(SUM(r.size), 0) FROM Retail r " +
+        "JOIN r.masterRetail mr " +
+        "WHERE r.statusPayment = :status " +
+        "AND (:area IS NOT NULL AND :area <> '' AND mr.area = :area)")
+        Double sumSizeByStatusAndDateRangeAndArea1(@Param("status") String status,
+                                                @Param("area") String area);
 
         @Query(value = "SELECT " +
                 "    CASE WHEN COUNT(*) = 0 THEN 0 ELSE (COUNT(CASE WHEN r.status_booking = 'Sewa' THEN 1 ELSE NULL END) / COUNT(*) * 100.0) END AS percentage " +

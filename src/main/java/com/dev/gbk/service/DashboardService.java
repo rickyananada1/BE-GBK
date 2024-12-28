@@ -77,24 +77,39 @@ public class DashboardService {
 
         public Map<String, BigDecimal> getUsageByProfileEvent(LocalDate startDate, LocalDate endDate,
                         String unitNames) {
+                // Memecah unitNames menjadi list jika ada lebih dari satu
                 List<String> units = unitNames != null ? Arrays.asList(unitNames.split(",")) : null;
+
+                // Mendapatkan data unit berdasarkan nama
                 Unit unitData = this.unitRepository.findByName(unitNames).orElse(null);
-                Map<String, BigDecimal> profile = new HashMap<>();
+                Map<String, Long> aggregatedProfileEventCount = new HashMap<>();
+
+                // Memproses jika unit ditemukan
                 if (Objects.nonNull(unitData)) {
-                        for(Venue venue : unitData.getVenues()) {
-                                List<Schedule> schedules = scheduleRepository.findSingleSchedules(venue.getVenue(), startDate, endDate);
-                                Map<String, Long> profileEventCount = schedules.stream()
-                                    .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
-                                    .collect(Collectors.groupingBy(Schedule::getProfileEvent, Collectors.counting()));
+                        for (Venue venue : unitData.getVenues()) {
+                        // Mendapatkan jadwal untuk venue tertentu
+                        List<Schedule> schedules = scheduleRepository.findSingleSchedules(venue.getVenue(), startDate, endDate);
 
-                                long totalEvents = profileEventCount.values().stream().mapToLong(Long::longValue).sum();
+                        // Mengelompokkan dan menghitung event berdasarkan profileEvent
+                        Map<String, Long> profileEventCount = schedules.stream()
+                                .filter(schedule -> PAID_STATUS.equals(schedule.getStatusPayment()))
+                                .filter(schedule -> schedule.getProfileEvent() != null) // Menghindari null keys
+                                .collect(Collectors.groupingBy(Schedule::getProfileEvent, Collectors.counting()));
 
-                                profile.putAll(calculatePercentages(profileEventCount, totalEvents));
+                        // Menggabungkan hasil dari venue ke peta agregat
+                        profileEventCount.forEach((key, count) -> 
+                                aggregatedProfileEventCount.merge(key, count, Long::sum));
                         }
                 }
-                return profile;
 
+                // Menghitung total dari semua event dalam unit
+                long totalEvents = aggregatedProfileEventCount.values().stream().mapToLong(Long::longValue).sum();
+
+                // Menghitung persentase untuk seluruh unit
+                return calculatePercentages(aggregatedProfileEventCount, totalEvents);
         }
+
+
 
         public Map<String, Integer> getTotalPaidGroupedByProfileEvent(LocalDate startDate, LocalDate endDate,
                         String unitNames) {
@@ -128,16 +143,19 @@ public class DashboardService {
                 List<String> units = unitNames != null ? Arrays.asList(unitNames.split(",")) : null;
                 Unit unitData = this.unitRepository.findByName(unitNames).orElse(null);
                 BigDecimal retailIncome = safeBigDecimalFromDouble(
-                                retailRepository.sumPriceByStatusAndDateRangeAndArea("Sewa", unitNames));
+                                retailRepository.sumPriceByStatusAndDateRangeAndArea("Paid", unitNames));
+                BigDecimal retailProyeksi= safeBigDecimalFromDouble(
+                                retailRepository.sumPriceByStatusAndDateRangeAndArea1("Soft Boking", unitNames));
 
                 BigDecimal retailOccupied = safeBigDecimalFromDouble(
-                                retailRepository.sumSizeByStatusAndDateRangeAndArea("Sewa", unitNames));
+                                retailRepository.sumSizeByStatusAndDateRangeAndArea1("Paid", unitNames));
 
                 BigDecimal retailNonOccupied = safeBigDecimalFromDouble(
-                                retailRepository.sumSizeByStatusAndDateRangeAndArea("Belum Sewa",
+                                retailRepository.sumSizeByStatusAndDateRangeAndArea("Soft Boking","Belum Sewa",
                                                 unitNames));
 
-                BigDecimal maintenanceVenue = BigDecimal.ZERO;
+                Integer maintenanceVenue =0;
+                Integer maintenanceLapangan = 0;
                 BigDecimal sewaLahan = BigDecimal.ZERO;
                 BigDecimal sewaLahanProyeksi = BigDecimal.ZERO;
                 BigDecimal gamesUmum = BigDecimal.ZERO;
@@ -152,9 +170,9 @@ public class DashboardService {
                         List<Venue> venues = unitData.getVenues(); // Assuming Unit entity has a list of Venues
                         if (!venues.isEmpty()) {
                                 for(Venue venue : venues) {
-                                        BigDecimal maintenancePerVenue = safeBigDecimalFromDouble(
-                                            scheduleRepository.sumMaintenanceByType(
-                                                venue.getVenue(), startDate, endDate));
+                                        // BigDecimal maintenancePerVenue = safeBigDecimalFromDouble(
+                                        //     scheduleRepository.sumMaintenanceByType(
+                                        //         venue.getVenue(), startDate, endDate));
                                         List<Object> response = scheduleRepository.sumSewaLahanByStatusPayment(startDate, endDate, venue.getVenue());
 
                                         BigDecimal sewaLahanPerVenue = safeBigDecimalFromDouble(response.stream()
@@ -207,7 +225,7 @@ public class DashboardService {
                                             .mapToDouble(obj -> ((Number) ((Object[]) obj)[1]).doubleValue())
                                             .sum());
 
-                                        maintenanceVenue = maintenanceVenue.add(maintenancePerVenue);
+                                        // maintenanceVenue = maintenanceVenue.add(maintenancePerVenue);
                                         sewaLahan = sewaLahan.add(sewaLahanPerVenue);
                                         sewaLahanProyeksi = sewaLahanProyeksi.add(sewaLahanProyeksiPerVenue);
                                         gamesUmum = gamesUmum.add(gamesUmumPerVenue);
@@ -222,37 +240,60 @@ public class DashboardService {
                         }
                 }
 
-                BigDecimal totalIncomeForMaintenance = BigDecimal.ZERO;
+                BigDecimal totalIncomeMaintenanceForLapangan = BigDecimal.ZERO;
+                BigDecimal totalIncomeMaintenanceForVenue = BigDecimal.ZERO;
+
                 if (Objects.nonNull(unitData)) {
-                        for(Venue venue: unitData.getVenues()) {
+                        for (Venue venue : unitData.getVenues()) {
                                 // Get Total Pendapatan Maintenance based on day
                                 List<Schedule> scheduleBasedOnVenue =
-                                    scheduleRepository.findSingleSchedulesMaintenance(
+                                scheduleRepository.findSingleSchedulesMaintenance(
                                         venue.getVenue(), startDate, endDate);
-                                List<String> days = new ArrayList<>();
+
+                                // Map untuk mengelompokkan sesi berdasarkan hari
+                                Map<String, List<Schedule>> sessionsByDay = new HashMap<>();
                                 for (Schedule schedule : scheduleBasedOnVenue) {
                                         if (schedule.getStatusPayment().equals("Maintenance")) {
-                                                days.addAll(getDayNamesBetween(schedule.getScheduleStartDate(),
-                                                    schedule.getScheduleEndDate()));
+                                                List<String> days = getDayNamesBetween(schedule.getScheduleStartDate(), schedule.getScheduleEndDate());
+                                                for (String day : days) {
+                                                        sessionsByDay.computeIfAbsent(day, k -> new ArrayList<>()).add(schedule);
+                                                }
                                         }
                                 }
-                                BigDecimal totalIncomeForMaintenancePerVenue = BigDecimal.ZERO;
-                                for (String day : days) {
+
+                                // Proses sesi berdasarkan hari
+                                for (Map.Entry<String, List<Schedule>> entry : sessionsByDay.entrySet()) {
+                                        String day = entry.getKey();
+                                        List<Schedule> schedules = entry.getValue();
+
+                                        // Hitung jumlah sesi untuk hari tersebut
+                                        int totalSessions = schedules.size();
                                         BigDecimal priceForMaintenance = systemProperties.getMaintenance().get(day);
-                                        totalIncomeForMaintenancePerVenue = totalIncomeForMaintenancePerVenue.add(priceForMaintenance);
+
+                                        if (totalSessions < 8) {
+                                                // totalTerpakai maintenanceLapangan hanya totalnya aja bukan per venue
+                                                maintenanceLapangan = maintenanceLapangan + 1;
+                                                // Jika sesi kurang dari 8, tambahkan ke pendapatan Lapangan
+                                                totalIncomeMaintenanceForLapangan = totalIncomeMaintenanceForLapangan.add(priceForMaintenance.multiply(BigDecimal.valueOf(totalSessions)));
+                                        } else  {
+                                                // Jika sesi sama dengan 8, tambahkan ke pendapatan Venue
+                                                maintenanceVenue = maintenanceVenue + 1;
+                                                totalIncomeMaintenanceForVenue = totalIncomeMaintenanceForVenue.add(priceForMaintenance);
+                                        }
                                 }
-                                totalIncomeForMaintenance = totalIncomeForMaintenance.add(totalIncomeForMaintenancePerVenue);
                         }
                 }
 
                 long monthsBetween = calculateMonthsBetween(startDate, endDate);
                 BigDecimal totalParkingFee = MONTHLY_PARKING_FEE.multiply(BigDecimal.valueOf(monthsBetween));
 
-                return new IncomeDTO(retailIncome, retailOccupied, retailNonOccupied,
-                                maintenanceVenue, totalParkingFee, sewaLahan, sewaLahanProyeksi, gamesUmum,
-                                gamesUmumProyeksi, gamesTimnas, gamesTimnasProyeksi, totalIncomeForMaintenance,
+                return new IncomeDTO(retailIncome, retailProyeksi,retailOccupied, retailNonOccupied,
+                                maintenanceLapangan,maintenanceVenue, totalParkingFee, sewaLahan, sewaLahanProyeksi, gamesUmum,
+                                gamesUmumProyeksi, gamesTimnas, gamesTimnasProyeksi, totalIncomeMaintenanceForLapangan,
+                                totalIncomeMaintenanceForVenue,
                                 events, eventsProyeksi, eventsNon, eventsProyeksiNon);
         }
+
 
         private List<String> getDayNamesBetween(LocalDate startDate, LocalDate endDate) {
                 List<String> dayNames = new ArrayList<>();
@@ -359,8 +400,8 @@ public class DashboardService {
                 List<CardEventDTO> allEvents = new ArrayList<>();
 
                 for (Venue venue : venues) {
-                        if (venue.getIsEligibleSession()) {
-                        }
+                        // if (venue.getIsEligibleSession()) {
+                        // }
                         List<Schedule> schedules = scheduleRepository.findSingleSchedules(venue.getVenue(), startDate, endDate);
 
                         Map<String, CardEventDTO> eventMap = schedules.stream()
@@ -427,14 +468,40 @@ public class DashboardService {
         // === Helper Methods ===
 
         private <T> Map<String, BigDecimal> calculatePercentages(Map<String, T> countMap, long total) {
+                if (total == 0 || countMap == null || countMap.isEmpty()) {
+                    System.out.println("Total is zero or countMap is null/empty. Returning empty map.");
+                    return Collections.emptyMap();
+                }
+            
+                System.out.println("Total: " + total);
+                System.out.println("Count Map: " + countMap);
+            
                 return countMap.entrySet().stream()
-                                .collect(Collectors.toMap(
-                                                Map.Entry::getKey,
-                                                entry -> BigDecimal
-                                                                .valueOf(((Number) entry.getValue()).doubleValue()
-                                                                                * 100.0 / total)
-                                                                .setScale(2, RoundingMode.HALF_UP)));
-        }
+                        .filter(entry -> {
+                            boolean isKeyNotNull = entry.getKey() != null;
+                            if (!isKeyNotNull) {
+                                System.out.println("Skipping entry with null key: " + entry);
+                            }
+                            return isKeyNotNull;
+                        })
+                        .collect(Collectors.toMap(
+                                Map.Entry::getKey,
+                                entry -> {
+                                    try {
+                                        double value = ((Number) entry.getValue()).doubleValue();
+                                        BigDecimal percentage = BigDecimal.valueOf(value * 100.0 / total)
+                                                .setScale(2, RoundingMode.HALF_UP);
+                                        System.out.println("Calculated percentage for key " + entry.getKey() + ": " + percentage);
+                                        return percentage;
+                                    } catch (ClassCastException e) {
+                                        System.err.println("Invalid value type for key " + entry.getKey() + ": " + entry.getValue());
+                                        throw e;
+                                    }
+                                }
+                        ));
+            }
+            
+            
 
         private BigDecimal safeBigDecimalFromDouble(Double value) {
                 return (value != null) ? BigDecimal.valueOf(value) : BigDecimal.ZERO;
@@ -747,8 +814,10 @@ public class DashboardService {
                 List<CardSewaLahanDTO> allDetails = new ArrayList<>();
 
                 for (Venue venue : venues) {
-                        Long venueTotal = scheduleRepository.getOverallPercentage(venue.getVenue(), startDate, endDate);
-                        List<CardSewaLahanDTO> venueDetails = scheduleRepository.getSewaLahanCardData(venue.getVenue(), startDate, endDate);
+                        List<String> getVenue = new ArrayList<>();
+                        getVenue.add(venue.getVenue());
+                        Long venueTotal = scheduleRepository.getOverallPercentage(getVenue, startDate, endDate);
+                        List<CardSewaLahanDTO> venueDetails = scheduleRepository.getSewaLahanCardData(getVenue, startDate, endDate);
 
                         if (venueTotal != null) {
                                 total += venueTotal;

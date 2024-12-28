@@ -10,11 +10,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import jakarta.persistence.criteria.Predicate;
 
 import com.dev.gbk.dto.MasterRetailRequest;
 import com.dev.gbk.exception.GBKAPIException;
 import com.dev.gbk.exception.ResourceNotFoundException;
 import com.dev.gbk.model.MasterRetail;
+import com.dev.gbk.model.Retail;
 import com.dev.gbk.repository.MasterRetailRepository;
 import com.dev.gbk.spesification.SpecificationBuilderImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,24 +32,57 @@ public class MasterRetailService {
         this.masterRetailRepository = masterRetailRepository;
     }
 
-    public Page<MasterRetail> findAll(String search, int page, int size) {
+    public Page<MasterRetail> findAll(String search, int page, int size,List<String> unit, String unitName) {
         Pageable pageable = PageRequest.of(page, size);
-        Specification<MasterRetail> searchSpec = (root, query, criteriaBuilder) -> {
-            if (search == null || search.trim().isEmpty()) {
-                return criteriaBuilder.conjunction();
+
+        Specification<MasterRetail> specification = (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+
+            if (search != null && !search.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("tenant_name")),
+                                "%" + search.toLowerCase() + "%"));
             }
-            return criteriaBuilder.like(criteriaBuilder.lower(root.get("tenant_name")), "%" + search.toLowerCase() + "%");
+
+            if (unit != null && !unit.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate,
+                        root.get("area").in(unit));
+            }
+
+            if (unitName != null && !unitName.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("area")),
+                                "%" + unitName.toLowerCase() + "%"));
+            }
+
+            return predicate;
         };
 
-        return masterRetailRepository.findAll(searchSpec, pageable);
+        return masterRetailRepository.findAll(specification, pageable);
     }
 
-    public List<MasterRetail> findAll(String search) {
+    public List<MasterRetail> findAll(String search,List<String> unit, String unitName) {
         Specification<MasterRetail> searchSpec = (root, query, criteriaBuilder) -> {
-            if (search == null || search.trim().isEmpty()) {
-                return criteriaBuilder.conjunction();
+            Predicate predicate = criteriaBuilder.conjunction();
+
+            if (search != null && !search.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("tenant_name")),
+                                "%" + search.toLowerCase() + "%"));
             }
-            return criteriaBuilder.like(criteriaBuilder.lower(root.get("tenant_name")), "%" + search.toLowerCase() + "%");
+
+            if (unit != null && !unit.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate,
+                        root.get("area").in(unit));
+            }
+
+            if (unitName != null && !unitName.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("area")),
+                                "%" + unitName.toLowerCase() + "%"));
+            }
+
+            return predicate;
         };
         return masterRetailRepository.findAll(searchSpec);
     }
