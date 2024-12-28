@@ -580,7 +580,7 @@ public class DashboardService {
                                 sumOfPendapatan = sumOfPendapatan.add(priceForWeekdaysSesiA).add(priceForWeekdaysSesiB).add(priceForWeekdaysSesiC);
                         }
                         totalProyeksiMaxPendapatan = calculateMaxRevenue(start, end,stadion);
-                        
+
                         sumPendapatanPerTotalProyeksiMaxPendapatan = sumOfPendapatan.divide(BigDecimal.valueOf(totalProyeksiMaxPendapatan), MathContext.DECIMAL128).multiply(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_EVEN);
                 }
 
@@ -599,15 +599,16 @@ public class DashboardService {
                             percentageMaintenance.divide(BigDecimal.valueOf(tempSession),
                                     MathContext.DECIMAL128).multiply(BigDecimal.valueOf(100))
                                 .setScale(2, BigDecimal.ROUND_HALF_EVEN);
-
-                        percentageTimnas =
-                            percentageTimnas.divide(sumOfEligibleSession, MathContext.DECIMAL128)
-                                .multiply(BigDecimal.valueOf(100))
-                                .setScale(2, BigDecimal.ROUND_HALF_EVEN);
-
-                        percentage = percentage.divide(sumOfEligibleSession, MathContext.DECIMAL128)
-                            .multiply(BigDecimal.valueOf(100))
-                            .setScale(2, BigDecimal.ROUND_HALF_EVEN);
+                        if (isValueGreaterThanZero(percentageTimnas)) {
+                          percentageTimnas =
+                              percentageTimnas.divide(sumOfEligibleSession, MathContext.DECIMAL128).multiply(BigDecimal.valueOf(100))
+                                  .setScale(2, BigDecimal.ROUND_HALF_EVEN);
+                        }
+                        if (isValueGreaterThanZero(percentage)) {
+                                percentage = percentage.divide(sumOfEligibleSession, MathContext.DECIMAL128)
+                                    .multiply(BigDecimal.valueOf(100))
+                                    .setScale(2, BigDecimal.ROUND_HALF_EVEN);
+                        }
 
                         sumOfMaintenance = sumOfMaintenance.add(percentageMaintenance);
 
@@ -658,6 +659,10 @@ public class DashboardService {
                 }
                 return new Occupancy(resultOfPercentage.doubleValue(), pkblu,
                     resultOfPercentageMaintenance.doubleValue(), 0d, resultOfPercentageTimnas.doubleValue(), sumPendapatanPerTotalProyeksiMaxPendapatan.doubleValue());
+        }
+
+        private boolean isValueGreaterThanZero(BigDecimal percentage) {
+                return percentage.intValue() != 0;
         }
 
         private Occupancy getOccupancyForNotEligibleSessionVenue(LocalDate start, LocalDate end, String venue) {
@@ -764,21 +769,21 @@ public class DashboardService {
         public long calculateMaxRevenue(LocalDate startDate, LocalDate endDate, String stadion) {
                 BigDecimal totalRevenue = BigDecimal.ZERO;
                 int sessionsPerDay = 8;
-            
+
                 for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
                     DayOfWeek dayOfWeek = date.getDayOfWeek();
                     BigDecimal totalDayRevenue = BigDecimal.ZERO;
-            
+
                     if (dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY) {
                         List<BigDecimal> weekdayPrices = systemProperties.getPriceForVenueInWeekdays().get(stadion);
-            
+
                         if (weekdayPrices != null && !weekdayPrices.isEmpty()) {
                             BigDecimal pricePerSession = weekdayPrices.get(0);
                             totalDayRevenue = pricePerSession.multiply(BigDecimal.valueOf(sessionsPerDay));
                         }
                     } else {
                         List<BigDecimal> weekendPrices = systemProperties.getPriceForVenueInWeekend().get(stadion);
-            
+
                         if (weekendPrices != null && !weekendPrices.isEmpty()) {
                             BigDecimal pricePerSession = weekendPrices.get(0);
                             totalDayRevenue = pricePerSession.multiply(BigDecimal.valueOf(sessionsPerDay));
@@ -786,7 +791,7 @@ public class DashboardService {
                     }
                     totalRevenue = totalRevenue.add(totalDayRevenue);
                 }
-            
+
                 return totalRevenue.longValue();
         }
 
