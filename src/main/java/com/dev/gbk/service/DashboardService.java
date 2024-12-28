@@ -9,6 +9,7 @@ import com.dev.gbk.repository.RetailRepository;
 import com.dev.gbk.repository.ScheduleRepository;
 import com.dev.gbk.repository.UnitRepository;
 import com.dev.gbk.repository.VenueRepository;
+import com.dev.gbk.response.Alert;
 import com.dev.gbk.response.Occupancy;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -941,5 +942,75 @@ public class DashboardService {
         }
 
 
+        // getAlert
+        private static final Map<String, List<String>> UNIT_VENUES = Map.of(
+                "Unit GBK ARENA", List.of(
+                    "GBK Arena Badminton Lt.2 A", "GBK Arena Badminton Lt.2 B", "GBK Arena Badminton Lt.2 C", 
+                    "GBK Arena Badminton Lt.2 D", "GBK Arena Badminton Lt.2 E", "GBK Arena Badminton Lt.2 F", 
+                    "GBK Arena Badminton Lt.5 A", "GBK Arena Badminton Lt.5 B", "GBK Arena Badminton Lt.5 C", 
+                    "GBK Arena Badminton Lt.5 D", "GBK Arena Badminton Lt.5 E", "GBK Arena Badminton Lt.5 F", 
+                    "GBK Arena Basket", "GBK Arena Tenis Meja A", "GBK Arena Tenis Meja B", 
+                    "GBK Arena Tenis Meja C", "GBK Arena Tenis Meja D", "GBK Arena Voli"
+                ),
+                "Unit Basket", List.of(
+                    "Lap. Hoki 1", "Lap. Hoki 2", "Lap. Basket Outdoor 1", "Lap. Basket Outdoor 2", 
+                    "Lap. Basket Outdoor 3", "Lap. Basket Outdoor 4", "Panahan", "Rugbi", 
+                    "Lapangan A", "Lapangan B", "Lapangan C", "Lap. Squash 1", "Lap. Squash 2", 
+                    "Lap. Squash 3", "Lap. Squash 4"
+                ),
+                "Unit Stadion Utama", List.of(
+                    "Lapangan Utama SUGBK", "Ring Road", "Pintu Merah", "Pintu Kuning", "Pintu Biru", 
+                    "Lobby VIP Barat", "Lobby VIP Timur", "Selasar Lt2 Pintu Kuning", 
+                    "Teras Lobby Barat", "Teras Lobby Timur", "Jogging Track", "Plasa Barat", 
+                    "Plasa Timur", "Plasa Utara", "Plasa Tenggara"
+                ),
+                "Unit Gedung Serbaguna", List.of(
+                    "Lahan Parkir", "Ruang Catlleya", "R. Vanda", "Masjid Albina", "Parkir Albina", 
+                    "Parkir WSG Sisi Timur", "Parkir WSG Sisi Barat"
+                ),
+                "Unit Tennis dan Madya", List.of(
+                    "Baseball", "Lapangan Bola Madya A", "Lapangan Bola Madya B", "Lintasan Track Madya 1", 
+                    "Lintasan Track Madya 2", "Tennis Centre Crout 1", "Tennis Centre Crout 2", 
+                    "Tennis Outdoor 1", "Tennis Outdoor 2"
+                ),
+                "Unit Akuatik", List.of(
+                    "Kolam Diving", "Kolam Tanding", "Kolam Polo", "Kolam Pemanasan", "Lahan Parkir Aquatic"
+                ),
+                "Unit PTHK", List.of(
+                    "Plasa Parkir Timur", "Lap. Softball 1", "Lap. Softball 2", "Lap. Softball 3"
+                )
+        );
+            
 
+        public List<Map<String, String>> getAlert() {
+                LocalDate today = LocalDate.now();
+                LocalDate startOfWeek = today.with(DayOfWeek.SUNDAY);
+                LocalDate endOfWeek = startOfWeek.plusDays(6);
+
+                List<Map<String, String>> unoccupiedDetails = new ArrayList<>();
+
+                for (String unit : UNIT_VENUES.keySet()) {
+                        for (String venue : UNIT_VENUES.get(unit)) {
+                                List<Schedule> occupiedDates = scheduleRepository.findOccupiedDatesByVenue(venue, startOfWeek, endOfWeek);
+
+                                // Cari tanggal yang tidak terisi dalam minggu tersebut
+                                List<LocalDate> unoccupiedDates = startOfWeek.datesUntil(endOfWeek.plusDays(1))
+                                        .filter(date -> !occupiedDates.contains(date))
+                                        .collect(Collectors.toList());
+
+                                // Jika ada tanggal yang tidak terisi, simpan informasi ke list
+                                if (!unoccupiedDates.isEmpty()) {
+                                for (LocalDate date : unoccupiedDates) {
+                                        Map<String, String> alertDetail = new HashMap<>();
+                                        alertDetail.put("unit", unit);
+                                        alertDetail.put("venue", venue);
+                                        alertDetail.put("tanggal", date.toString());
+                                        unoccupiedDetails.add(alertDetail);
+                                }
+                                }
+                        }
+                }
+
+                return unoccupiedDetails;
+        }
 }

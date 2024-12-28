@@ -216,4 +216,13 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
                 "ORDER BY s.category", nativeQuery = true)
         List<Schedule> findAllByCategory();
 
+        @Query("SELECT s FROM Schedule s " +
+                        "JOIN s.venues v " +
+                        "WHERE (:venue IS NULL OR :venue = ''OR v.venue IN :venue) " +
+                        "AND s.scheduleStartDate >= :startDate AND s.scheduleEndDate <= :endDate")
+        List<Schedule> findOccupiedDatesByVenue(
+            @Param("venue") String venue,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+        );
 }

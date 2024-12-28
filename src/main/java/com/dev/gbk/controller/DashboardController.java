@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.dev.gbk.response.Alert;
 import com.dev.gbk.response.Occupancy;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
@@ -185,6 +186,12 @@ public class DashboardController {
         }
         Occupancy occupancy = dashboardService.getOccupancy(start, end, venue);
         return ResponseEntity.ok(occupancy);
+    }
+
+    @GetMapping("/get-alert")
+    public ResponseEntity<List<Map<String, String>>> getOccupancy() {
+        List<Map<String, String>> alertDetails = dashboardService.getAlert();
+        return ResponseEntity.ok(alertDetails);
     }
 
     @GetMapping("/export/occupancy")
