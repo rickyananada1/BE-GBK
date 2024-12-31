@@ -1014,33 +1014,33 @@ public class DashboardService {
 
         public List<Map<String, String>> getAlert() {
                 LocalDate today = LocalDate.now();
-                LocalDate startOfWeek = today.with(DayOfWeek.SUNDAY);
-                LocalDate endOfWeek = startOfWeek.plusDays(6);
-
+                LocalDate startOfWeek = today.minusDays(7); // 7 hari ke belakang
+                LocalDate endOfWeek = today.minusDays(1); // Sampai kemarin
+            
                 List<Map<String, String>> unoccupiedDetails = new ArrayList<>();
-
+            
                 for (String unit : UNIT_VENUES.keySet()) {
-                        for (String venue : UNIT_VENUES.get(unit)) {
-                                List<Schedule> occupiedDates = scheduleRepository.findOccupiedDatesByVenue(venue, startOfWeek, endOfWeek);
-
-                                // Cari tanggal yang tidak terisi dalam minggu tersebut
-                                List<LocalDate> unoccupiedDates = startOfWeek.datesUntil(endOfWeek.plusDays(1))
-                                        .filter(date -> !occupiedDates.contains(date))
-                                        .collect(Collectors.toList());
-
-                                // Jika ada tanggal yang tidak terisi, simpan informasi ke list
-                                if (!unoccupiedDates.isEmpty()) {
-                                for (LocalDate date : unoccupiedDates) {
-                                        Map<String, String> alertDetail = new HashMap<>();
-                                        alertDetail.put("unit", unit);
-                                        alertDetail.put("venue", venue);
-                                        alertDetail.put("tanggal", date.toString());
-                                        unoccupiedDetails.add(alertDetail);
-                                }
-                                }
+                    for (String venue : UNIT_VENUES.get(unit)) {
+                        List<Schedule> occupiedDates = scheduleRepository.findOccupiedDatesByVenue(venue, startOfWeek, endOfWeek);
+            
+                        // Cari tanggal yang tidak terisi dalam 7 hari terakhir
+                        List<LocalDate> unoccupiedDates = startOfWeek.datesUntil(endOfWeek.plusDays(1))
+                                .filter(date -> !occupiedDates.contains(date))
+                                .collect(Collectors.toList());
+            
+                        // Jika ada tanggal yang tidak terisi, simpan informasi ke list
+                        if (!unoccupiedDates.isEmpty()) {
+                            for (LocalDate date : unoccupiedDates) {
+                                Map<String, String> alertDetail = new HashMap<>();
+                                alertDetail.put("unit", unit);
+                                alertDetail.put("venue", venue);
+                                alertDetail.put("tanggal", date.toString());
+                                unoccupiedDetails.add(alertDetail);
+                            }
                         }
+                    }
                 }
-
+            
                 return unoccupiedDetails;
         }
 }
