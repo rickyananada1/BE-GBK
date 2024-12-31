@@ -281,16 +281,16 @@ public class ScheduleService {
         }
     }
 
-    public byte[] generateExcelFile() throws IOException {
+    public byte[] generateExcelFile(LocalDate start, LocalDate end, String unitName) throws IOException {
         try (Workbook workbook = new XSSFWorkbook()) {
             // Sheet 1
-            createSheet(workbook, "List Transaction", scheduleRepository.findAll());
+            createSheet(workbook, "List Transaction", scheduleRepository.findAllByDateAndUnit(start, end, unitName));
 
-            // Sheet 2
-            createSheetByKlasifikasi(workbook, "LT According Klasfikasi", scheduleRepository.findAllByProfileEvent());
+        // Sheet 2
+            createSheetByKlasifikasi(workbook, "LT According Klasfikasi", scheduleRepository.findAllByProfileEventAndUnit(start, end, unitName));
 
             // Sheet 3
-            createSheetByCategory(workbook, "LT According Kategori", scheduleRepository.findAllByCategory());
+            createSheetByCategory(workbook, "LT According Kategori", scheduleRepository.findAllByCategoryAndUnit(start, end, unitName));
 
             // Write to byte array
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -364,6 +364,7 @@ public class ScheduleService {
         headerRow.createCell(4).setCellValue("Tanggal");
         headerRow.createCell(5).setCellValue("Jenis");
         headerRow.createCell(6).setCellValue("Harga");
+        headerRow.createCell(7).setCellValue("Klasifikasi");
 
         for (Schedule rowData : data) {
             Row row = sheet.createRow(rowIndex++);
@@ -377,6 +378,7 @@ public class ScheduleService {
             row.createCell(4).setCellValue(rowData.getScheduleStartDate() != null ? rowData.getScheduleStartDate().toString() : "");
             row.createCell(5).setCellValue(rowData.getType() != null ? rowData.getType() : "");
             row.createCell(6).setCellValue(rowData.getTotalPaid() != null ? rowData.getTotalPaid().toString() : "");
+            row.createCell(7).setCellValue(rowData.getProfileEvent() != null ? rowData.getProfileEvent() : "");
         }
 
     }
@@ -392,6 +394,7 @@ public class ScheduleService {
         headerRow.createCell(4).setCellValue("Tanggal");
         headerRow.createCell(5).setCellValue("Jenis");
         headerRow.createCell(6).setCellValue("Harga");
+        headerRow.createCell(7).setCellValue("Kategori");
 
         for (Schedule rowData : data) {
             Row row = sheet.createRow(rowIndex++);
@@ -405,6 +408,7 @@ public class ScheduleService {
             row.createCell(4).setCellValue(rowData.getScheduleStartDate() != null ? rowData.getScheduleStartDate().toString() : "");
             row.createCell(5).setCellValue(rowData.getType() != null ? rowData.getType() : "");
             row.createCell(6).setCellValue(rowData.getTotalPaid() != null ? rowData.getTotalPaid().toString() : "");
+            row.createCell(7).setCellValue(rowData.getCategory() != null ? rowData.getCategory() : "");
         }
 
     }

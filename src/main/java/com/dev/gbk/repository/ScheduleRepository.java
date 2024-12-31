@@ -226,4 +226,14 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
         );
+
+        @Query("SELECT s FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE (:unitName IS NULL OR :unitName = '' OR u.name = :unitName) AND s.scheduleStartDate BETWEEN :start AND :end")
+        List<Schedule> findAllByDateAndUnit(@Param("start") LocalDate start, @Param("end") LocalDate end, @Param("unitName") String unitName);
+
+        @Query("SELECT s FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE (:unitName IS NULL OR :unitName = '' OR u.name = :unitName) AND s.scheduleStartDate BETWEEN :start AND :end AND s.profileEvent IS NOT NULL")
+        List<Schedule> findAllByProfileEventAndUnit(@Param("start") LocalDate start, @Param("end") LocalDate end, @Param("unitName") String unitName);
+        
+        @Query("SELECT s FROM Schedule s JOIN s.venues v JOIN v.unit u WHERE (:unitName IS NULL OR :unitName = '' OR u.name = :unitName) AND s.scheduleStartDate BETWEEN :start AND :end AND s.category IS NOT NULL")
+        List<Schedule> findAllByCategoryAndUnit(@Param("start") LocalDate start, @Param("end") LocalDate end, @Param("unitName") String unitName);
+
 }

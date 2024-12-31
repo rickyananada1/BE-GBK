@@ -6,6 +6,7 @@ import com.dev.gbk.service.ScheduleService;
 import com.dev.gbk.utils.ResponseHandler;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -132,20 +133,48 @@ public class ScheduleController {
 
     @GetMapping("/export/excel")
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('VIEW_DATA_SCHEDULE')")
-    public ResponseEntity<byte[]> exportExcel() {
+    public void exportExcel(
+            @RequestParam(value = "unitName", required = false) String unitName,
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            HttpServletResponse response) throws IOException {
+        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().withDayOfYear(1);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
+
+        // Handle start and end date logic
+        if (start != null && end != null && end.isBefore(start)) {
+            LocalDate temp = start;
+            start = end;
+            end = temp;
+        }
+
+        // Generate Excel file
+        byte[] excelFile = scheduleService.generateExcelFile(start, end, unitName);
+
+        // Set response headers
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=Data Transaksi.xlsx");
+
         try {
-            byte[] excelFile = scheduleService.generateExcelFile();
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
-            headers.setContentDispositionFormData("attachment", "Data Transaksi.xlsx");
-
-            return new ResponseEntity<>(excelFile, headers, HttpStatus.OK);
+            response.getOutputStream().write(excelFile);
         } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new RuntimeException("Failed to write Excel file to response", e);
         }
     }
+    // public ResponseEntity<byte[]> exportExcel(@RequestParam(value = "unit", required = false) String unit) {
+    //     try {
+    //         byte[] excelFile = scheduleService.generateExcelFile(unit);
+
+    //         HttpHeaders headers = new HttpHeaders();
+    //         headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+    //         headers.setContentDispositionFormData("attachment", "Data Transaksi.xlsx");
+
+    //         return new ResponseEntity<>(excelFile, headers, HttpStatus.OK);
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    //     }
+    // }
 
 //
 //    public ResponseEntity<Object> exportToExcel() {
