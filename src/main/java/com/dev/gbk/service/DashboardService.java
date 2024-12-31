@@ -527,8 +527,9 @@ public class DashboardService {
                     .orElse(new ArrayList<>());
 
                 if (Objects.nonNull(unitData)) {
-                        List<Venue> venues = unitData.getVenues().stream()
-                            .filter(venue -> !notForCalculated.contains(venue.getVenue())).toList(); // Assuming Unit entity has a list of Venues
+                        List<Venue> venues = unitData.getVenues();
+//                        .stream()
+//                            .filter(venue -> !notForCalculated.contains(venue.getVenue())).toList(); // Assuming Unit entity has a list of Venues
 
                         if (!venues.isEmpty()) {
                                 BigDecimal totalOccFisik = BigDecimal.ZERO;
@@ -575,7 +576,9 @@ public class DashboardService {
                                             .multiply(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_EVEN);
                                         occupancyRetail = retailOccupied.intValue();
                                 }
-                                int numberOfVenues = venues.size();
+                                int numberOfVenuesThatIncludeInFisikVsPendapatan = venues.size();
+                                int numberOfVenues = venues.stream().filter(venue -> !notForCalculated.contains(venue.getVenue())).toList()
+                                    .size();
                                 Object test = retailFromVenue.get(0);
                                 if (test == null) {
                                         totalOccFisik = totalOccFisik.divide(BigDecimal.valueOf(numberOfVenues),
@@ -598,7 +601,9 @@ public class DashboardService {
                                     retailOccupied.doubleValue(),
                                     totalTimnasOcc.divide(BigDecimal.valueOf(numberOfVenues),
                                         BigDecimal.ROUND_HALF_UP).doubleValue(),
-                                    totalFisikVsPendapatan.doubleValue());
+                                    totalFisikVsPendapatan.divide(BigDecimal.valueOf(
+                                            numberOfVenuesThatIncludeInFisikVsPendapatan),
+                                        BigDecimal.ROUND_HALF_UP).doubleValue());
                         }
                 }
 
@@ -630,12 +635,11 @@ public class DashboardService {
                 BigDecimal sumOfPercentageTimnas = BigDecimal.ZERO;
                 BigDecimal sumOfPendapatan = BigDecimal.ZERO;
                 BigDecimal sumPendapatanPerTotalProyeksiMaxPendapatan = BigDecimal.ZERO;
-                long totalProyeksiMaxPendapatan = 0;
+                String stadion = venue.replace(" ","");
                 for (Object[] ob : sessionUsed) {
                         BigDecimal sumOfSesiA = getSingleValueWIthIndex(ob, 2); // Index 0 for totalPercentage
                         BigDecimal sumOfSesiB = getSingleValueWIthIndex(ob, 3); // Index 0 for totalPercentage
                         BigDecimal sumOfSesiC = getSingleValueWIthIndex(ob, 4); // Index 0 for
-                        String stadion = venue.replace(" ","");
                         if ("Weekend".equals(ob[5].toString())) {
                                 BigDecimal priceForWeekendSesiA = systemProperties.getPriceForVenueInWeekend().get(stadion).get(0).multiply(sumOfSesiA);
                                 BigDecimal priceForWeekendSesiB = systemProperties.getPriceForVenueInWeekend().get(stadion).get(1).multiply(sumOfSesiB);
@@ -647,9 +651,6 @@ public class DashboardService {
                                 BigDecimal priceForWeekdaysSesiC = systemProperties.getPriceForVenueInWeekdays().get(stadion).get(2).multiply(sumOfSesiC);
                                 sumOfPendapatan = sumOfPendapatan.add(priceForWeekdaysSesiA).add(priceForWeekdaysSesiB).add(priceForWeekdaysSesiC);
                         }
-                        totalProyeksiMaxPendapatan = calculateMaxRevenue(start, end,stadion);
-
-                        sumPendapatanPerTotalProyeksiMaxPendapatan = sumOfPendapatan.divide(BigDecimal.valueOf(totalProyeksiMaxPendapatan), MathContext.DECIMAL128).multiply(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_EVEN);
                 }
 
                 //Todo : Need to get potential max price for range startdate to end date
@@ -658,10 +659,14 @@ public class DashboardService {
                 for (Object[] ob : schedule) {
                         BigDecimal percentageTimnas = getSingleValueWIthIndex(ob, 0); // Index 0 for totalPercentage
                         BigDecimal percentage = getSingleValueWIthIndex(ob, 1); // Index 0 for totalPercentage
-                        BigDecimal percentageMaintenance = getSingleValueWIthIndex(ob, 2); // Index 0 for
-                                                                                           // totalPercentage
+                        BigDecimal percentageMaintenance = getSingleValueWIthIndex(ob, 2); // Index 0 for totalPercentage
                         BigDecimal sumOfEligibleSession =
                             BigDecimal.valueOf(tempSession).subtract(percentageMaintenance);
+                        BigDecimal totalLahanParkir = getSingleValueWIthIndex(ob,3);
+
+                        if (isValueGreaterThanZero(totalLahanParkir)) {
+                                totalLahanParkir = totalLahanParkir.multiply(BigDecimal.valueOf(17500));
+                        }
 
                         percentageMaintenance =
                             percentageMaintenance.divide(BigDecimal.valueOf(tempSession),
@@ -683,6 +688,8 @@ public class DashboardService {
                         sumOfPercentageTimnas = sumOfPercentageTimnas.add(percentageTimnas);
 
                         sumOfPercentage = sumOfPercentage.add(percentage);
+
+                        sumOfPendapatan = sumOfPendapatan.add(totalLahanParkir);
 
                         count++;
                 }
@@ -725,6 +732,10 @@ public class DashboardService {
                 } catch (ArithmeticException e) {
                         System.out.println("There is No Used Session");
                 }
+                long totalPotensiPendapatan = calculateMaxRevenue(start, end,stadion);
+
+                sumPendapatanPerTotalProyeksiMaxPendapatan = sumOfPendapatan.divide(BigDecimal.valueOf(totalPotensiPendapatan), MathContext.DECIMAL128).multiply(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_EVEN);
+
                 return new Occupancy(resultOfPercentage.doubleValue(), pkblu,
                     resultOfPercentageMaintenance.doubleValue(), 0d, resultOfPercentageTimnas.doubleValue(), sumPendapatanPerTotalProyeksiMaxPendapatan.doubleValue());
         }
@@ -844,25 +855,44 @@ public class DashboardService {
                     DayOfWeek dayOfWeek = date.getDayOfWeek();
                     BigDecimal totalDayRevenue = BigDecimal.ZERO;
 
-                    if (dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY) {
-                        List<BigDecimal> weekdayPrices = systemProperties.getPriceForVenueInWeekdays().get(stadion);
-
-                        if (weekdayPrices != null && !weekdayPrices.isEmpty()) {
-                            BigDecimal pricePerSession = weekdayPrices.get(0);
-                            totalDayRevenue = pricePerSession.multiply(BigDecimal.valueOf(sessionsPerDay));
-                        }
+                    if (systemProperties.getVenues().contains(stadion)) {
+                            totalDayRevenue =
+                                getPriceOfStadion(stadion, sessionsPerDay, dayOfWeek, totalDayRevenue);
                     } else {
-                        List<BigDecimal> weekendPrices = systemProperties.getPriceForVenueInWeekend().get(stadion);
-
-                        if (weekendPrices != null && !weekendPrices.isEmpty()) {
-                            BigDecimal pricePerSession = weekendPrices.get(0);
-                            totalDayRevenue = pricePerSession.multiply(BigDecimal.valueOf(sessionsPerDay));
-                        }
+                            totalDayRevenue = getPriceOfLahanParkir(stadion, 0, dayOfWeek, totalDayRevenue);
                     }
-                    totalRevenue = totalRevenue.add(totalDayRevenue);
+                        totalRevenue = totalRevenue.add(totalDayRevenue);
                 }
 
                 return totalRevenue.longValue();
+        }
+
+        private BigDecimal getPriceOfLahanParkir(String stadion, int i, DayOfWeek dayOfWeek, BigDecimal totalDayRevenue) {
+                return totalDayRevenue.add(systemProperties.getPriceForLahanParkirInWeekend().get(stadion).get(0));
+        }
+
+        private BigDecimal getPriceOfStadion(String stadion, int sessionsPerDay, DayOfWeek dayOfWeek,
+            BigDecimal totalDayRevenue) {
+                if (dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY) {
+                    List<BigDecimal> weekdayPrices = systemProperties.getPriceForVenueInWeekdays().get(
+                        stadion);
+
+                    if (weekdayPrices != null && !weekdayPrices.isEmpty()) {
+                        BigDecimal pricePerSession = weekdayPrices.get(0);
+                        totalDayRevenue = pricePerSession.multiply(BigDecimal.valueOf(
+                            sessionsPerDay));
+                    }
+                } else {
+                    List<BigDecimal> weekendPrices = systemProperties.getPriceForVenueInWeekend().get(
+                        stadion);
+
+                    if (weekendPrices != null && !weekendPrices.isEmpty()) {
+                        BigDecimal pricePerSession = weekendPrices.get(0);
+                        totalDayRevenue = pricePerSession.multiply(BigDecimal.valueOf(
+                            sessionsPerDay));
+                    }
+                }
+                return totalDayRevenue;
         }
 
         public byte[] exportOccupancyToExcel(LocalDate start, LocalDate end, String unitName) {

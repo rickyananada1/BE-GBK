@@ -125,14 +125,15 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
         @Query(value = "SELECT "
             + "(SUM(CASE WHEN s.games = 'Timnas' THEN 1 ELSE 0 END)) AS totalPercentageTimnas, "
             + "(SUM(CASE WHEN s.status_payment = 'Paid' AND s.games != 'Timnas' THEN 1 ELSE 0 END)) AS totalPercentage, "
-            + "(COALESCE(SUM(CASE WHEN s.status_payment = 'Maintenance' THEN 1 ELSE 0 END), 0)) AS totalMaintenance "
+            + "(COALESCE(SUM(CASE WHEN s.status_payment = 'Maintenance' THEN 1 ELSE 0 END), 0)) AS totalMaintenance, "
+            + "(SUM(DISTINCT(size_of_field))) AS totalLahan "
             + "FROM schedules s inner JOIN "
             + "schedules_venues sv "
             + "on s.id= sv.schedule_id join "
             + "schedule_times st ON s.id = st.schedule_id "
             + "JOIN venues v2  on sv.venue_id=v2.id "
             + "join units u on v2.unit_id =u.id "
-            + "WHERE v2.venue = :unit AND s.start_date >= :startDate AND s.end_date <= :endDate GROUP by s.start_date ;",
+            + "WHERE v2.venue = :unit AND s.start_date >= :startDate AND s.end_date <= :endDate GROUP by s.id ;",
             nativeQuery = true)
         List<Object[]> findSumOfSchedulesPerDay(@Param("unit") String unit, @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
