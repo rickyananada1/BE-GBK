@@ -988,8 +988,6 @@ public class DashboardService {
                                         //         venueOccupancy = getOccupancyForNotEligibleSessionVenue(monthStart, monthEnd, venue.getVenue());
                                         // }
 
-                                        System.out.println("Occupancy for venue " + venue.getVenue() + ": " + venueOccupancy);
-
                                         Row dataRow = sheet.createRow(rowIndex++);
                                         dataRow.createCell(0).setCellValue(unitName);
                                         dataRow.createCell(1).setCellValue(monthStart.toString());
