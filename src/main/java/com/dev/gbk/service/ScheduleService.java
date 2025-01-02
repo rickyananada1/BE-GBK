@@ -325,7 +325,7 @@ public class ScheduleService {
 
         for (Schedule rowData : data) {
             Row row = sheet.createRow(rowIndex++);
-            row.createCell(0).setCellValue(rowIndex);
+            row.createCell(0).setCellValue(rowIndex - 1);
 
             row.createCell(1).setCellValue(rowData.getCustomerName() != null ? rowData.getCustomerName() : "");
             row.createCell(2).setCellValue(rowData.getCustomerEmail() != null ? rowData.getCustomerEmail() : "");

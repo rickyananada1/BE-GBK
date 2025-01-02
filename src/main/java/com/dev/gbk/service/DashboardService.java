@@ -610,6 +610,52 @@ public class DashboardService {
                 return null;
         }
 
+        public Occupancy getOccupancyPerVenue(LocalDate start, LocalDate end, String unit, String venueName) {
+                Unit unitData = this.unitRepository.findByName(unit).orElse(null);
+            
+                if (unitData == null) {
+                    throw new RuntimeException("Unit not found for name: " + unit);
+                }
+            
+                Venue targetVenue = unitData.getVenues().stream()
+                        .filter(venue -> venue.getVenue().equals(venueName))
+                        .findFirst()
+                        .orElse(null);
+            
+                if (targetVenue == null) {
+                    throw new RuntimeException("Venue not found for name: " + venueName);
+                }
+            
+                Occupancy venueOccupancy;
+                if (targetVenue.getIsEligibleSession()) {
+                    venueOccupancy = getOccupancyForEligibleSessionVenue(start, end, targetVenue.getVenue());
+                } else {
+                    venueOccupancy = getOccupancyForNotEligibleSessionVenue(start, end, targetVenue.getVenue());
+                }
+            
+                List<Object[]> retailFromVenue = this.retailRepository.findSumPaidAndAllRecordForRetail(unit, start, end);
+                BigDecimal retailOccupied = BigDecimal.ZERO;
+                int occupancyRetail = 0;
+                for (Object[] retail : retailFromVenue) {
+                    BigDecimal totalRetailOccupied = getSingleValueWIthIndex(retail, 0);
+                    BigDecimal totalAllRetail = getSingleValueWIthIndex(retail, 1);
+                    if (totalRetailOccupied.compareTo(BigDecimal.ZERO) != 0 && totalAllRetail.compareTo(BigDecimal.ZERO) != 0) {
+                        retailOccupied = totalRetailOccupied.divide(totalAllRetail, MathContext.DECIMAL128)
+                                .multiply(BigDecimal.valueOf(100)).setScale(2, BigDecimal.ROUND_HALF_EVEN);
+                        occupancyRetail = retailOccupied.intValue();
+                    }
+                }
+            
+                return new Occupancy(
+                        venueOccupancy.getOccFisik(),
+                        venueOccupancy.getOccPKBLUHari(),
+                        venueOccupancy.getOccMaintenance(),
+                        retailOccupied.doubleValue(),
+                        venueOccupancy.getOccTimnas(),
+                        venueOccupancy.getOccFisikVsPendapatan()
+                );
+        }            
+
         public Occupancy getOccupancy(LocalDate start, LocalDate end, String venue) {
                 Venue venue1 = this.venueRepository.findByVenue(venue).orElse(null);
                 if (Objects.nonNull(venue1)) {
@@ -936,11 +982,13 @@ public class DashboardService {
 
                                 for (Venue venue : venues) {
                                         Occupancy venueOccupancy;
-                                        if (venue.getIsEligibleSession()) {
-                                                venueOccupancy = getOccupancyForEligibleSessionVenue(monthStart, monthEnd, venue.getVenue());
-                                        } else {
-                                                venueOccupancy = getOccupancyForNotEligibleSessionVenue(monthStart, monthEnd, venue.getVenue());
-                                        }
+                                        // if (venue.getIsEligibleSession()) {
+                                        venueOccupancy = getOccupancyPerVenue(monthStart, monthEnd, unitName, venue.getVenue());
+                                        // } else {
+                                        //         venueOccupancy = getOccupancyForNotEligibleSessionVenue(monthStart, monthEnd, venue.getVenue());
+                                        // }
+
+                                        System.out.println("Occupancy for venue " + venue.getVenue() + ": " + venueOccupancy);
 
                                         Row dataRow = sheet.createRow(rowIndex++);
                                         dataRow.createCell(0).setCellValue(unitName);
