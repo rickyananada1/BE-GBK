@@ -1069,10 +1069,16 @@ public class DashboardService {
                     for (String venue : UNIT_VENUES.get(unit)) {
                         List<Schedule> occupiedDates = scheduleRepository.findOccupiedDatesByVenue(venue, startOfWeek, endOfWeek);
             
+                        // Ubah List<Schedule> menjadi List<LocalDate> (tanggal yang terisi)
+                        List<LocalDate> occupiedDatesList = occupiedDates.stream()
+                            .flatMap(schedule -> schedule.getScheduleStartDate()
+                                    .datesUntil(schedule.getScheduleEndDate().plusDays(1))) // Rentang seluruh tanggal dalam jadwal
+                            .collect(Collectors.toList());
+            
                         // Cari tanggal yang tidak terisi dalam 7 hari terakhir
                         List<LocalDate> unoccupiedDates = startOfWeek.datesUntil(endOfWeek.plusDays(1))
-                                .filter(date -> !occupiedDates.contains(date))
-                                .collect(Collectors.toList());
+                            .filter(date -> !occupiedDatesList.contains(date))  // Bandingkan dengan LocalDate
+                            .collect(Collectors.toList());
             
                         // Jika ada tanggal yang tidak terisi, simpan informasi ke list
                         if (!unoccupiedDates.isEmpty()) {
@@ -1086,7 +1092,7 @@ public class DashboardService {
                         }
                     }
                 }
-            
                 return unoccupiedDetails;
         }
+            
 }
